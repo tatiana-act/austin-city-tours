@@ -8,12 +8,13 @@ import { faqs as faqsRu } from '@/data/faq';
 import { faqs as faqsEn } from '@/data/faq.en';
 import { upcomingTours } from '@/data/upcomingTours';
 import pastTours from '@/data/RecentTours';
-import { TourProgram } from '@/types/tour';
+import { TourProgram, PastTourEvent } from '@/types/tour';
 import HomeClient from '@/components/HomeClient';
 import { getAllReviews } from "@/app/actions/readAllFeedbacks";
 import ReviewSection from "@/components/ReviewsSection";
 import { headers } from 'next/headers';
 import { parseCentralTime } from '@/lib/utils';
+import RecentEventsSection from '@/components/RecentEventsSection';
 
 export default async function Home({
   params
