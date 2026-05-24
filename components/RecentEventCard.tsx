@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { PastTourEvent } from '@/types/tour';
 import { formatDateToUserLocale } from '@/lib/utils';
-import Popup from "reactjs-popup";
+import { Dialog, DialogPanel } from '@headlessui/react';
 import FeedbackForm from "@/components/FeedbackForm";
 import AboutTour from "@/components/AboutTour";
 import Modal from "@/components/Modal";
@@ -33,26 +33,21 @@ const RecentEventCard: React.FC<PastTourCardProps> = ({ tour, tourName, locale }
     return (
 
         <div className="upcoming-tour-card p-2 bg-white rounded-lg shadow-md max-w-md mx-auto relative" id={'tour-card-' + tour.id.valueOf()}>
-            {openPopupIndex === 2 && (
-                <Modal isOpen={openPopupIndex === 2} onClose={closePopup} title={tFeedback('title')}>
-                    <FeedbackForm tourName={tourName} tourId={tour.tourProgramId} date={tour.date} onClose={closePopup} />
-                </Modal>
-            )
-            }
-            {openPopupIndex === 1 && (
-                <div>
-                    <Popup open={openPopupIndex === 1} closeOnDocumentClick onClose={closePopup}
-                        contentStyle={{ padding: 0, border: "none", background: "transparent" }}>
-                        <div className="modalfit">
-                            <button className="close" onClick={closePopup}>
-                                &times;
-                            </button>
-                            <AboutTour eventUrl={tour.eventUrl || ''} eventImage={tour.eventImage || ''} tourName={tourName} onClose={closePopup} />
-                        </div>
-                    </Popup>
+            <Modal isOpen={openPopupIndex === 2} onClose={closePopup} title={tFeedback('title')}>
+                <FeedbackForm tourName={tourName} tourId={tour.tourProgramId} date={tour.date} onClose={closePopup} />
+            </Modal>
+
+            <Dialog open={openPopupIndex === 1} onClose={closePopup} className="relative z-50">
+                <div className="popup-overlay fixed inset-0" aria-hidden="true" />
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <DialogPanel className="modalfit">
+                        <button className="close" onClick={closePopup}>
+                            &times;
+                        </button>
+                        <AboutTour eventUrl={tour.eventUrl || ''} eventImage={tour.eventImage || ''} tourName={tourName} onClose={closePopup} />
+                    </DialogPanel>
                 </div>
-            )
-            }
+            </Dialog>
 
             <div className="upcoming-tour-content">
                 <h4 className="upcoming-tour-name">{tourName}</h4>

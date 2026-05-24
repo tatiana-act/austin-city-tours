@@ -1,4 +1,4 @@
-'use server'; // Marks this as a Server Action
+'use server';
 
 import { GoogleAuth } from 'google-auth-library';
 import { sheets_v4 } from '@googleapis/sheets';
@@ -6,7 +6,6 @@ import { FeedbackFormData, feedbackFormSchema } from "@/app/zfdschema";
 import sendTelegramMessage from "@/app/tgmessage";
 
 export async function submitFeedbackForm(_prevState: FeedbackFormData, formData: FormData): Promise<FeedbackFormData> {
-
     const data = {
         name: formData.get('name') as string,
         text: formData.get('text') as string,
@@ -16,56 +15,47 @@ export async function submitFeedbackForm(_prevState: FeedbackFormData, formData:
     };
 
     const validated = feedbackFormSchema.safeParse(data);
-    let msg = '';
-    let success = validated.success;
+
     if (!validated.success) {
-        msg = validated.error.issues[0].message
-    } else {
-        try {
-            // Authenticate with Google
-            const auth = new GoogleAuth({
-                credentials: {
-                    client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-                    private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-                },
-                scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-            });
-
-            const sheets = new sheets_v4.Sheets({ auth });
-            const tgMessage = `Received new contact: ${validated.data?.name}`;
-            sendTelegramMessage(tgMessage).catch((error) => {
-                console.error('Unhandled error in sendTelegramMessageInternal:', error);
-            });
-            await sheets.spreadsheets.values.append({
-                spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID!,
-                range: 'Reviews!A:F',
-                valueInputOption: 'USER_ENTERED',
-                requestBody: {
-                    values: [[
-                        validated.data?.name || '',
-                        validated.data?.tour || '',
-                        validated.data?.tourId || '',
-                        validated.data?.date || '',
-                        '',
-                        validated.data?.text || '',
-
-                    ]],
-                },
-            })
-
-        } catch (error) {
-            success = false;
-            msg = String(error?.toString() || 'unknown error');
-            console.error('Error submitting to Google Sheets:', error);
-        }
+        console.error('Feedback validation failed:', validated.error.issues[0]);
+        return { ...data, success: false, errMessage: validated.error.issues[0].message };
     }
-    return {
-        name: data.name,
-        text: data.text || '',
-        tour: data.tour || '',
-        tourId: data.tourId,
-        date: data.date || '',
-        success: success,
-        errMessage: msg
-    };
+
+    const clientEmail = process.env.GOOGLE_SHEETS_CLIENT_EMAIL;
+    const privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
+
+    if (!clientEmail || !privateKey || !spreadsheetId) {
+        console.error('Missing required Google Sheets environment variables');
+        return { ...validated.data, success: false, errMessage: 'Submission failed. Please try again.' };
+    }
+
+    try {
+        const auth = new GoogleAuth({
+            credentials: { client_email: clientEmail, private_key: privateKey },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        });
+
+        const sheets = new sheets_v4.Sheets({ auth });
+        const { name, tour, tourId, date, text } = validated.data;
+
+        sendTelegramMessage(`New feedback from ${name} for "${tour}"`).catch((error) => {
+            console.error('Telegram notification failed:', error);
+        });
+
+        await sheets.spreadsheets.values.append({
+            spreadsheetId,
+            range: 'Reviews!A:F',
+            valueInputOption: 'RAW',
+            requestBody: {
+                values: [[name, tour, tourId, date, '', text]],
+            },
+        });
+
+        return { ...validated.data, success: true, errMessage: '' };
+
+    } catch (error) {
+        console.error('Error submitting to Google Sheets:', error);
+        return { ...validated.data, success: false, errMessage: 'Submission failed. Please try again.' };
+    }
 }
