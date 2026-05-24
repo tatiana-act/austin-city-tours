@@ -664,3 +664,153 @@ form > .tour-header {
 .review-link:hover {
     text-decoration: underline;
 }
+
+/* Upcoming tour card actions */
+.upcoming-tour-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.details-link {
+    display: block;
+    width: 100%;
+    background: none;
+    border: 2px solid #667eea;
+    color: #667eea;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    font-size: inherit;
+}
+
+.details-link:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Tour Detail Page */
+.tour-detail-page {
+    min-height: 100vh;
+    background: white;
+}
+
+.tour-detail-back-bar {
+    padding: 1.5rem 2rem;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+.tour-detail-back-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.tour-detail-back-link:hover {
+    color: #764ba2;
+}
+
+.tour-detail-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 450px;
+}
+
+.tour-detail-image-wrapper {
+    position: relative;
+    min-height: 350px;
+}
+
+.tour-detail-image {
+    object-fit: cover;
+}
+
+.tour-detail-info {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tour-detail-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.3;
+}
+
+.tour-detail-attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tour-detail-attr {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1rem;
+    color: #444;
+}
+
+.tour-detail-bonus {
+    color: #764ba2;
+    font-weight: 600;
+}
+
+.tour-detail-book-button {
+    margin-top: auto;
+    max-width: 280px;
+}
+
+.tour-detail-section {
+    padding: 2.5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.tour-detail-reviews-section {
+    padding: 2rem 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f8f9fa;
+}
+
+.tour-detail-no-reviews {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .tour-detail-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .tour-detail-image-wrapper {
+        min-height: 250px;
+    }
+
+    .tour-detail-info {
+        padding: 1.5rem;
+    }
+
+    .tour-detail-title {
+        font-size: 1.5rem;
+    }
+
+    .tour-detail-book-button {
+        max-width: 100%;
+    }
+}
