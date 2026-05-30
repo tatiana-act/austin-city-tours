@@ -53,7 +53,8 @@
         "shareTitle": "Austin City Tours - The city you don't know yet",
         "shareOnFb": "Share on Facebook",
         "shareOnTg": "Share on Telegram",
-        "share": "Share"
+        "share": "Share",
+        "details": "View details"
     },
     "Recent": {
         "title": "Past tours",
@@ -106,5 +107,13 @@
     },
     "Footer": {
         "title": "Where the best experiences begin"
+    },
+    "TourDetail": {
+        "back": "← Back to tours",
+        "free": "Free",
+        "duration": "Duration",
+        "book": "Reserve a spot",
+        "noReviews": "No reviews for this tour yet",
+        "notFound": "Tour not found"
     }
 }

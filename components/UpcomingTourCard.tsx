@@ -2,6 +2,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { UpcomingTourEvent } from '@/types/tour';
 import { formatDateToUserLocale } from '@/lib/utils';
 import { useTranslations } from "next-intl";
@@ -94,9 +95,18 @@ const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
             <FaTelegram />
           </button>
         </div>
-        <button className="book-button" onClick={handleReserveClick}>
-          {t('join')}
-        </button>
+        <div className="upcoming-tour-actions">
+          <Link
+            href={`/${locale}/tours/${upcomingTour.id}`}
+            className="details-link"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {t('details')}
+          </Link>
+          <button className="book-button" onClick={handleReserveClick}>
+            {t('join')}
+          </button>
+        </div>
       </div>
     </div>
   );
