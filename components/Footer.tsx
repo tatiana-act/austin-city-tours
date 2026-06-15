@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
             <div className="contact-item">
               <span><FaPhone color="#25D366" /></span>
               <span>
-                <a className='contact-item-link' href="tel:+15128014114">+1-512-801-4114</a>
+                <a className='contact-item-link' href="tel:+17373097849">+1-737-309-7849</a>
               </span>
             </div>
             <div className="contact-item">
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
               </div>
             }
           </div>
-          <p>&copy; 2025 Austin City Tours</p>
+          <p>&copy; 2026 Austin City Tours</p>
         </div>
       </div>
     </footer>

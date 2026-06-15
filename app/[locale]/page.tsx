@@ -8,12 +8,13 @@ import { faqs as faqsRu } from '@/data/faq';
 import { faqs as faqsEn } from '@/data/faq.en';
 import { upcomingTours } from '@/data/upcomingTours';
 import pastTours from '@/data/RecentTours';
-import { TourProgram } from '@/types/tour';
-import RecentEventsSection from '@/components/RecentEventsSection';
+import { TourProgram, PastTourEvent } from '@/types/tour';
 import HomeClient from '@/components/HomeClient';
 import { getAllReviews } from "@/app/actions/readAllFeedbacks";
 import ReviewSection from "@/components/ReviewsSection";
 import { headers } from 'next/headers';
+import { parseCentralTime } from '@/lib/utils';
+import RecentEventsSection from '@/components/RecentEventsSection';
 
 export default async function Home({
   params
@@ -31,11 +32,27 @@ export default async function Home({
     tours.map(tour => [tour.id, tour] as const),
   );
 
+  const now = new Date();
+  const futureUpcomingTours = upcomingTours.filter(tour => parseCentralTime(tour.date, tour.time) >= now);
+  const pastTourIds = new Set(pastTours.map(t => t.id));
+  const expiredUpcomingTours: PastTourEvent[] = upcomingTours.filter(
+    tour => parseCentralTime(tour.date, tour.time) < now && !pastTourIds.has(tour.id)
+  );
+  const mergedPastTours = [...pastTours];
+  for (const expired of expiredUpcomingTours) {
+    const insertAt = mergedPastTours.findIndex(t => t.date <= expired.date);
+    if (insertAt === -1) {
+      mergedPastTours.push(expired);
+    } else {
+      mergedPastTours.splice(insertAt, 0, expired);
+    }
+  }
+
   return (
     <main>
       <Hero allTours={allTours} />
-      <HomeClient allTours={allTours} tours={tours} upcomingTours={upcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
-      <RecentEventsSection pastTours={pastTours} tours={tours} locale={locale} />
+      <HomeClient allTours={allTours} tours={tours} upcomingTours={futureUpcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
+      <RecentEventsSection pastTours={mergedPastTours} tours={tours} locale={locale} />
       <ReviewSection reviews={allReviews} allTours={allTours} />
       <FAQSection faqs={faqs} />
       <Footer />

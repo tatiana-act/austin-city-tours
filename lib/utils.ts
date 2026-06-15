@@ -1,3 +1,20 @@
+const centralTimeParts = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/Chicago',
+  year: 'numeric', month: 'numeric', day: 'numeric',
+  hour: 'numeric', minute: 'numeric', second: 'numeric',
+  hour12: false,
+});
+
+export function parseCentralTime(date: string, time: string): Date {
+  const [year, month, day] = date.split('-').map(Number);
+  const [hour, minute] = time.split(':').map(Number);
+  const utcProbe = Date.UTC(year, month - 1, day, hour, minute, 0);
+  const parts = centralTimeParts.formatToParts(new Date(utcProbe));
+  const get = (type: string) => parseInt(parts.find(p => p.type === type)?.value ?? '0');
+  const centralAsUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour') % 24, get('minute'), get('second'));
+  return new Date(utcProbe + (utcProbe - centralAsUtc));
+}
+
 export function formatDateToUserLocale(
   dateString: string,
   locale: string,

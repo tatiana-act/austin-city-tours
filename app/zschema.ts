@@ -35,7 +35,7 @@ export const contactFormSchema = z.object({
     name: z.string().min(3, 'Мне нужно хотя бы 3 буквы Вашего имени.').max(50, 'Меня зовут Татьяна. А Вас?'),
     email: z.email('проверьте пожалуйста адрес эл почты').optional().or(z.literal('')),
     phone: phoneSchema,
-    tour: z.string().optional(),
+    tour: z.string().max(200).trim().optional(),
     whatsapp: z.boolean().default(false),
     telegram: telegramNicknameSchema.optional().or(z.literal('')),
     success: z.boolean().default(false),
