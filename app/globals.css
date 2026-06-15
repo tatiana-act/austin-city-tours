@@ -814,3 +814,85 @@ form > .tour-header {
         max-width: 100%;
     }
 }
+
+/* ── About / Bio page ─────────────────────────────────── */
+.about-page {
+    min-height: 100vh;
+    background: white;
+}
+
+/* Bio section extends the shared tour-detail-section style */
+.about-bio-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+    max-width: 860px;
+}
+
+.about-bio-lead {
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.7;
+}
+
+.about-bio-heading {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0.4rem;
+    padding-left: 1rem;
+    border-left: 4px solid #667eea;
+}
+
+.about-sign {
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Info panel overrides inside the shared tour-detail-info */
+.about-tagline {
+    font-size: 1rem;
+    font-style: italic;
+    color: #666;
+    line-height: 1.5;
+}
+
+.about-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+}
+
+.about-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.about-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.about-stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    line-height: 1;
+}
+
+.about-stat-label {
+    font-size: 0.8rem;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: center;
+}
