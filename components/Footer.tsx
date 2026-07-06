@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
               <span><FaInstagram color="#E4405F" /></span>
               <span>
                 <a className='contact-item-link'
-                  href="https://instagram.com/austin.guide/"
+                  href="https://www.instagram.com/austin.tx.guide/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
