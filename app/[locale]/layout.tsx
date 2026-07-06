@@ -10,39 +10,54 @@ import { routing } from '@/i18n/routing';
 import type { Graph } from 'schema-dts';
 import type { Metadata } from 'next'
 
-const graph: Graph = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Person',
-      '@id': 'https://austin-city-tours.vercel.app/#tatiana',
-      name: 'Tatiana Orlova',
-      hasOccupation: {
-        '@type': 'Occupation',
-        name: 'Austin city tour guide',
-        qualifications: 'city expert',
+const SITE_URL = 'https://austin-city-tours.vercel.app';
+
+async function buildGraph(locale: string): Promise<Graph> {
+  const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
+  const tAbout = await getTranslations({ locale, namespace: 'About' });
+
+  const aboutUrl = `${SITE_URL}/${locale}/about`;
+  const personId = `${SITE_URL}/#tatiana`;
+  const aboutId = `${aboutUrl}#about`;
+  const inLanguage = locale === 'ru' ? 'ru-RU' : 'en-US';
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: 'Tatiana Orlova',
+        url: aboutUrl,
+        mainEntityOfPage: { '@id': aboutId },
+        hasOccupation: {
+          '@type': 'Occupation',
+          name: 'Austin city tour guide',
+          qualifications: 'city expert',
+        },
       },
-    },
-    {
-      '@type': 'AboutPage',
-      '@id': 'https://austin-city-tours.vercel.app/#about',
-      url: 'https://austin-city-tours.vercel.app',
-      name: "Татьяна Орлова, ваш персональный гид",
-      inLanguage: 'ru-RU',
-      description: 'Austin City Tours - Город, который ты ещё не знаешь',
-      mainEntity: { '@id': 'https://austin-city-tours.vercel.app/#tatiana' },
-    },
-    {
-      '@type': 'WebPage',
-      '@id': 'https://austin-city-tours.vercel.app',
-      url: 'https://austin-city-tours.vercel.app',
-      name: "Austin City Tours - Город, который ты ещё не знаешь",
-      inLanguage: 'ru-RU',
-      about: { '@id': 'https://austin-city-tours.vercel.app/#about' },
-      mainEntity: { '@id': 'https://austin-city-tours.vercel.app/#tatiana' },
-    },
-  ],
-};
+      {
+        '@type': 'AboutPage',
+        '@id': aboutId,
+        url: aboutUrl,
+        name: tAbout('pageTitle'),
+        inLanguage,
+        description: tMeta('description'),
+        mainEntity: { '@id': personId },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}/${locale}`,
+        url: `${SITE_URL}/${locale}`,
+        name: tMeta('title'),
+        inLanguage,
+        description: tMeta('description'),
+        about: { '@id': aboutId },
+        mainEntity: { '@id': personId },
+      },
+    ],
+  };
+}
 
 export async function generateMetadata({
   params
@@ -118,9 +133,15 @@ export default async function RootLayout({
   // side is the easiest way to get started
   const messages = await getMessages();
 
+  const graph = await buildGraph(locale);
+
   return (
     <html lang={locale}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
+        />
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

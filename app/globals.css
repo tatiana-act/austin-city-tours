@@ -814,3 +814,106 @@ form > .tour-header {
         max-width: 100%;
     }
 }
+
+/* ── About / Bio page ─────────────────────────────────── */
+.about-page {
+    min-height: 100vh;
+    background: white;
+}
+
+.about-section {
+    background: white;
+    /* Tighter gap between the back bar and the title (overrides .section's 60px top) */
+    padding-top: 1.5rem;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Two-column: full portrait beside the bio text */
+.about-layout {
+    max-width: 1100px;
+    margin: 2.5rem auto 0;
+    display: grid;
+    grid-template-columns: minmax(260px, 340px) 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+/* Portrait shown at natural aspect ratio — never cropped */
+.about-photo-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.about-bio-lead {
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.7;
+}
+
+/* Action buttons under the bio — centered within the text column */
+.about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.about-actions .cta-button {
+    margin: 0;
+}
+
+/* Inline links inside the bio (calendar link + booking button) */
+.about-inline-link {
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+}
+
+.about-inline-link:hover {
+    color: #764ba2;
+}
+
+/* The booking trigger is a <button> — strip native button chrome */
+.about-inline-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .about-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Text first, photo after on mobile */
+    .about-content {
+        order: 1;
+    }
+
+    .about-photo {
+        order: 2;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+}

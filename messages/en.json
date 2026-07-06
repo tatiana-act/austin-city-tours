@@ -108,6 +108,22 @@
     "Footer": {
         "title": "Where the best experiences begin"
     },
+    "About": {
+        "navLink": "About the guide",
+        "pageTitle": "About the Guide",
+        "tagline": "Storyteller. Historian. Your personal window into Austin.",
+        "statsYears": "5",
+        "statsYearsLabel": "Years guiding",
+        "statsTours": "100+",
+        "statsToursLabel": "Tours conducted",
+        "statsLang": "3",
+        "statsLangLabel": "Cities",
+        "bio1": "Hello, I'm Tatiana, a city guide based in Austin, Texas, and I'm here to show you that exploring Central Texas can be both engaging and relaxing—never boring or exhausting. I moved to Austin five years ago and quickly became fascinated by its history, neighborhoods, and the people who helped create this unique city.",
+        "bio2": "Since then, I've led more than 100 tours in Austin, as well as in Georgetown and San Antonio, always looking for fun details, great views, and stories that bring each place to life. My tours are city walks with stories about people and events, and the pace is comfortable—you can enjoy the walk, take photos, ask questions, and really feel the city instead of rushing from one stop to another.",
+        "bio3": "On my tours, you'll meet Austin from different angles: from well-known landmarks to quiet streets, hidden corners, and local anecdotes that help the city feel closer to your heart. Whether you've lived in Austin for years or you're here for just a day, there is always a new way to see and understand this place.",
+        "bio4": "Join me for a walk through Austin: check the <calendar>calendar for upcoming group tours</calendar>, or <booking>book a personal tour</booking>, and let's explore this beautiful city together.",
+        "cta": "Book a tour"
+    },
     "TourDetail": {
         "back": "← Back to tours",
         "free": "Free",
