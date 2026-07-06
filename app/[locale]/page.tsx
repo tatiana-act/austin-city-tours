@@ -15,6 +15,7 @@ import ReviewSection from "@/components/ReviewsSection";
 import { headers } from 'next/headers';
 import { parseCentralTime } from '@/lib/utils';
 import RecentEventsSection from '@/components/RecentEventsSection';
+import HashScrollHandler from '@/components/HashScrollHandler';
 
 export default async function Home({
   params
@@ -50,6 +51,7 @@ export default async function Home({
 
   return (
     <main>
+      <HashScrollHandler />
       <Hero allTours={allTours} />
       <HomeClient allTours={allTours} tours={tours} upcomingTours={futureUpcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
       <RecentEventsSection pastTours={mergedPastTours} tours={tours} locale={locale} />
