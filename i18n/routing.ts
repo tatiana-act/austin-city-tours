@@ -8,6 +8,11 @@ export const routing = defineRouting({
     // Used when no locale matches
     defaultLocale: 'en',
     localePrefix: 'always',
+
+    // Don't emit next-intl's automatic hreflang `Link` header. Its `x-default`
+    // points at the bare root `/`, which competed with our canonical and made
+    // Google pick `/` over `/en/`. We declare hreflang ourselves in metadata.
+    alternateLinks: false,
 });
 
 // Lightweight wrappers around Next.js' navigation APIs

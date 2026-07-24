@@ -99,6 +99,7 @@ export async function generateMetadata({
       languages: {
         'en': '/en',
         'ru': '/ru',
+        'x-default': '/en',
       },
     },
     robots: {
