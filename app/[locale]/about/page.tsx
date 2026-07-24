@@ -7,6 +7,31 @@ import AboutBio from '@/components/AboutBio';
 import { tours as toursRu } from '@/data/tours';
 import { tours as toursEn } from '@/data/tours.en';
 import { TourProgram } from '@/types/tour';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'About' });
+
+  return {
+    title: t('pageTitle'),
+    description: t('tagline'),
+    // Own canonical so this page isn't folded into the homepage.
+    // (The shared layout's canonical only applies to the homepage.)
+    alternates: {
+      canonical: `/${locale}/about`,
+      languages: {
+        en: '/en/about',
+        ru: '/ru/about',
+        'x-default': '/en/about',
+      },
+    },
+  };
+}
 
 export default async function AboutPage({
   params,

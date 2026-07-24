@@ -31,7 +31,8 @@
         "reserve": "Reserve"
     },
     "Calendar": {
-        "title": "Tours calendar"
+        "title": "Tours calendar",
+        "metaDescription": "See the full schedule of upcoming and recent Austin walking tours. Pick a date and book your spot."
     },
     "Reviews": {
         "title": "Customer reviews"
