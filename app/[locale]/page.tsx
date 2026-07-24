@@ -6,14 +6,12 @@ import { tours as toursRu } from '@/data/tours';
 import { tours as toursEn } from '@/data/tours.en';
 import { faqs as faqsRu } from '@/data/faq';
 import { faqs as faqsEn } from '@/data/faq.en';
-import { upcomingTours } from '@/data/upcomingTours';
-import pastTours from '@/data/RecentTours';
-import { TourProgram, PastTourEvent } from '@/types/tour';
+import { TourProgram } from '@/types/tour';
 import HomeClient from '@/components/HomeClient';
 import { getAllReviews } from "@/app/actions/readAllFeedbacks";
 import ReviewSection from "@/components/ReviewsSection";
 import { headers } from 'next/headers';
-import { parseCentralTime } from '@/lib/utils';
+import { getTourSchedule } from '@/lib/tourSchedule';
 import RecentEventsSection from '@/components/RecentEventsSection';
 import HashScrollHandler from '@/components/HashScrollHandler';
 
@@ -33,21 +31,7 @@ export default async function Home({
     tours.map(tour => [tour.id, tour] as const),
   );
 
-  const now = new Date();
-  const futureUpcomingTours = upcomingTours.filter(tour => parseCentralTime(tour.date, tour.time) >= now);
-  const pastTourIds = new Set(pastTours.map(t => t.id));
-  const expiredUpcomingTours: PastTourEvent[] = upcomingTours.filter(
-    tour => parseCentralTime(tour.date, tour.time) < now && !pastTourIds.has(tour.id)
-  );
-  const mergedPastTours = [...pastTours];
-  for (const expired of expiredUpcomingTours) {
-    const insertAt = mergedPastTours.findIndex(t => t.date <= expired.date);
-    if (insertAt === -1) {
-      mergedPastTours.push(expired);
-    } else {
-      mergedPastTours.splice(insertAt, 0, expired);
-    }
-  }
+  const { futureUpcomingTours, mergedPastTours } = getTourSchedule();
 
   return (
     <main>

@@ -3,25 +3,30 @@ import { routing } from '@/i18n/routing'
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://austin-city-tours.vercel.app';
-    const routes = [
-        '',
-        '#tours',
-        '#calendar',
-    ]
+
+    // Real, indexable pages only. Do NOT list `#anchor` URLs — Google ignores
+    // fragments, so they just add duplicates of the page they live on.
+    // Tour detail pages and /tours/next (a redirect) are intentionally excluded:
+    // the detail pages are date-based and expire (soft-404s in Search Console),
+    // and /tours/next always redirects, so it isn't a real content page.
+    const routes = ['', 'about', 'tours/calendar']
 
     return routes.flatMap((path) =>
-        routing.locales.map((locale) => ({
-            url: `${baseUrl}/${locale}${path ? `/${path}` : ''}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly' as const,
-            priority: path === '' ? 1 : 0.8,
-            alternates: {
-                languages: {
-                    'en': `${baseUrl}/en${path ? `/${path}` : ''}`,
-                    'ru': `${baseUrl}/ru${path ? `/${path}` : ''}`,
-                    'x-default': `${baseUrl}/en${path ? `/${path}` : ''}`, // Для Google
+        routing.locales.map((locale) => {
+            const suffix = path ? `/${path}` : ''
+            return {
+                url: `${baseUrl}/${locale}${suffix}/`,
+                lastModified: new Date(),
+                changeFrequency: 'weekly' as const,
+                priority: path === '' ? 1 : 0.8,
+                alternates: {
+                    languages: {
+                        'en': `${baseUrl}/en${suffix}/`,
+                        'ru': `${baseUrl}/ru${suffix}/`,
+                        'x-default': `${baseUrl}/en${suffix}/`, // Для Google
+                    },
                 },
-            },
-        }))
+            }
+        })
     )
 }

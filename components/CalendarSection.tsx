@@ -6,23 +6,34 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import MyConstants from "@/lib/MyConstants";
 import {useTranslations} from "next-intl";
+import {useRouter} from "@/i18n/routing";
 
 interface CalendarSectionProps {
   allTours: ReadonlyMap<string, TourProgram>;
   upcomingTours: UpcomingTourEvent[];
   recentTours: PastTourEvent[];
   locale: string;
+  // 'home' scrolls to the tour card on the same page (default);
+  // 'standalone' navigates to the tour's detail page (used on /tours/calendar).
+  variant?: 'home' | 'standalone';
 }
 
 const CalendarSection: React.FC<CalendarSectionProps> = ({
   allTours,
   upcomingTours,
   recentTours,
-  locale
+  locale,
+  variant = 'home'
 }) => {
+  const router = useRouter();
+
   const handleEventClick = (info: any) => {
-      document.getElementById('tour-card-' + info.event.extendedProps.eventId)?.scrollIntoView({ behavior: 'smooth' });
-      //document.getElementById(info.event.extendedProps.programId + "tour-card")?.scrollIntoView({ behavior: 'smooth' });
+      const eventId = info.event.extendedProps.eventId;
+      if (variant === 'standalone') {
+          router.push(`/tours/${eventId}`);
+          return;
+      }
+      document.getElementById('tour-card-' + eventId)?.scrollIntoView({ behavior: 'smooth' });
   }
 
   const futureEvents = upcomingTours.map((ut)=> {
