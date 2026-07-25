@@ -203,6 +203,55 @@ body {
     white-space: pre-wrap;
 }
 
+/* Collapsed mobile card: the whole teaser is one button, so strip the
+   default button chrome and let the card styling show through. */
+.tour-teaser {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.tour-teaser-text {
+    position: relative;
+}
+
+/* Fade the second line out to hint that there is more text behind the tap. */
+.tour-teaser-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.6em;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff);
+    pointer-events: none;
+}
+
+.tour-teaser-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.tour-teaser-hint {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ff6b6b;
+}
+
 .tour-highlights {
     margin-bottom: 1.5rem;
 }
