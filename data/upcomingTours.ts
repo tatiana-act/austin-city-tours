@@ -27,7 +27,7 @@ export const upcomingTours: UpcomingTourEvent[] = [
   },
   {
     id: 'tour76',
-    tourProgramId: 'Albjwc',
+    tourProgramId: 'Rrock',
     date: '2026-08-09',
     time: '09:00',
     price: 40,

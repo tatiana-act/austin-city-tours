@@ -49,7 +49,6 @@ export const tours: TourProgram[] = [
         meetingPointLink: 'https://maps.app.goo.gl/Bso8TEdRQwCgCbaY7',
         difficulty: 'Easy',
     },
-
     {
         id: 'Gcrt',
         title: 'Tour of downtown Georgetown',
@@ -76,6 +75,32 @@ export const tours: TourProgram[] = [
         meetingPoint:
             'We meet on Georgetown’s central square, near the Williamson Museum',
         meetingPointLink: 'https://maps.app.goo.gl/c9spEFwMY7VWcPTS6',
+        difficulty: 'Easy',
+    },
+    {
+        id: 'Rrock',
+        title: 'Round Rock: From the Wild West to the Paris Stage',
+        shortTitle: 'Round Rock',
+        description:
+            'Join me for a walk through historic downtown Round Rock — a place where Wild West history, local legends, and the lives of remarkable people still echo today.\n' +
+            'We’ll step back into the days of the Chisholm Trail, uncover the story of the legendary train robber Sam Bass, and visit his final resting place at Round Rock’s old cemetery.\n' +
+            'But the most unexpected chapter of all is still ahead of us: the story of Barbette (Vander Clyde Broadway), a Round Rock native who conquered the stages of New York and Paris, inspired Jean Cocteau, and linked a small Texas town to the world of art.',
+        duration: '2–2.5 hours',
+        price: 0,
+        imageUrl:
+            '/round-rock.jpg',
+        highlights: [
+            'Discover the unexpected stories of a small Texas town',
+            'Experience the atmosphere of the real Wild West',
+            'Hear about real people whose lives became part of local legend',
+            'Learn how one person’s life connected Round Rock to 1920s Paris',
+            'End the walk with a cup of coffee in a cozy café in the historic downtown area.'
+        ],
+        included: [
+        ],
+        meetingPoint:
+            'Chisholm Trail Crossing Park',
+        meetingPointLink: 'https://maps.app.goo.gl/gNghyezKAVjKKyWu8',
         difficulty: 'Easy',
     },
     {
