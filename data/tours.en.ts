@@ -79,35 +79,6 @@ export const tours: TourProgram[] = [
         difficulty: 'Easy',
     },
     {
-        id: 'Rrock',
-        title: 'Экскурсия по Раунд-Року',
-        shortTitle: 'Раунд-Рок',
-        description:
-            'Увлекательная экскурсия-квест для взрослых и детей по историческому центру Джорджтауна — одному из самых красивых и уютных городков Техаса!',
-        duration: '1.5 - 2 часа',
-        price: 0,
-        imageUrl:
-            '/round-rock.jpg',
-        highlights: [
-            'Прогулка-квест по центральной площади Джорджтауна — разгадаем загадки зданий, стоящихна ней, рассмотрим архитектуру и скульптуры, познакомимся с прошлым Техаса.',
-            'Перерыв на кофе в уютном кафе.',
-            'Экскурсия по музею Уильямсона — ожившая история округа, интересные экспонаты и атмосфера прошлого.',
-            'Подходит для взрослых и детей 7+',
-            'После экскурсии - кофе-брейк или поход в кафе- мороженое!',
-        ],
-        included: [
-            'Expert food guide',
-            'All food tastings',
-            'Recipe cards to take home',
-            'Market shopping tips',
-            'Dietary restrictions accommodated',
-        ],
-        meetingPoint:
-            'Встречаемся на площади возле Round Rock City Hall, ближайший адрес 221 E Main St',
-        meetingPointLink: 'https://maps.app.goo.gl/s2aEN7vbb7er2K9NA',
-        difficulty: 'Easy',
-    },
-    {
         id: 'Brmn',
         title: 'Tour of the Bremond district',
         shortTitle: 'Bremond district tour',
@@ -131,7 +102,6 @@ export const tours: TourProgram[] = [
         meetingPointLink: 'https://maps.app.goo.gl/UiDVakHKfszzTE5b7',
         difficulty: 'Easy',
     },
-
     {
         id: 'Auswe',
         title: 'Weekend Austin-style',
