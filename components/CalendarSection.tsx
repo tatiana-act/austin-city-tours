@@ -80,6 +80,9 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({
         locale={locale}
         initialView='dayGridMonth'
         initialDate={initDate}
+        // Grow with content instead of a fixed aspect-ratio height, otherwise
+        // wrapped multi-line tour titles push the last weeks out of view.
+        height='auto'
         nowIndicator={true}
         editable={false}
         selectable={true}

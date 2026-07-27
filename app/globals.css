@@ -549,6 +549,24 @@ form > .tour-header {
 }
 
 @media (max-width: 768px) {
+    /* Keep wrapped tour titles compact so a full month stays readable */
+    .fc .fc-daygrid-event {
+        font-size: 0.7rem;
+        line-height: 1.15;
+        padding: 1px 2px;
+        margin-bottom: 1px;
+    }
+
+    .fc .fc-daygrid-day-number,
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.75rem;
+        padding: 2px;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.1rem;
+    }
+
     .upcoming-tours-grid {
         grid-template-columns: 1fr;
     }
