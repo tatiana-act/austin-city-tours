@@ -8,8 +8,12 @@ interface ToursSectionProps {
   onBookTour: (tourId: string) => void;
 }
 
+// Mobile shows one column, so keep the initial list short — otherwise the
+// calendar and the sections below it are a very long scroll away.
+const MOBILE_INITIAL_COUNT = 3;
+
 const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(MOBILE_INITIAL_COUNT);
   const [increment, setIncrement] = useState(2);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -25,18 +29,15 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
     const mobileQuery = window.matchMedia('(max-width: 768px)');
 
     const handleResize = () => {
-      // Logic for Increment (pagination)
+      const mobileStatus = mobileQuery.matches;
+      setIsMobile(mobileStatus);
+
+      // Logic for Increment (pagination). Deliberately leaves visibleCount
+      // alone so a resize never hides tours the visitor already loaded.
       if (mediaQuery.matches) { // 3 columns
         setIncrement(3);
       } else {
-        setIncrement(2);
-      }
-
-      // Logic for Mobile Mode
-      const mobileStatus = mobileQuery.matches;
-      setIsMobile(mobileStatus);
-      if (mobileStatus) {
-        setVisibleCount(tours.length); // Show all on mobile
+        setIncrement(mobileStatus ? MOBILE_INITIAL_COUNT : 2);
       }
     };
 
@@ -48,8 +49,8 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
       setVisibleCount(6);
       setIncrement(3);
     } else {
-      setVisibleCount(mobileStatus ? tours.length : 3);
-      setIncrement(2);
+      setVisibleCount(MOBILE_INITIAL_COUNT);
+      setIncrement(mobileStatus ? MOBILE_INITIAL_COUNT : 2);
     }
 
     mediaQuery.addEventListener('change', handleResize);
@@ -104,7 +105,7 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
             />
           ))}
         </div>
-        {visibleCount < tours.length && !isMobile && (
+        {visibleCount < tours.length && (
           <div className="flex justify-center mt-8">
             <button onClick={handleLoadMore} className="cta-button">
               {t('btnMore')}
