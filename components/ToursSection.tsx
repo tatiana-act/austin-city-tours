@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useSyncExternalStore } from 'react';
 import { TourProgram } from '@/types/tour';
 import TourCard from './TourCard';
 import {useTranslations} from "next-intl";
@@ -12,62 +12,53 @@ interface ToursSectionProps {
 // calendar and the sections below it are a very long scroll away.
 const MOBILE_INITIAL_COUNT = 3;
 
+// Three 350px cards, two 32px gaps and 40px of page padding.
+const THREE_COLUMN_QUERY = `(min-width: ${350 * 3 + 32 * 2 + 40}px)`;
+// Below this the grid is a single column and cards render compact.
+const MOBILE_QUERY = '(max-width: 768px)';
+
+/**
+ * Reads a media query as React state without writing state from an effect.
+ * The server — and the first client render, which has to produce the same
+ * markup — sees `false`; React re-reads the real value while hydrating.
+ */
+function useMediaQuery(query: string): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const mediaQuery = window.matchMedia(query);
+      mediaQuery.addEventListener('change', onChange);
+      return () => mediaQuery.removeEventListener('change', onChange);
+    },
+    [query],
+  );
+
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
+
 const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
-  const [visibleCount, setVisibleCount] = useState(MOBILE_INITIAL_COUNT);
-  const [increment, setIncrement] = useState(2);
-  const [isMobile, setIsMobile] = useState(false);
+  const isThreeColumn = useMediaQuery(THREE_COLUMN_QUERY);
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
-  useEffect(() => {
-    const threeColumnsMinWidth = 350 * 3 + 32 * 2 + 40;
-    const minWidthQueryText = `(min-width: ${threeColumnsMinWidth}px)`;
-    const mediaQuery = window.matchMedia(minWidthQueryText);
+  // What the current layout shows before "load more" is pressed, and how much
+  // that button adds.
+  const layoutCount = isThreeColumn ? 6 : MOBILE_INITIAL_COUNT;
+  const increment = isThreeColumn ? 3 : isMobile ? MOBILE_INITIAL_COUNT : 2;
 
-    // Check for mobile (single column usually < 768px or based on grid)
-    // Here using a standard breakpoint for simplicity, or we can reuse the grid logic if preferred. 
-    // Given the prompt "if horizontal space is limited, and site displays just one column"
-    // Let's assume < 768px for single column mobile view.
-    const mobileQuery = window.matchMedia('(max-width: 768px)');
-
-    const handleResize = () => {
-      const mobileStatus = mobileQuery.matches;
-      setIsMobile(mobileStatus);
-
-      // Logic for Increment (pagination). Deliberately leaves visibleCount
-      // alone so a resize never hides tours the visitor already loaded.
-      if (mediaQuery.matches) { // 3 columns
-        setIncrement(3);
-      } else {
-        setIncrement(mobileStatus ? MOBILE_INITIAL_COUNT : 2);
-      }
-    };
-
-    // Initial check
-    const mobileStatus = mobileQuery.matches;
-    setIsMobile(mobileStatus);
-
-    if (mediaQuery.matches) {
-      setVisibleCount(6);
-      setIncrement(3);
-    } else {
-      setVisibleCount(MOBILE_INITIAL_COUNT);
-      setIncrement(mobileStatus ? MOBILE_INITIAL_COUNT : 2);
-    }
-
-    mediaQuery.addEventListener('change', handleResize);
-    mobileQuery.addEventListener('change', handleResize);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleResize);
-      mobileQuery.removeEventListener('change', handleResize);
-    };
-  }, []);
+  // Tracked separately from the layout and only ever grown, so a resize can
+  // widen the list but never hides tours the visitor already loaded.
+  const [requestedCount, setRequestedCount] = useState(0);
+  const visibleCount = Math.max(layoutCount, requestedCount);
 
   useEffect(() => {
     const handleShowAllAndScroll = (event: Event) => {
       const customEvent = event as CustomEvent;
       const tourId = customEvent.detail?.tourId;
       if (tourId) {
-        setVisibleCount(tours.length);
+        setRequestedCount(tours.length);
         setTimeout(() => {
           const elementId = tourId + 'tour-card';
           const element = document.getElementById(elementId);
@@ -85,7 +76,9 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
   }, [tours.length]);
 
   const handleLoadMore = () => {
-    setVisibleCount(prev => prev + increment);
+    // Grows from what is on screen now, not from `requestedCount`, which starts
+    // below the layout's own count.
+    setRequestedCount(visibleCount + increment);
   };
 
   const visibleTours = tours.slice(0, visibleCount);
