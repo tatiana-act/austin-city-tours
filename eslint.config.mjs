@@ -38,6 +38,13 @@ const config = [
       '@typescript-eslint/consistent-type-definitions': 'off',
     },
   },
+  {
+    // Build tooling that Node loads directly is CommonJS by design.
+    files: ['*.config.js', 'jest.setup.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ];
 
 export default config;

@@ -9,6 +9,10 @@ const createJestConfig = nextJest({
 const customJestConfig = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'jest-environment-jsdom',
+    // `.claude/worktrees/` holds full working copies of this repo, each with its
+    // own __tests__ directory. Without this, jest collects and runs those copies
+    // alongside the real ones.
+    testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/.claude/'],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

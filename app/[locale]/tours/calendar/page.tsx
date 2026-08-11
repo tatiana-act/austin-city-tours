@@ -38,7 +38,6 @@ export default async function CalendarPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'Calendar' });
 
   const tours = locale === 'en' ? toursEn : toursRu;
   const allTours: Map<string, TourProgram> = new Map(
