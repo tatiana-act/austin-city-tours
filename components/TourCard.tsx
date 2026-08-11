@@ -82,7 +82,6 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onBookTour, isCompact = false
             <h3 className="tour-title">{tour.title}</h3>
             <div className="tour-meta">
               <span>⏱️ {tour.duration}</span>
-              {/*<span>🚶 {tour.difficulty}</span>*/}
             </div>
           </div>
           {/*<div className="tour-price">${tour.price}</div>*/}

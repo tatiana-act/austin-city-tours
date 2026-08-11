@@ -7,11 +7,9 @@ export interface TourProgram {
   price: number;
   imageUrl: string;
   highlights: string[];
-  included: string[];
   extra?: string;
   meetingPoint: string;
   meetingPointLink: string;
-  difficulty: 'Easy' | 'Moderate' | 'Challenging';
 }
 
 export interface FAQ {
