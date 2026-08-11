@@ -16,18 +16,11 @@ export const tours: TourProgram[] = [
       'Не забудьте зарядить телефоны — будет что фотографировать!',
       'После экскурсии желающие смогут выпить кофе и почувствовать атмосферу XIX века в красивом старинном кафе при отеле.',
     ],
-    included: [
-      'Professional tour guide',
-      'Historical maps and materials',
-      'Entry to public buildings',
-      'Small group experience (max 15 people)',
-    ],
     extra:
       '👉 есть 2 варианта: 1️⃣ прогулка с посещением Капитолия 2️⃣ без Капитолия, зато прогулка получится длиннее',
     meetingPoint:
       'Встречаемся у южных ворот Капитолия Техаса (пересечение Congress Ave и 11th St)',
     meetingPointLink: 'https://maps.app.goo.gl/vTTBHFYjYFnkgYPB6',
-    difficulty: 'Easy',
   },
   {
     id: 'Haust',
@@ -43,10 +36,8 @@ export const tours: TourProgram[] = [
       'увидеть здания, в которых, возможно, и сегодня обитают призраки',
       'пощекотать нервы городскими легендами',
     ],
-    included: [],
     meetingPoint: 'Встречаемся возле Texas Capitol visitors center',
     meetingPointLink: 'https://maps.app.goo.gl/Bso8TEdRQwCgCbaY7',
-    difficulty: 'Easy',
   },
   {
     id: 'Gcrt',
@@ -65,17 +56,9 @@ export const tours: TourProgram[] = [
       'Подходит для взрослых и детей 7+',
       'После экскурсии - кофе-брейк или поход в кафе- мороженое!',
     ],
-    included: [
-      'Expert food guide',
-      'All food tastings',
-      'Recipe cards to take home',
-      'Market shopping tips',
-      'Dietary restrictions accommodated',
-    ],
     meetingPoint:
         'Встречаемся на центральной площади Джорджтауна, около Williamson museum',
     meetingPointLink: 'https://maps.app.goo.gl/c9spEFwMY7VWcPTS6',
-    difficulty: 'Easy',
   },
   {
     id: 'Rrock',
@@ -96,12 +79,9 @@ export const tours: TourProgram[] = [
       'узнать, как судьба одного человека связала Раунд Рок с Парижем 1920-х годов',
       'завершить прогулку за чашкой кофе в уютном кафе исторического центра.'
     ],
-    included: [
-    ],
     meetingPoint:
         'Chisholm Trail Crossing Park',
     meetingPointLink: 'https://maps.app.goo.gl/gNghyezKAVjKKyWu8',
-    difficulty: 'Easy',
   },
   {
     id: 'Brmn',
@@ -117,15 +97,9 @@ export const tours: TourProgram[] = [
       'Занимательная история остинских фамилий, оставивших свой след в сердце Остина',
       'Прикоснуться к историческому наследию и почувствовать себя ... в сказке',
     ],
-    included: [
-      'Photography guide',
-      'Tripod rental available',
-      'Photo editing tips',
-    ],
     meetingPoint:
       'Встречаемся в павильоне на площади Wooldridge Square, пересечение улиц Guadalupe и 9-й Западной',
     meetingPointLink: 'https://maps.app.goo.gl/UiDVakHKfszzTE5b7',
-    difficulty: 'Easy',
   },
   {
     id: 'Auswe',
@@ -148,10 +122,8 @@ export const tours: TourProgram[] = [
       'Индивидуальный формат и комфортный темп, живые, яркие истории, детали, которых нет в путеводителях',
       'Обед и шоппинг как у местных: уютные места и необычные магазины',
     ],
-    included: [],
     meetingPoint: 'Обговаривается индивидуально',
     meetingPointLink: '',
-    difficulty: 'Easy',
   },
   {
     id: 'Auhnry',
@@ -168,15 +140,9 @@ export const tours: TourProgram[] = [
       "Вы посетите места в Остине, связанные с О'Генри",
       'Чашечка ароматного кофе в атмосфере XIX века -- в красивом старинном кафе при отеле Driskill',
     ],
-    included: [
-      'Photography guide',
-      'Tripod rental available',
-      'Photo editing tips',
-    ],
     meetingPoint:
       'Встречаемся у скульптуры-гитары ("Vibrancy guitar statue"), пересечение Congress Avenue и 4-й Восточной',
     meetingPointLink: 'https://maps.app.goo.gl/tvFiqw2Z93jqi5WS6',
-    difficulty: 'Easy',
   },
   {
     id: 'Hyde',
@@ -192,11 +158,9 @@ export const tours: TourProgram[] = [
       'вкус настоящей истории в Avenue B Grocery & Market — старейшем магазине Остина',
       'посещение First Light Books — уютного книжного магазина с редкими изданиями, необычными сувенирами и ароматным кофе',
     ],
-    included: [],
     meetingPoint:
       'Встречаемся в парке Shipe Neighborhood, ближе к 44-й Восточной улице',
     meetingPointLink: 'https://maps.app.goo.gl/TkbGjf1g56Vr8mEc6',
-    difficulty: 'Easy',
   },
   {
     id: 'Acstm',
@@ -212,10 +176,8 @@ export const tours: TourProgram[] = [
       'Море положительных впечатлений',
       'Интересный и насыщенный день в ритме Остина',
     ],
-    included: [],
     meetingPoint: 'Назначается индивидуально',
     meetingPointLink: '',
-    difficulty: 'Easy',
   },
   {
     id: 'Albjwc',
@@ -232,17 +194,9 @@ export const tours: TourProgram[] = [
       'Рассказ об архитектуре и ландшафтном дизайне центра. Вы сделаете потрясающие кадры с расположенной на башне смотровой площадки',
       'Поговорим о символике растений в искусстве и народной культуре Техаса',
     ],
-    included: [
-      'Photography guide',
-      'Tripod rental available',
-      'Photo editing tips',
-      'Location map for future visits',
-      'Small group (max 10 people)',
-    ],
     extra: '🎟️ Входной билет оплачивается отдельно',
     meetingPoint: 'Lady Bird Johnson Wildflower Center',
     meetingPointLink: 'https://maps.app.goo.gl/aJf3ShjPhDnvwdJq5',
-    difficulty: 'Moderate',
   },
   {
     id: 'Amhry',
@@ -258,17 +212,9 @@ export const tours: TourProgram[] = [
       "Поиграете на старинном пианино, а также прослушаете музыкальное произведение, которое сочинил сам О'Генри",
       'После экскурсии желающие могут выпить кофе и продолжить общение в красивом старинном кафе при отеле Driskill',
     ],
-    included: [
-      'Photography guide',
-      'Tripod rental available',
-      'Photo editing tips',
-      'Location map for future visits',
-      'Small group (max 10 people)',
-    ],
     meetingPoint:
       'Встречаемся на площади Brush Square, пересечение 4-й Восточной и Neches',
     meetingPointLink: 'https://maps.app.goo.gl/GDtQDZMwxYAMGudHA',
-    difficulty: 'Easy',
   },
   {
     id: 'Milt',
@@ -286,14 +232,8 @@ export const tours: TourProgram[] = [
       'Посещение легендарного Millett Opera House',
       'Изысканный обед в ресторане Millett Opera House',
     ],
-    included: [
-      'Photography guide',
-      'Tripod rental available',
-      'Photo editing tips',
-    ],
     meetingPoint:
       'Встречаемся у скульптуры-гитары ("Vibrancy guitar statue"), пересечение Congress Avenue и 4-й Восточной',
     meetingPointLink: 'https://maps.app.goo.gl/tvFiqw2Z93jqi5WS6',
-    difficulty: 'Easy',
   },
 ];

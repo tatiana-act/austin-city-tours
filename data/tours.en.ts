@@ -16,18 +16,11 @@ export const tours: TourProgram[] = [
             'Do not forget to charge your phones — there will be plenty to photograph!',
             'After the tour, those who wish can have coffee and experience the atmosphere of the 19th century in a beautiful historic café at the hotel.',
         ],
-        included: [
-            'Professional tour guide',
-            'Historical maps and materials',
-            'Entry to public buildings',
-            'Small group experience (max 15 people)',
-        ],
         extra:
             '👉 There are 2 options: 1️⃣ walk with a visit to the Capitol 2️⃣ without the Capitol, but the walk will be longer',
         meetingPoint:
             'We meet at the south gates of the Texas Capitol (intersection of Congress Ave and 11th St)',
         meetingPointLink: 'https://maps.app.goo.gl/vTTBHFYjYFnkgYPB6',
-        difficulty: 'Easy',
     },
 
     {
@@ -44,10 +37,8 @@ export const tours: TourProgram[] = [
             'See buildings that may still be inhabited by ghosts today.',
             'Tickle your nerves with urban legends.',
         ],
-        included: [],
         meetingPoint: 'We meet near the Texas Capitol Visitors Center',
         meetingPointLink: 'https://maps.app.goo.gl/Bso8TEdRQwCgCbaY7',
-        difficulty: 'Easy',
     },
     {
         id: 'Gcrt',
@@ -65,17 +56,9 @@ export const tours: TourProgram[] = [
             'Suitable for adults and children 7+.',
             'After the tour: coffee break or a visit to an ice-cream café!',
         ],
-        included: [
-            'Expert food guide',
-            'All food tastings',
-            'Recipe cards to take home',
-            'Market shopping tips',
-            'Dietary restrictions accommodated',
-        ],
         meetingPoint:
             'We meet on Georgetown’s central square, near the Williamson Museum',
         meetingPointLink: 'https://maps.app.goo.gl/c9spEFwMY7VWcPTS6',
-        difficulty: 'Easy',
     },
     {
         id: 'Rrock',
@@ -96,12 +79,9 @@ export const tours: TourProgram[] = [
             'Learn how one person’s life connected Round Rock to 1920s Paris',
             'End the walk with a cup of coffee in a cozy café in the historic downtown area.'
         ],
-        included: [
-        ],
         meetingPoint:
             'Chisholm Trail Crossing Park',
         meetingPointLink: 'https://maps.app.goo.gl/gNghyezKAVjKKyWu8',
-        difficulty: 'Easy',
     },
     {
         id: 'Brmn',
@@ -117,15 +97,9 @@ export const tours: TourProgram[] = [
             'Fascinating stories of Austin families who left their mark in the heart of Austin.',
             'Touch the historical heritage and feel as if you are in a fairy tale.',
         ],
-        included: [
-            'Photography guide',
-            'Tripod rental available',
-            'Photo editing tips',
-        ],
         meetingPoint:
             'We meet at the pavilion on Wooldridge Square, at the intersection of Guadalupe and West 9th streets',
         meetingPointLink: 'https://maps.app.goo.gl/UiDVakHKfszzTE5b7',
-        difficulty: 'Easy',
     },
     {
         id: 'Auswe',
@@ -148,10 +122,8 @@ export const tours: TourProgram[] = [
             'Individual format and comfortable pace, vivid lively stories, and details you will not find in guidebooks.',
             'Lunch and shopping like locals: cozy spots and unusual shops.',
         ],
-        included: [],
         meetingPoint: 'Arranged individually',
         meetingPointLink: '',
-        difficulty: 'Easy',
     },
 
     {
@@ -169,15 +141,9 @@ export const tours: TourProgram[] = [
             'You will visit places in Austin associated with O. Henry.',
             'A cup of aromatic coffee in the atmosphere of the 19th century in the beautiful historic café at the Driskill Hotel.',
         ],
-        included: [
-            'Photography guide',
-            'Tripod rental available',
-            'Photo editing tips',
-        ],
         meetingPoint:
             'We meet at the guitar sculpture (“Vibrancy guitar statue”), at the intersection of Congress Avenue and East 4th',
         meetingPointLink: 'https://maps.app.goo.gl/tvFiqw2Z93jqi5WS6',
-        difficulty: 'Easy',
     },
 
     {
@@ -194,11 +160,9 @@ export const tours: TourProgram[] = [
             'A taste of real history at Avenue B Grocery & Market — the oldest store in Austin.',
             'Visit to First Light Books — a cozy bookstore with rare editions, unusual souvenirs, and aromatic coffee.',
         ],
-        included: [],
         meetingPoint:
             'We meet at Shipe Neighborhood Park, closer to East 44th Street',
         meetingPointLink: 'https://maps.app.goo.gl/TkbGjf1g56Vr8mEc6',
-        difficulty: 'Easy',
     },
 
     {
@@ -215,10 +179,8 @@ export const tours: TourProgram[] = [
             'A sea of positive impressions.',
             'An interesting and eventful day in Austin’s rhythm.',
         ],
-        included: [],
         meetingPoint: 'Arranged individually',
         meetingPointLink: '',
-        difficulty: 'Easy',
     },
 
     {
@@ -236,17 +198,9 @@ export const tours: TourProgram[] = [
             'Discussion of the center’s architecture and landscape design. You will take stunning shots from the observation deck on the tower.',
             'Talk about the symbolism of plants in the art and folk culture of Texas.',
         ],
-        included: [
-            'Photography guide',
-            'Tripod rental available',
-            'Photo editing tips',
-            'Location map for future visits',
-            'Small group (max 10 people)',
-        ],
         extra: '🎟️ Entrance ticket is paid separately',
         meetingPoint: 'Lady Bird Johnson Wildflower Center',
         meetingPointLink: 'https://maps.app.goo.gl/aJf3ShjPhDnvwdJq5',
-        difficulty: 'Moderate',
     },
 
     {
@@ -263,17 +217,9 @@ export const tours: TourProgram[] = [
             'You will play an antique piano and listen to a musical piece composed by O. Henry himself.',
             'After the tour, those who wish can have coffee and continue the conversation in the beautiful historic café at the Driskill Hotel.',
         ],
-        included: [
-            'Photography guide',
-            'Tripod rental available',
-            'Photo editing tips',
-            'Location map for future visits',
-            'Small group (max 10 people)',
-        ],
         meetingPoint:
             'We meet at Brush Square, at the intersection of East 4th and Neches',
         meetingPointLink: 'https://maps.app.goo.gl/GDtQDZMwxYAMGudHA',
-        difficulty: 'Easy',
     },
 
     {
@@ -292,14 +238,8 @@ export const tours: TourProgram[] = [
             'Visit to the legendary Millett Opera House.',
             'Refined lunch at the Millett Opera House restaurant.',
         ],
-        included: [
-            'Photography guide',
-            'Tripod rental available',
-            'Photo editing tips',
-        ],
         meetingPoint:
             'We meet at the guitar sculpture (“Vibrancy guitar statue”), at the intersection of Congress Avenue and East 4th',
         meetingPointLink: 'https://maps.app.goo.gl/tvFiqw2Z93jqi5WS6',
-        difficulty: 'Easy',
     },
 ];
