@@ -45,7 +45,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, tourTitle }) => {
                     ref={textRef}
                     className={`text-gray-600 italic leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}
                 >
-                    "{review.text}"
+                    &quot;{review.text}&quot;
                 </p>
                 {shouldShowButton && (
                     <button

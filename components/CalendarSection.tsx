@@ -4,6 +4,7 @@ import React  from 'react';
 import {PastTourEvent, TourProgram, UpcomingTourEvent} from '@/types/tour';
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import type { EventClickArg } from '@fullcalendar/core'
 import MyConstants from "@/lib/MyConstants";
 import {useTranslations} from "next-intl";
 import {useRouter} from "@/i18n/routing";
@@ -27,7 +28,7 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({
 }) => {
   const router = useRouter();
 
-  const handleEventClick = (info: any) => {
+  const handleEventClick = (info: EventClickArg) => {
       const eventId = info.event.extendedProps.eventId;
       if (variant === 'standalone') {
           router.push(`/tours/${eventId}`);
