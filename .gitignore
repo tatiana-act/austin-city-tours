@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Claude Code scratch worktrees — full working copies of this repo.
+# Not ignoring them means `eslint .` and `jest` walk thousands of duplicated files.
+.claude/worktrees/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
