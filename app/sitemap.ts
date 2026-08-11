@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing'
+import { SITE_URL } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://austin-city-tours.vercel.app';
+    const baseUrl = SITE_URL;
 
     // Real, indexable pages only. Do NOT list `#anchor` URLs — Google ignores
     // fragments, so they just add duplicates of the page they live on.
