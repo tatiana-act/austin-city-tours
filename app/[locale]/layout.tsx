@@ -16,7 +16,13 @@ async function buildGraph(locale: string): Promise<Graph> {
   const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
   const tAbout = await getTranslations({ locale, namespace: 'About' });
 
-  const aboutUrl = `${SITE_URL}/${locale}/about`;
+  // Trailing slashes are load-bearing: `trailingSlash: true` in next.config.ts makes
+  // `/en/about/` the real URL, and `/en/about` 308-redirects to it. Next normalizes the
+  // URLs we hand to `metadata`, but not these hand-built JSON-LD strings — so they have
+  // to carry the slash themselves, or every entity points at a redirect and `url` stops
+  // matching the page's canonical.
+  const homeUrl = `${SITE_URL}/${locale}/`;
+  const aboutUrl = `${SITE_URL}/${locale}/about/`;
   const personId = `${SITE_URL}/#tatiana`;
   const aboutId = `${aboutUrl}#about`;
   const inLanguage = locale === 'ru' ? 'ru-RU' : 'en-US';
@@ -47,8 +53,8 @@ async function buildGraph(locale: string): Promise<Graph> {
       },
       {
         '@type': 'WebPage',
-        '@id': `${SITE_URL}/${locale}`,
-        url: `${SITE_URL}/${locale}`,
+        '@id': homeUrl,
+        url: homeUrl,
         name: tMeta('title'),
         inLanguage,
         description: tMeta('description'),
