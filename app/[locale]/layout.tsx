@@ -10,7 +10,7 @@ import { routing } from '@/i18n/routing';
 import type { Graph } from 'schema-dts';
 import type { Metadata } from 'next'
 
-const SITE_URL = 'https://austin-city-tours.vercel.app';
+import { SITE_URL } from '@/lib/site';
 
 async function buildGraph(locale: string): Promise<Graph> {
   const tMeta = await getTranslations({ locale, namespace: 'Metadata' });
@@ -74,7 +74,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 
   return {
-    metadataBase: new URL('https://austin-city-tours.vercel.app'),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: t('title'),
       template: '%s | Austin City Tours',
@@ -87,7 +87,7 @@ export async function generateMetadata({
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: `https://austin-city-tours.vercel.app/${locale}`,
+      url: `${SITE_URL}/${locale}`,
       siteName: 'Austin City Tours',
       images: [
         {
@@ -101,7 +101,7 @@ export async function generateMetadata({
       type: 'website',
     },
     alternates: {
-      canonical: `https://austin-city-tours.vercel.app/${locale}`,
+      canonical: `${SITE_URL}/${locale}`,
       languages: {
         'en': '/en',
         'ru': '/ru',
