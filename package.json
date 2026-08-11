@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -36,6 +36,7 @@
     "postcss": "8.5.14"
   },
   "devDependencies": {
+    "@eslint/js": "9.39.4",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
