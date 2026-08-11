@@ -53,8 +53,11 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ tourName, tourId, date, onC
                 />
             </div>
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Ваш отзыв</label>
+                <label htmlFor="text" className="block text-sm font-bold mb-2">
+                  {t('text')}
+                </label>
                 <textarea
+                    id="text"
                     placeholder={t('text')}
                     rows={7}
                     className="w-full p-3 rounded-lg bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"

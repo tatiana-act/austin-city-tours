@@ -35,7 +35,10 @@
         "metaDescription": "See the full schedule of upcoming and recent Austin walking tours. Pick a date and book your spot."
     },
     "Reviews": {
-        "title": "Customer reviews"
+        "title": "Customer reviews",
+        "readMore": "Read in full",
+        "hide": "Hide",
+        "readOriginal": "Read the original"
     },
     "FAQ": {
         "title": "Frequently asked questions"

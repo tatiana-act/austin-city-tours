@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Review } from '@/types/review';
 
 interface ReviewCardProps {
@@ -9,6 +10,7 @@ interface ReviewCardProps {
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ review, tourTitle }) => {
+    const t = useTranslations('Reviews');
     const [isExpanded, setIsExpanded] = useState(false);
     const [shouldShowButton, setShouldShowButton] = useState(false);
     const textRef = useRef<HTMLParagraphElement>(null);
@@ -50,13 +52,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, tourTitle }) => {
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="text-indigo-500 hover:text-indigo-700 text-sm font-medium mt-2 focus:outline-none cursor-pointer"
                     >
-                        {isExpanded ? 'Скрыть' : 'Читать полностью'}
+                        {isExpanded ? t('hide') : t('readMore')}
                     </button>
                 )}
             </div>
             {review.link && (
                 <a href={review.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-auto text-sm font-medium text-purple-600 hover:text-purple-700 hover:underline">
-                    Читать оригинал
+                    {t('readOriginal')}
                 </a>
             )}
         </div>
