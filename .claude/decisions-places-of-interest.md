@@ -5,8 +5,10 @@ what was weighed, what was decided, and what each decision cost. Nothing here is
 requirement — an implementer who reads only the PRD is not missing an instruction.
 
 Markers are the PRD's: `[owner, N]` — answer to interview question N (21 questions,
-2026-08-13, in English). `[owner, decision 2026-08-13]` — a decision taken *after* the
-interview, on a question the PRD put to the owner. `[from code]` — read from the repository.
+2026-08-13, in English). `[owner, decision <date>]` — a decision taken *after* the interview,
+on a question the PRD put to the owner; three dates carry them — 2026-08-13, 2026-08-17 (the
+answers to the design objections, quoted verbatim in `.claude/answers.md`) and 2026-08-18.
+`[from code]` — read from the repository.
 
 **The interview has never been repeated.** Across every revision, no `[owner, N]` statement
 has been added, altered or removed. The two markers are kept separate on purpose: `N` always
@@ -28,6 +30,8 @@ would destroy the only guarantee these documents make about their own facts.
 | v1.6 | Closed O7 and R12: the repeat reading is set at 60 days and is final; the page-views metric is dropped, leaving one measured goal, so the wider statement stops being called a goal. |
 | **v2.0** | **Split into two documents.** The PRD keeps the specification; this file takes the alternatives, the closed items, the closed risks, the rationale and this history. No fact was dropped and none was added. Acceptance criteria were **renumbered** into ordered blocks — the v1.6 list placed AC 23 before AC 22, and nothing outside these two documents referenced those numbers. Sub-numbering is retained only where an item qualifies its parent (`7a`, `7b` — the intermediate-state counterparts of AC 7). Risk numbers were **not** renumbered. |
 | **v2.1** | Slicing moved out of the acceptance criteria into its own §8 Release plan — it is a plan, not an observable criterion — and the sections below it shifted by one. The measurement criterion (v2.0 AC 24) was deleted: it asserted a condition already satisfied, and its one live instruction, the optional Search Console reading, moved into PRD §2.1. Two remnants of self-explanation removed, and the URL-segment rationale in §7.1 cut to its result. |
+| **v2.2** | Ten owner decisions, relayed through `.claude/architecture-places-of-interest.md` §0: **no place count** (§2.2), one record per place, RU/EN parity and program coverage enforced by the build, **production from the first place**, a footer entry, one non-localised map link, the day grouping shown in both views. AC 2 withdrawn and AC 7b replaced; R2 and R3 rewritten and kept live; R13–R15 opened. O11–O17 were opened by those decisions and answered the same day. |
+| **v2.3** | The owner's answers to design objections `D1`–`D14` (`.claude/answers.md`): the short description lives on the list page only; the map link too, and the place name is a link nowhere; program names are shown in full and **become links to the homepage**; the catalogue is ordered alphabetically; no language switcher outside the homepage; both lists in the accordion kept, provisionally; two states declared impossible (no place without a description, no empty linking table). AC 8, 15 and 16 tightened, AC 25 and AC 26 added; **R4 closed**, R16 and R17 opened, R13 marked provisional. Then, against the architect's v1.1 review: §7.4 completed to **all six** visitor-facing strings, AC 25 reformulated so arrival is observable and includes the card opening on a phone, §8.1's slices restated as what each must prove, §5.1 corrected against the repository (one linked place, not thirty). O18, O19 and O20 were opened and closed inside the revision. |
 
 ---
 
@@ -39,7 +43,8 @@ decision. Descriptions are unchanged from v1.2.
 **A. Places inside permanent program pages** (context.md q16). The same texts, placed on
 pages that can rank — "Hyde Park walking tour" is a query a program page answers, and the
 place names inside it carry the long tail. Cost: q16 is the project's largest fork and the
-owner has said not to start it. This shape *dissolves* R4 and R7 rather than managing them.
+owner has said not to start it. This shape *dissolves* R7 rather than managing it — and R4,
+which v2.3 has since closed by other means (§6).
 
 **B. Thin slice, no new page.** Places render only inside the program accordion and the date
 page. No list page, no new URL, 3–5 places instead of 15–20. Serves the delivery statement
@@ -65,15 +70,16 @@ content) is bounded before it is taken.
 
 **What gets built:** places render in the program accordion and on the date page — B's
 rendering — **and** the places list page ships, written for and measured by the one named
-query D identifies. The catalogue is **15 places**.
+query D identifies. The catalogue was **15 places**; the count was withdrawn in v2.2 (§2.2)
+and the shape decision stands without it.
 
 **The reading this is taken under, stated so it cannot be re-read later.** "записанное в D"
 is taken to mean *the list page ships*, because D's defining content is that page plus the
 honest narrowed goal attached to it; without the page there is nothing to target a named
 query with, and D's metric could not exist. A second reading is available and consistent —
 that the decision is D with 15 places (the low end of `[owner, 6]`), built B-style, thin
-slice first — and it produces **the same artifact**: list page, accordion, date page, 15
-places, one named query. Since the two readings converge on what is built, no question is
+slice first — and it produces **the same artifact**: list page, accordion, date page, one
+named query. Since the two readings converge on what is built, no question is
 raised on them. A third reading — D's metric without D's page — is rejected as internally
 impossible, not chosen against: a named query with no page to rank cannot be measured. If
 that was what was meant, say so, and O8 and O9 come back with it.
@@ -82,25 +88,31 @@ that was what was meant, say so, and O8 and O9 come back with it.
 Остине» and "Places to see in Austin" `[owner, decision 2026-08-13]`. What was this
 document's draft is now the owner's decision — see O5.
 
-### 2.2 The cost of 15 places
+### 2.2 The 15-place target, and its withdrawal
 
 Cutting the catalogue to 3–5 was refused outright `[owner, decision 2026-08-13]`:
 
 > «я не могу выкатывать в прод только 5 мест, смысла не имеет»
 
-So 15 is a decision with a reason, and the reason is about **production**: a five-place
-catalogue is not something the owner is willing to show visitors. It sits inside
-`[owner, 6]`'s 15–20, so there is no conflict with the interview — but it removes the single
-largest advantage the recommendation rested on. At 3–5 places R2 was bounded *before* the
-work was commissioned; at 15 places it is 30 texts through one writer at one batch every 2–3
-weeks, which is R2 at close to full size. Slicing no longer bounds R2 by releasing value in
-parts; it only lowers technical risk early.
+That refusal is about **production**, and it outlived the number it came with: a near-empty
+catalogue is not something the owner is willing to show visitors. The 15 itself is gone —
+**v2.2 committed to no place count at all** `[owner, decision 2026-08-13]`, and which places
+exist is compiled outside this project (PRD §5.1). With it went the arithmetic this section
+used to carry: "15 places = 30 texts" sized R2 and made the catalogue's completion sayable.
+
+What replaced it, and why the trade is not a loss: R2 was to be bounded by keeping the
+catalogue small, and is now bounded by **releasing in instalments** — the page goes to
+production with its first described place `[owner, decision 2026-08-13]`, so a stalled
+pipeline costs the page depth rather than existence (PRD §11.1). What is genuinely lost is the
+completed state: nothing now says when the catalogue is done, and no criterion can fail on
+size (PRD R14).
 
 ### 2.3 Not chosen: A
 
 The hold context.md question 16 puts on permanent program pages stays in force and is not
-touched by this feature. R4 and R7 therefore stand as risks rather than dissolving, and R3
-stands as accepted rather than fixed.
+touched by this feature. R7 therefore stands as a risk rather than dissolving, and R3 stands
+as mitigated rather than fixed (the footer entry, v2.2). R4 was the other half of not choosing
+A; v2.3 closed it without touching q16 — see §6.
 
 Worth recording for whenever q16 is revisited, without reopening it here: with impressions at
 essentially zero the site is invisible in search, and the case for A — pages that can rank
@@ -172,6 +184,64 @@ Numbers are retained and never reused, following context.md's convention.
   baseline would have made the stated goal permanently unverifiable. The owner reported both
   baselines, so nothing perishable is left to lose. The baseline stopped being a release
   condition and became an optional refinement, noted in PRD §2.1.
+- **O11. CLOSED v2.2** `[owner, decision 2026-08-13]`: «пусть растёт, это не может ухудшить».
+  Was: the incremental release makes the page grow inside the measurement window — does the
+  ≥20 / ≥3 threshold still stand? Answer: nothing in the metric changes. What it buys and what
+  it costs are in PRD §2.1 — the day-60 reading becomes a best-case one, and stops being
+  attributable to a page state.
+- **O12. CLOSED v2.2** `[owner, decision 2026-08-13]`: no marker on the page. Was: with the
+  completion target gone and incomplete now the released state, must the page say it is
+  growing? Answer: no — no count, no "more coming". The answer carried two facts beyond the
+  question, both live in the PRD: there is no sharp criterion for what a place is (R14), and a
+  place may later be dropped and a route changed (§13 item 8).
+- **O13. CLOSED v2.2** `[owner, decision 2026-08-13]`: `[owner, 14]`'s "all 12 programs"
+  survives the removal of the count **as a plan** — not a release gate, not a schedule. It is
+  the only completed state the feature has left, and a real one: the program set is finite and
+  enumerable `[from code]`.
+- **O14. CLOSED v2.2** `[owner, decision 2026-08-13]`: «нет, не замещает». The footer link adds
+  to the tour-description entry; AC 12 requires both.
+- **O15. CLOSED v2.2** `[owner, decision 2026-08-13]`: only day 1 goes into the schedule, day 2
+  is not marked in the calendar in any way. Closed in the cheapest direction — nothing changes,
+  the existing single `date`/`time` *is* day 1. What stays visible is PRD R15.
+- **O16. CLOSED v2.2** `[owner, decision 2026-08-13]`: every slice may go to production, no
+  limit on deployments, but very small increments are to be avoided. Free technically, bounded
+  by taste; "very small" is deliberately not quantified. One consequence: the one-place
+  rehearsal stays on `dev` rather than becoming the first release.
+- **O17. CLOSED v2.2** `[owner, decision 2026-08-13]`: **the linking table is the release
+  queue.** Was: `'TBD'` is a non-empty string that satisfies AC 3 to the letter, and the page
+  publishes from the first place — so how does a place wait for its description? Of the three
+  options put (ship the placeholder / queue / wait for the whole catalogue) the owner chose the
+  queue: an unwritten place is absent from the data entirely, so no placeholder can reach
+  production. It arrived before the first commit `[from code]`, so it cost a working-tree edit.
+- **O18. CLOSED v2.3** `[owner, decision 2026-08-17]`: «O18 "you will see"». Was: the RU
+  caption «Вы увидите» was the owner's word and the EN half was design's proposal, so one
+  visitor-facing string would have shipped with a document behind it instead of an owner —
+  the defect v2.3 set out to close. Answer: the pair is «Вы увидите» / "You will see", both
+  halves the owner's. Punctuation and capitalisation stay the coder's business.
+- **O19. CLOSED v2.3** `[owner, decision 2026-08-18]`: «О19 - "Can be seen on tours",
+  "Day 1 / Day 2", "Austin sightseeing"». Was: three of the six visitor-facing strings — the
+  caption above the programs in a catalogue entry, the day-group label and the page's
+  `description` metadata — had no source and were shipping with values the architecture
+  document had invented for its own v1.0, which is the defect PRD §7.4 exists to end. Answer:
+  all three named. **Two readings this document applied**, both stated in PRD §7.4 rather than
+  assumed: «Day 1 / Day 2» is one string `"Day {n}"` and not one string per day, because a
+  string per label repeats the `bonus` trap (R11); and the RU halves, which the answer did not
+  give, are proposals of the PRD until the owner replaces them — «Можно увидеть на
+  экскурсиях», «День {n}», «Достопримечательности Остина». **The cost recorded rather than
+  argued** (PRD §2.1): `description` is the only one of the six a person sees *before* the
+  click, on the page the metric measures, and it went from a full sentence to two words —
+  impressions do not depend on it, clicks partly do, so a 60-day reading that meets ≥20
+  impressions and misses ≥3 clicks points here first.
+- **O20. CLOSED v2.3** `[owner, decision 2026-08-18]`: «O20 - да, раскрыть». Was: on a phone
+  the homepage card is a collapsed teaser whose description opens with a tap, so a visitor
+  following a program name from the catalogue arrived at a name rather than at a description —
+  should the card open on arrival? Answer: yes. PRD AC 25 now promises the description visible
+  without a further tap at any screen width, and the transition contract owes a third thing
+  beyond scrolling and expanding the list. **Scoped deliberately:** the expansion applies to
+  arrival through this link only; the teaser is unchanged for every other route into the
+  homepage, which is what the architecture document had recorded as untouched.
+
+*(O11–O20 are closed here; PRD §12 points at this section instead of repeating them.)*
 
 ---
 
@@ -276,7 +346,7 @@ closing, blocking nothing.
 
 ---
 
-## 5. Decisions inside the entity and the relations
+## 5. Decisions inside the entity, the relations and the views
 
 ### Google Maps — reversible, not free
 
@@ -286,12 +356,18 @@ about reversibility — nothing in this feature binds it to a provider, and the 
 content field per entry.
 
 What the change would cost when it comes, so "easy" is not read as "free": the link is a
-required field in **every entry in both locales**, so switching providers on a finished
-catalogue means replacing **15 × 2 = 30 links** by hand, by the same single person who writes
-the texts (R2), each verified individually because the acceptance criterion accepts no
-automation. The cost scales with catalogue size at the moment of the switch, so switching
-early is much cheaper than switching late. A note, not a risk: nothing is uncertain and no
-decision is pending.
+required field on **every place — one link, not one per locale** `[owner, decision
+2026-08-13]` (PRD §5) — so switching providers means replacing **one link per place, N edits
+at whatever size N the catalogue has reached**, by hand, by the same single person who writes
+the texts (R2), each verified individually because AC 9 accepts no automation. There is no
+committed N: the count was withdrawn (§2.2), so the price is not knowable in advance, only its
+shape — it grows with every place that ships and never shrinks.
+
+**The conclusion is unchanged, its basis is not.** Switching early stays much cheaper than
+switching late; that used to follow from a fixed 15 × 2 = 30 and now follows from a
+monotonically growing N. For scale rather than commitment: 30 places are compiled as material
+today `[from code]`, of which the release queue has linked one. A note, not a risk: nothing is
+uncertain and no decision is pending.
 
 ### Free order — a correction this document made against itself
 
@@ -314,6 +390,22 @@ renders*.** The alternative reading is barely coherent: a list that reshuffles b
 looks broken, gives the visitor nothing, and saves no work, since any fixed listing already
 produces a stable order. Stated as an assumption rather than assumed silently.
 
+### Two lists in one accordion — kept, and kept provisionally
+
+The place list stands next to the program's own `highlights` list, and both stay
+`[owner, decision 2026-08-17]`:
+
+> «пока оставляем оба списка»
+
+**The word is «пока», and it is recorded as said** — provisional in the same sense as the map
+provider above, not an approved end state. What it costs is PRD R13: one accordion can name
+the same site twice, which reads as a defect to anyone who has not read these documents. What
+it bought at the same time: the design objection that raised it asked what tells the two lists
+apart, and the answer named a caption for the place list («Вы увидите» / "You will see",
+O18) — so the pair is now distinguished by words the owner chose, not by strings a document
+invented. Reversing it later removes a list; nothing else in the feature depends on there
+being two.
+
 ### Content order — a plan decision recorded with its cost
 
 The owner named the first four programs `[owner, decision 2026-08-13]`. This replaced the
@@ -322,8 +414,9 @@ earlier proposal opened with `Milt` or `Amhry` — single-place programs `[owner
 texts, the whole rendering path proven at the smallest possible content cost. The owner's four
 are all multi-stop routes, so the first slice is several times larger and the "prove the
 pipeline cheaply" benefit shrinks accordingly. Content is the owner's `[owner, 4]`; recorded
-with its cost, not argued with. The single-place slice survives in the PRD as an optional
-technical slice 0.
+with its cost, not argued with. The single-place rehearsal survives in the PRD §8.1 as a
+slice that stays on `dev`; it exists today on `capitol` in `Acap` rather than on one of the
+single-place programs, because that is what the working tree already held `[from code]`.
 
 ---
 
@@ -333,19 +426,31 @@ technical slice 0.
   to take, not a risk to manage. Taken as O0 (§2.1). **The combination that made it matter:**
   R1 + R2 — a goal mismatch plus a slow content pipeline — was the case for not building at
   all, and is why O0 existed. The owner answered it by removing the mismatch instead of the
-  work, while accepting R2 at close to full size. Resolved, not vanished: the pair is exactly
-  what the owner decided to spend.
+  work, while accepting R2 in full. Resolved, not vanished: the pair is exactly
+  what the owner decided to spend. (The "15 places / 30 texts" sizing that phrase once used is
+  withdrawn — §2.2; R2 is bounded now by releasing in instalments, not by catalogue size.)
 - **R8 — domain sequencing.** Closed in v1.3 by fact `[from code, lib/site.ts]`: the `.com`
   domain is connected and canonicalised, `lib/site.ts:22` is
   `https://www.austin-city-tours.com`, and the docblock at `lib/site.ts:9-12` records that the
   apex and the old `.vercel.app` host both answer 308 to `www`, so exactly one host returns
   200. context.md question 12 is satisfied before any permanent page of this feature exists.
 - **R12 — an unfalsifiable goal.** Closed in v1.6 (§4.3). **The combination that made it worth
-  closing early:** R12 + R2. The measurement clock starts at the production release and the
-  release waits for all 30 texts, so the date of the verdict is unknown for the same reason the
-  launch date is. The pair explained why the schedule had to be fixed *before* the content
-  arrives — the longer the writing takes, the more tempting it becomes to read the first
-  available number as the answer. With 30 and 60 days both set relative to the release, the
-  schedule survives a launch date nobody can predict.
+  closing early:** R12 + R2. The measurement clock starts at the production release, and the
+  date of the verdict was therefore unknown for the same reason the launch date was — at the
+  time because the release waited for the whole catalogue, a premise v2.2 later reversed. The
+  pair explained why the schedule had to be fixed *before* the content arrives; because both
+  readings are set relative to the release rather than to a calendar date, the closure survives
+  that reversal unchanged.
+- **R4 — no durable link target from a place to a program. CLOSED v2.3**
+  `[owner, decision 2026-08-17]`. It said places could name programs but not reach them,
+  because programs have no permanent pages (context.md q16) and date pages expire. The owner
+  made the program names in a catalogue entry links to the homepage, carrying the program
+  identifier, loading all cards when the target is not among those rendered (PRD §7.1, AC 25) —
+  so the absence the risk named no longer exists, and q16 was not touched to achieve it. What
+  it does **not** close: R7, the other consequence of having no program pages. The pair R4 + R7
+  in PRD §11.1 went with the closure — it had been counting one absence twice.
 
-Numbers are retained and not reused; the PRD's risk table carries the gaps.
+Numbers are retained and not reused; the PRD's risk table carries the gaps. **This section
+holds closures only.** Live risks, their wording and their severity are the PRD's — including
+those opened after v2.1 (R13–R17); what is recorded here is why a risk stopped existing, and
+the decisions behind live ones sit in §5.
