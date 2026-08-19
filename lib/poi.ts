@@ -1,4 +1,4 @@
-import { programPoi, type PoiId } from '@/data/poi.programs';
+import { programPoi, type PoiId, type ProgramId } from '@/data/poi.programs';
 import { poiMapUrl } from '@/data/poi.links';
 import { poiRu } from '@/data/poi.ru';
 import { poiEn } from '@/data/poi.en';
@@ -16,19 +16,32 @@ import type { PoiText } from '@/types/poi';
  * text in one locale or a place no program visits is a compile error.
  */
 
-export interface PoiView {
+/**
+ * A place as the program view shows it: the accordion on the homepage and the
+ * tour date page. Neither the description nor the map link is in this shape —
+ * those two live on the list page only (PRD §7.2, §7.3), and leaving them out
+ * of the type is what makes AC 15 and AC 16 hold by construction instead of by
+ * review.
+ */
+export interface ProgramPoi {
   id: PoiId;
   name: string;
-  description: string;
-  mapUrl: string;
   /** Present only for programs whose route is split across days (`Auswe`). */
   day?: number;
 }
 
-export interface PoiCatalogEntry extends PoiView {
-  /** Programs that visit this place, by localized name. Names, not links —
-   *  programs have no permanent pages to link to (context.md question 16). */
-  programs: { id: string; title: string }[];
+/** A place as the list page shows it (PRD §7.1). */
+export interface PoiCatalogEntry {
+  id: PoiId;
+  name: string;
+  description: string;
+  mapUrl: string;
+  /**
+   * Programs that visit this place, by full localized `TourProgram.title` —
+   * not the short form. `id` carries: the entry builds the link back to the
+   * program's card on the homepage from it (architecture §4.1).
+   */
+  programs: { id: ProgramId; title: string }[];
 }
 
 /**
@@ -41,18 +54,19 @@ const linkedPoi: Partial<
   Record<string, readonly { poi: PoiId; day?: number }[]>
 > = programPoi;
 
+/**
+ * `Object.entries` widens the keys of the linking table to `string`, while its
+ * `satisfies Partial<Record<ProgramId, …>>` clause already guarantees every key
+ * is a `ProgramId`. This narrows them back without a cast; the negative branch
+ * is unreachable by construction.
+ */
+function isLinkedProgram(programId: string): programId is ProgramId {
+  return programId in programPoi;
+}
+
 // Same locale test as `app/[locale]/page.tsx` uses for the tour catalogue.
 function poiTexts(locale: string): Record<PoiId, PoiText> {
   return locale === 'en' ? poiEn : poiRu;
-}
-
-function toView(id: PoiId, texts: Record<PoiId, PoiText>): PoiView {
-  return {
-    id,
-    name: texts[id].name,
-    description: texts[id].description,
-    mapUrl: poiMapUrl[id],
-  };
 }
 
 /**
@@ -60,35 +74,47 @@ function toView(id: PoiId, texts: Record<PoiId, PoiText>): PoiView {
  * An unknown program id — or one with no places yet — returns an empty array,
  * which the callers render as nothing at all (AC 7a).
  */
-export function getProgramPoi(programId: string, locale: string): PoiView[] {
+export function getProgramPoi(programId: string, locale: string): ProgramPoi[] {
   const refs = linkedPoi[programId];
   if (!refs) return [];
 
   const texts = poiTexts(locale);
-  return refs.map(ref => ({ ...toView(ref.poi, texts), day: ref.day }));
+  return refs.map(ref => ({
+    id: ref.poi,
+    name: texts[ref.poi].name,
+    day: ref.day,
+  }));
 }
 
 /**
- * Every place once, in order of first appearance in the linking table — the
- * same order in both locales, since that table is not localized.
+ * Every place once (AC 5), in alphabetical order of the name as displayed, so
+ * the two locales order the page differently on purpose (AC 26). Ties keep the
+ * linking table's order, since `Array.prototype.sort` is stable.
+ *
+ * The order of `programs` inside an entry is the order the table is walked —
+ * not localized, so RU and EN name the same programs in the same sequence.
  */
 export function getPoiCatalog(locale: string): PoiCatalogEntry[] {
   const texts = poiTexts(locale);
   const tours = locale === 'en' ? toursEn : toursRu;
-  const programTitles = new Map(
-    tours.map(tour => [tour.id, tour.shortTitle] as const),
-  );
+  const programTitles = new Map(tours.map(tour => [tour.id, tour.title] as const));
 
   const catalog = new Map<PoiId, PoiCatalogEntry>();
 
   for (const [programId, refs] of Object.entries(linkedPoi)) {
-    if (!refs) continue;
+    if (!refs || !isLinkedProgram(programId)) continue;
     const title = programTitles.get(programId);
 
     for (const ref of refs) {
       let entry = catalog.get(ref.poi);
       if (!entry) {
-        entry = { ...toView(ref.poi, texts), programs: [] };
+        entry = {
+          id: ref.poi,
+          name: texts[ref.poi].name,
+          description: texts[ref.poi].description,
+          mapUrl: poiMapUrl[ref.poi],
+          programs: [],
+        };
         catalog.set(ref.poi, entry);
       }
       // A program is named once per place however many times it visits it.
@@ -98,5 +124,6 @@ export function getPoiCatalog(locale: string): PoiCatalogEntry[] {
     }
   }
 
-  return [...catalog.values()];
+  const collator = new Intl.Collator(locale);
+  return [...catalog.values()].sort((a, b) => collator.compare(a.name, b.name));
 }

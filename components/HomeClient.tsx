@@ -6,7 +6,7 @@ import CalendarSection from "@/components/CalendarSection";
 import UpcomingToursSection from '@/components/UpcomingSection';
 import BookingManager from '@/components/BookingManager';
 import { TourProgram, UpcomingTourEvent } from '@/types/tour';
-import type { PoiView } from '@/lib/poi';
+import type { ProgramPoi } from '@/lib/poi';
 import pastTours from '@/data/RecentTours';
 
 
@@ -14,7 +14,7 @@ interface HomeClientProps {
     allTours: Map<string, TourProgram>;
     tours: TourProgram[];
     /** Places per program id, read on the server — see `app/[locale]/page.tsx`. */
-    poiByProgram: Record<string, PoiView[]>;
+    poiByProgram: Record<string, ProgramPoi[]>;
     upcomingTours: UpcomingTourEvent[];
     isMobileDevice: boolean;
     locale: string;

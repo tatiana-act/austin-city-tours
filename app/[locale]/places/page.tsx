@@ -61,26 +61,45 @@ export default async function PlacesPage({
                 key={place.id}
                 className="border-b border-gray-200 pb-8 last:border-b-0 last:pb-0"
               >
+                {/* The place name is plain text, here and everywhere else
+                    (PRD §7.1). */}
                 <h2 className="text-ink text-2xl font-bold">{place.name}</h2>
 
                 <p className="text-ink-muted mt-3 leading-relaxed">
                   {place.description}
                 </p>
 
-                {place.programs.length > 0 && (
-                  <p className="text-ink-muted mt-3 text-sm">
-                    <span className="font-semibold">{t('onTours')}:</span>{' '}
-                    {place.programs.map(program => program.title).join(', ')}
-                  </p>
-                )}
+                {/* Programs before the map: the link that goes deeper into the
+                    site stands above the one that leaves it, and a place always
+                    has at least one program — it exists because a program
+                    visits it. Each name is a link to that program's card on the
+                    homepage, one per line. */}
+                <p className="text-ink-muted mt-4 text-sm font-semibold">
+                  {t('seenOnTours')}
+                </p>
+                <ul className="mt-1 flex list-none flex-col gap-1 p-0">
+                  {place.programs.map(program => (
+                    <li key={program.id}>
+                      <Link
+                        href={`/${locale}/#${program.id}tour-card`}
+                        className="text-brand hover:text-brand-dark underline-offset-2 hover:underline focus-visible:underline"
+                      >
+                        {program.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
 
+                {/* The one point in the feature that takes the visitor off the
+                    site, so it is last in the entry and marked as external:
+                    permanent underline, an arrow, a new tab. */}
                 <a
                   href={place.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand hover:text-brand-dark mt-3 inline-block font-semibold underline underline-offset-2"
+                  className="text-brand hover:text-brand-dark mt-4 inline-block text-sm font-semibold underline underline-offset-2"
                 >
-                  {t('openMap')} ↗
+                  {t('mapLink')} <span aria-hidden="true">↗</span>
                 </a>
               </li>
             ))}

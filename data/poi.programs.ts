@@ -7,7 +7,9 @@
 //
 // Deliberately not localised: RU and EN cannot drift apart in order or content.
 
-type ProgramId =
+// Exported: the catalogue entry types the program id it builds its link to the
+// homepage from off this union (architecture §2.1, §3).
+export type ProgramId =
   | 'Acap'
   | 'Haust'
   | 'Gcrt'
@@ -33,3 +35,14 @@ export const programPoi = {
 } as const satisfies Partial<Record<ProgramId, readonly PoiRef[]>>;
 
 export type PoiId = (typeof programPoi)[keyof typeof programPoi][number]['poi'];
+
+// Third invariant: this table is never empty (PRD §5.1, architecture §2.6).
+// Plain inference does not catch an empty one — `PoiId` degrades to `never`,
+// which `Record<never, …>` satisfies with empty text files, so the build stays
+// green while the page renders a heading over nothing. The assertion below
+// fails instead: on an empty table `NonEmptyCatalogue` is `never` and `true`
+// cannot be assigned to it. The tuple wrapper is required — a bare
+// `PoiId extends never` distributes over the union and would resolve to `never`
+// for the wrong reason. Exported so it is not read as an unused constant.
+type NonEmptyCatalogue = [PoiId] extends [never] ? never : true;
+export const catalogueIsNotEmpty: NonEmptyCatalogue = true;

@@ -36,11 +36,11 @@
     },
     "Places": {
         "title": "Places to see in Austin",
-        "metaDescription": "Sights in and around Austin that our walking tours visit — what each one is, where it is, and which tour takes you there.",
-        "onTours": "Visited on",
-        "openMap": "On the map",
+        "metaDescription": "Austin sightseeing",
+        "seenOnTours": "Can be seen on tours:",
+        "mapLink": "locate on map",
         "day": "Day {n}",
-        "whatWeSee": "What we will see"
+        "youWillSee": "You will see:"
     },
     "Reviews": {
         "title": "Customer reviews",

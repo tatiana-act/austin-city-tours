@@ -1,13 +1,13 @@
 import React, { useCallback, useState, useEffect, useSyncExternalStore } from 'react';
 import { TourProgram } from '@/types/tour';
-import type { PoiView } from '@/lib/poi';
+import type { ProgramPoi } from '@/lib/poi';
 import TourCard from './TourCard';
 import {useTranslations} from "next-intl";
 
 interface ToursSectionProps {
   tours: TourProgram[];
   /** Places per program id, passed straight through to each card. */
-  poiByProgram: Record<string, PoiView[]>;
+  poiByProgram: Record<string, ProgramPoi[]>;
   onBookTour: (tourId: string) => void;
 }
 
@@ -19,6 +19,25 @@ const MOBILE_INITIAL_COUNT = 3;
 const THREE_COLUMN_QUERY = `(min-width: ${350 * 3 + 32 * 2 + 40}px)`;
 // Below this the grid is a single column and cards render compact.
 const MOBILE_QUERY = '(max-width: 768px)';
+
+/**
+ * Reads `show-all-tours-and-scroll` without a cast. `expand` is sent by the
+ * arrival from the places list (architecture §4.1); `UpcomingTourCard` sends
+ * the same event without it, and keeps its old behaviour.
+ */
+function readAnnouncement(
+  event: Event,
+): { tourId: string; expand: boolean } | null {
+  if (!(event instanceof CustomEvent)) return null;
+  const detail: unknown = event.detail;
+  if (typeof detail !== 'object' || detail === null) return null;
+  if (!('tourId' in detail)) return null;
+
+  const { tourId } = detail;
+  if (typeof tourId !== 'string' || tourId === '') return null;
+
+  return { tourId, expand: 'expand' in detail && detail.expand === true };
+}
 
 /**
  * Reads a media query as React state without writing state from an effect.
@@ -56,18 +75,33 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBook
   const [requestedCount, setRequestedCount] = useState(0);
   const visibleCount = Math.max(layoutCount, requestedCount);
 
+  // The program a visitor arrived at from the places list. Kept here rather
+  // than in the card, because the announcement is a window event and only this
+  // component listens to it; the card gets it as a prop and folds it into what
+  // it shows, so nothing writes state after a render (architecture §4.1).
+  const [arrivedTourId, setArrivedTourId] = useState<string | null>(null);
+
   useEffect(() => {
     const handleShowAllAndScroll = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      const tourId = customEvent.detail?.tourId;
-      if (tourId) {
-        setRequestedCount(tours.length);
-        setTimeout(() => {
-          const elementId = tourId + 'tour-card';
-          const element = document.getElementById(elementId);
-          element?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
+      const announcement = readAnnouncement(event);
+      if (!announcement) return;
+      const { tourId, expand } = announcement;
+
+      // Grow only when the wanted program is not on screen. `UpcomingTourCard`
+      // announces a program only in that case anyway, so its path is unchanged;
+      // an arrival by link may well point at a card that is already rendered.
+      const index = tours.findIndex(tour => tour.id === tourId);
+      setRequestedCount(previous =>
+        index >= Math.max(layoutCount, previous) ? tours.length : previous,
+      );
+
+      if (expand) setArrivedTourId(tourId);
+
+      setTimeout(() => {
+        const elementId = tourId + 'tour-card';
+        const element = document.getElementById(elementId);
+        element?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     };
 
     window.addEventListener('show-all-tours-and-scroll', handleShowAllAndScroll);
@@ -76,7 +110,7 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBook
         'show-all-tours-and-scroll',
         handleShowAllAndScroll
       );
-  }, [tours.length]);
+  }, [tours, layoutCount]);
 
   const handleLoadMore = () => {
     // Grows from what is on screen now, not from `requestedCount`, which starts
@@ -99,6 +133,7 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBook
               poi={poiByProgram[tour.id] ?? []}
               onBookTour={onBookTour}
               isCompact={isMobile}
+              hasArrived={tour.id === arrivedTourId}
             />
           ))}
         </div>
