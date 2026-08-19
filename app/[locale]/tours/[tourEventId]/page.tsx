@@ -10,6 +10,8 @@ import { getAllReviews } from '@/app/actions/readAllFeedbacks';
 import { formatDateToUserLocale } from '@/lib/utils';
 import ReviewCard from '@/components/ReviewCard';
 import TourDetailClient from '@/components/TourDetailClient';
+import PoiList from '@/components/PoiList';
+import { getProgramPoi } from '@/lib/poi';
 
 export default async function TourDetailPage({
   params,
@@ -35,6 +37,10 @@ export default async function TourDetailPage({
 
   const price = event.price ?? program.price;
   const bonus = event.bonus ? tUpcoming(event.bonus) : null;
+
+  // The program's list, not the date's — a date has no places of its own, and a
+  // `bonus` is never folded into this list (PRD §6, AC 17).
+  const poi = getProgramPoi(event.tourProgramId, locale);
 
   return (
     <main className="tour-detail-page">
@@ -97,6 +103,8 @@ export default async function TourDetailPage({
         </div>
 
         {program.extra && <div className="tour-highlights">{program.extra}</div>}
+
+        <PoiList poi={poi} headingLevel={2} />
 
         <div className="meeting-point">
           <strong>{tTours('meetingPoint')}</strong>{' '}

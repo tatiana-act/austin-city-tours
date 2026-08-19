@@ -1,10 +1,13 @@
 import React, { useCallback, useState, useEffect, useSyncExternalStore } from 'react';
 import { TourProgram } from '@/types/tour';
+import type { PoiView } from '@/lib/poi';
 import TourCard from './TourCard';
 import {useTranslations} from "next-intl";
 
 interface ToursSectionProps {
   tours: TourProgram[];
+  /** Places per program id, passed straight through to each card. */
+  poiByProgram: Record<string, PoiView[]>;
   onBookTour: (tourId: string) => void;
 }
 
@@ -39,7 +42,7 @@ function useMediaQuery(query: string): boolean {
   );
 }
 
-const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
+const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBookTour }) => {
   const isThreeColumn = useMediaQuery(THREE_COLUMN_QUERY);
   const isMobile = useMediaQuery(MOBILE_QUERY);
 
@@ -93,6 +96,7 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, onBookTour }) => {
             <TourCard
               key={tour.id}
               tour={tour}
+              poi={poiByProgram[tour.id] ?? []}
               onBookTour={onBookTour}
               isCompact={isMobile}
             />

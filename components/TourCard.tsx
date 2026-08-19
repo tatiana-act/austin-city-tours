@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TourProgram } from '@/types/tour';
+import type { PoiView } from '@/lib/poi';
 import Image from 'next/image';
+import PoiList from './PoiList';
 import {useTranslations} from "next-intl";
 
 interface TourCardProps {
   tour: TourProgram;
+  /** Places this program visits. Empty for a program that has none yet. */
+  poi: PoiView[];
   onBookTour: (tourId: string) => void;
   isCompact?: boolean;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tour, onBookTour, isCompact = false }) => {
+const TourCard: React.FC<TourCardProps> = ({ tour, poi, onBookTour, isCompact = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const prevExpanded = useRef(isExpanded);
 
@@ -99,6 +103,8 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onBookTour, isCompact = false
         </div>
 
         {tour.extra && <div className="tour-highlights">{tour.extra}</div>}
+
+        <PoiList poi={poi} />
 
         <div className="meeting-point">
           <strong>{t('meetingPoint')}</strong>{' '}

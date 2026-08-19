@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+    /* Brand palette — the two blues already used throughout the hand-written
+       rules below, so utilities and existing classes cannot drift apart. */
+    --color-brand: #667eea;
+    --color-brand-dark: #764ba2;
+    --color-ink: #333333;
+    --color-ink-muted: #666666;
+
     --animate-float: float 20s ease-in-out infinite;
     --animate-slide-up: slideInUp 1s ease-out forwards;
 

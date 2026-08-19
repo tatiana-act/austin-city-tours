@@ -34,6 +34,14 @@
         "title": "Tours calendar",
         "metaDescription": "See the full schedule of upcoming and recent Austin walking tours. Pick a date and book your spot."
     },
+    "Places": {
+        "title": "Places to see in Austin",
+        "metaDescription": "Sights in and around Austin that our walking tours visit — what each one is, where it is, and which tour takes you there.",
+        "onTours": "Visited on",
+        "openMap": "On the map",
+        "day": "Day {n}",
+        "whatWeSee": "What we will see"
+    },
     "Reviews": {
         "title": "Customer reviews",
         "readMore": "Read in full",
