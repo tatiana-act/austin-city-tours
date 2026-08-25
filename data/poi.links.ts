@@ -5,7 +5,7 @@ import type { PoiId } from '@/data/poi.programs';
 // short links: those are minted by Google when a human shares a pin, so they
 // cannot be generated. Replacing one with a short link is a one-line edit.
 export const poiMapUrl: Record<PoiId, string> = {
-  capitol: 'https://https://maps.app.goo.gl/wG9EQkfPH27FRVZKA',
+  capitol: 'https://maps.app.goo.gl/wG9EQkfPH27FRVZKA',
   old_bakery: 'https://maps.app.goo.gl/YqqNUK1zKNZ8MNYf8',
   millet: 'https://maps.app.goo.gl/Srea7V3YAw9yruGc6',
   st_mary: 'https://maps.app.goo.gl/hrjZdVS9BNi8pCFR6',
