@@ -31,7 +31,14 @@ type PoiRef = { poi: string; day?: number };
 // and EN descriptions exist, so an unwritten place is absent from the data
 // entirely rather than present as a placeholder (PRD v2.2 §5.1, O17).
 export const programPoi = {
-  Acap: [{ poi: 'capitol' }],
+  Acap: [{ poi: 'capitol' }, { poi: 'old_bakery' }, { poi: 'millet' }, { poi: 'st_mary' }, { poi: 'paramount'}, { poi: 'norwood'}, { poi: 'angelina'},{ poi: 'driskill'}],
+  Haust: [{ poi: 'driskill'}, { poi: 'paramount'}, { poi: 'millet' }, { poi: 'txdot' }, { poi: 'dep_housing' }, { poi: 'land_office' }],
+  Brmn: [{ poi: 'history_cen'}, { poi: 'woolridge'}, { poi: 'travis_court' }, { poi: 'hirshfield' }, { poi: 'bremond' }, { poi: 'john_bremond' }, { poi: 'pier_bremond' }, { poi: 'eug_bremond' }, { poi: 'north_cottage' }, { poi: 'chateau' }],
+  Gcrt: [{poi: 'williamson'},{poi: 'wil_court'},{poi: 'onion_dome'},{poi: 'city_post'},{poi: 'gtown_art'},{poi: 'grace_center'}],
+  Rrock: [{poi: 'chisholm'},{poi: 'rr_hall'},{poi: 'woodbine'},{poi: 'rr_post'},{poi: 'sam_bass'}],
+  Auswe: [
+    { poi: 'capitol', day: 1 }, { poi: 'driskill', day: 1}, { poi: 'paramount', day: 1}, { poi: 'old_bakery', day: 1 }, { poi: 'millet', day: 1 }, { poi: 'st_mary', day: 1 }, { poi: 'mayfield', day: 1}, { poi: 'covert', day: 1},{ poi: 'bat_bridge', day: 1},
+    { poi: 'williamson', day: 2 }, { poi: 'wil_court', day: 2}, { poi: 'onion_dome', day: 2}, { poi: 'sw_university', day: 2 }, { poi: 'inner_space', day: 2 }],
 } as const satisfies Partial<Record<ProgramId, readonly PoiRef[]>>;
 
 export type PoiId = (typeof programPoi)[keyof typeof programPoi][number]['poi'];
