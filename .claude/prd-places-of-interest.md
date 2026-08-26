@@ -1,8 +1,8 @@
 # PRD: Places of Interest (POI)
 
-version: 2.3 | date: 2026-08-18 | status: buildable — no open items
+version: 2.4 | date: 2026-08-25 | status: buildable — no open items
 source: owner interview, 21 questions, 2026-08-13, plus the owner's post-interview
-decisions of 2026-08-13 and of 2026-08-16/17/18
+decisions of 2026-08-13 and of 2026-08-16/17/18, plus the two improvements ordered after v2.3
 companion: `.claude/context.md` (v1.0, 2026-08-11) — on conflict, context.md wins
 objections and answers: `.claude/answers.md` — threads `D1`–`D14`, opened by design
 2026-08-16 against PRD v2.2, answered by the owner 2026-08-16/17
@@ -11,15 +11,18 @@ rationale, alternatives weighed, closed items, revision history:
 
 Markers. `[owner, N]` — answer to interview question N. `[owner, decision <date>]` — a
 decision taken after the interview, on a question this document put to the owner; three dates
-carry them, 2026-08-13, 2026-08-17 and 2026-08-18. `[from code]` — read from the repository.
-Nothing here is unsourced.
+carry them, 2026-08-13, 2026-08-17 and 2026-08-18. `[owner, improvement N]` — one of the two
+improvements ordered after v2.3, quoted verbatim in §7.5; **the request carried no date, so
+none is invented** — the same rule §2.1 applies to numbers. `[from code]` — read from the
+repository. Nothing here is unsourced.
 
 **Provenance.** v2.2's ten owner decisions did not reach this document directly: they were
 recorded in `.claude/architecture-places-of-interest.md` §0 (v1.0, 2026-08-13) and are
 relayed here under `[owner, decision 2026-08-13]`. v2.3 carries the owner's answers to the
 design objections `D1`–`D14`, quoted verbatim in `.claude/answers.md` and dated 2026-08-16/17
-(`[owner, decision 2026-08-17]`), plus the answer to O20 of 2026-08-18. No interview answer was
-added, altered or removed in either revision.
+(`[owner, decision 2026-08-17]`), plus the answer to O20 of 2026-08-18. v2.4 adds the two
+improvements of §7.5 and the answers taken on them — five on 2026-08-24, the scope of the
+one-panel rule and the icon-link's name on 2026-08-25 — and nothing else. No interview answer was added, altered or removed in any revision.
 
 Written in English because the interview was in English; context.md is in Russian.
 
@@ -142,11 +145,19 @@ how the result reads. So if the 60-day reading meets ≥20 impressions and misse
 is the first thing to look at. Recorded as an input to reading the result — not a prediction,
 and not an objection: the string is the owner's.
 
+**What the page competes with, recorded here because it sits on this threshold too.** Since
+v2.4 the description of every place is server-rendered into the homepage as well
+`[owner, decision 2026-08-24]`, so the text this page must rank with is repeated on the
+strongest page of the same site → **R18**. It changes nothing in the table above and no
+instrument separates the two pages beyond Search Console's own per-page filter, which §2.1
+already uses.
+
 **Deliberately not claimed as measurable:** the share of tour-description readers who reach
 the place list. That entry point is an accordion on `/` and no custom event is emitted
 anywhere in the codebase `[from code]`, so the number cannot be produced without new code.
-The footer link added in v2.2 (§7.1) does not change this: it is a second entry point, not
-an instrument, and attributing arrivals between the two would need the same missing event.
+The footer link added in v2.2 (§7.1) does not change this, and neither does the popup's
+icon-link added in v2.4 (§7.5): they are further entry points, not instruments, and
+attributing arrivals between three routes needs the same missing event.
 
 Two readings this document applied rather than assumed — the threshold is scoped to the
 page and not the site, and day 30 is a weekly rate and not a 30-day total — are stated with
@@ -167,7 +178,8 @@ feature's interview did not revisit them.
   one page of places with map links, so they can see where they will be taken without me
   explaining it. → AC 8, 9, 12.
 - **US3 — visitor on a date page.** As someone who arrived on a specific date, I want the
-  place list right there, so I do not have to go and find the program. → AC 16, 17, 24.
+  place list right there, so I do not have to go and find the program. → AC 16, 17, 24. Since
+  v2.4 a place there also tells me what it is, without leaving the page → AC 28.
 - **US4 — searcher.** As someone searching for what to see in Austin, I want to land on
   this site. → AC 12, 13, 14. **Served for the one named query only**, not for individual
   place names; no acceptance criterion covers the place-name case, deliberately (§2).
@@ -238,7 +250,7 @@ Fields:
 | Field | Required | Per locale | Notes |
 |---|---|---|---|
 | name | yes | **yes**, RU + EN | |
-| short description | yes | **yes**, RU + EN | `[owner, 3]` short by design |
+| short description | yes | **yes**, RU + EN | `[owner, 3]` short by design. **Serves two layouts again since v2.4** — a paragraph on the list page and the body of the popup (§7.5); the single-layout premise that made its length a non-question in v2.3 is gone. Since the panel is server-rendered, its length is also what the homepage's HTML weighs per place (R18). Still no number: one is not invented before the texts exist, and both readers of this field — a "tiny" panel and a page budget — are watched by design and by the architect rather than bounded here |
 | map link | yes | **no — one per place** | `[owner, decision 2026-08-13]`. **Google Maps** `[owner, decision 2026-08-13]`, chosen from the two options in `[owner, 19]`. Matches the precedent in the repo: every `meetingPointLink` today is a `maps.app.goo.gl` short link `[from code]`. Provisional and reversible; [D §5] prices the reversal — one link per place, so N edits at whatever size the catalogue has reached |
 | photo | **no** | — | `[owner, 13 revised]` deferred; entries must be able to gain one later without being rewritten — R9 |
 
@@ -439,7 +451,8 @@ not because `Acap` meets at its south gates. No deduplication, no cross-linking.
 
 ## 7. Views
 
-Three views ship together; §7.4 names the strings they add.
+Three views ship together; §7.4 names the strings they add, and §7.5 carries the two
+improvements ordered after v2.3.
 
 ### 7.1 Places list page
 
@@ -448,7 +461,7 @@ One page listing all places `[owner, 3]`. Per entry, in this composition
 
 | Element | Shown as |
 |---|---|
-| Place name | plain text — **not a link**, here or in any other view |
+| Place name | plain text on this page — **not a link, and not a control** `[owner, decision 2026-08-17]`. In the two program views the name is clickable since v2.4, and opens the popup rather than navigating (§7.5) |
 | Short description | shown on this page only, and always present (§5.1) |
 | Map link | a labelled localised string, «показать на карте» / "locate on map" (§7.4). The only point in the feature where a visitor leaves the site |
 | Programs that visit it | each program's **full name** — `TourProgram.title` `[from code]`, not the short form `shortTitle` — and each name is a link (below) |
@@ -459,8 +472,10 @@ No photos `[owner, 13 revised]`, no availability marker `[owner, 11]`.
 two locales therefore order the page differently; that is what an alphabetical list is for —
 a reader looks a name up under its own first letter — and the criteria do not depend on the
 order (AC 26). AC 4 is untouched: it fixes the order of ids **in the data files**, which is
-not the order of output. One consequence of the alphabet is visible and accepted rather than
-fixed — the RU page reads as two alphabets, Latin names before Cyrillic ones → **R17**.
+not the order of output. What the alphabet does to a mixed-script catalogue is **R17**: on the
+data as it stands the RU page sorts as one alphabet, because every Russian name is Russian
+`[from code, data/poi.ru.ts]`; a Latin name used as a Russian name would sit in a tail below
+«Я», which is the sort working, not failing.
 **Named, not resolved:**
 `.claude/architecture-decisions-places-of-interest.md` §2 weighed these same options and
 rejected the alphabet; that document now disagrees with the owner and is the architect's to
@@ -526,8 +541,19 @@ gives the visitor nothing to click.
 homepage accordion; permanent program pages remain out of scope (§4).
 
 **Names only** `[owner, decision 2026-08-17]`. The list carries the caption «Вы увидите» /
-"You will see" (§7.4) and then the place names. **No short descriptions** — they live on the
-list page and nowhere else — **no map links**, and the name is not a link. Checked by AC 15.
+"You will see" (§7.4) and then the place names: no short descriptions **in the list itself**,
+no map links, and no navigation from a name. Checked by AC 15.
+
+**Since v2.4 a name is clickable and opens a popup that carries its description** (§7.5,
+AC 28) `[owner, improvement 2]`. This narrows the v2.3 answer rather than reversing it: the
+list still shows names, and the description reaches this view **only on demand**. What is set
+in this typeface, and what tells a clickable name from the inert one on the list page, is
+design's (§10).
+
+**Typography** `[owner, improvement 1]`: the place list is set in the same face as the
+`highlights` block directly above it — «Вам понравится» / "You will love it" `[from code]` —
+and not in the meeting-point style it uses today. This document states the relation only;
+the face itself, and every other property of the block, is design's (§10). Checked by AC 27.
 
 **The full list stands between the program's description and the booking button, and that is
 accepted** `[owner, decision 2026-08-17]`: no truncation, no "first N", no "the rest is on
@@ -551,13 +577,17 @@ Same shape as R5, different neighbour → **R13**.
 grouping as §7.2 shows it, so a visitor does not have to go find the program.
 `[owner, 21]` Identical content to §7.2 in v1 — neither free order nor the day grouping
 licenses the two views to disagree (AC 16, AC 24). **Identical composition too**
-`[owner, decision 2026-08-17]`: the same caption, names only, no descriptions, no map links,
-the name not a link.
+`[owner, decision 2026-08-17]`: the same caption, names only, no map links in the list.
+**Identical behaviour since v2.4** `[owner, improvement 2]`: the same popup on the same click,
+and the same typography rule (§7.2, §7.5). Two views of one list may not disagree, and that now
+covers what a click does, not only what is printed.
 
 ### 7.4 Strings this document names
 
 Visitor-facing strings were being invented in `.claude/architecture-places-of-interest.md` §6
-rather than required here. **The feature adds six, and all six are named below.** They are
+rather than required here. **The feature adds six strings, all six named by the owner**; a
+seventh slot — the icon-link's accessible name — is filled by one of them rather than by a new
+string. They are
 slots of this document — naming them is not the architect's job and not the coder's. How they
 are keyed, and their punctuation and capitalisation, is the coder's business; that they come
 through next-intl is AC 21.
@@ -570,11 +600,26 @@ through next-intl is AC 21.
 | Caption above the programs in a catalogue entry (§7.1) | *«Можно увидеть на экскурсиях»* | "Can be seen on tours" | EN `[owner, decision 2026-08-18]`; RU proposed here |
 | Day-group label (§7.2, §7.3, AC 24) | *«День {n}»* | "Day {n}" | EN `[owner, decision 2026-08-18]`: «Day 1 / Day 2»; RU proposed here |
 | `description` metadata of the list page — the line under the title in search results | *«Достопримечательности Остина»* | "Austin sightseeing" | EN `[owner, decision 2026-08-18]`; RU proposed here |
+| Accessible name of the popup's icon-link (§7.5) | *the page-title row above, verbatim* | *the page-title row above, verbatim* | `[owner, decision 2026-08-25]` |
 
 **The day label is one string with a number in it, not one string per day**
 `[owner, decision 2026-08-18]` read against AC 24: «Day 1 / Day 2» is "Day {n}" at n = 1 and
 n = 2. Two separate strings would repeat the `bonus` trap — every further day costing an edit
 to both `messages/*.json` plus a deploy (R11, context.md GLOSSARY).
+
+**The last row is v2.4's, and it is a pointer, not a seventh string** `[owner, decision
+2026-08-25]`: «accessible name for the link should be the title of the places page». An icon
+carries no text, so the link needs a name a screen reader can read, and that name **is** the
+page title — the same key, read twice, not copied. Written as a pointer on purpose: two rows
+holding the same words would be two sources for one string, and AC 13 ties the RU title to the
+query the page is measured on (§2.1), so a copy could drift away from the thing it is measured
+against. The consequence of the pointer is the opposite and is accepted: change the title and
+the link's name changes with it.
+
+**No close control is required.** Design decided the panel has no visible one, and that stands;
+the owner named a label «закрыть» / "close" in advance, «про запас», for the case where design
+ever adds one. A string with nothing to label is not a slot of this feature, so it is not in
+this table — it is recorded in [D §5], with the condition under which it applies.
 
 **The three RU halves in italics are this document's proposals, not the owner's word.** Same
 route the other strings took: proposed here, replaced by one word from him whenever he says it.
@@ -588,6 +633,84 @@ owner named the string, not its typography, and that is not a question to put ba
 The list page needs no caption of its own — its `h1` is one. The existing `whatWeSee`
 («Что увидим») is superseded by the caption above, and `openMap` («На карте») by the map-link
 string.
+
+### 7.5 The two improvements ordered after v2.3
+
+Quoted as given, because everything below is read off them:
+
+> 1) I want POI listed at the program card and the tour card to be printed with the same font
+> used for section above. Now we use the same font we use for the meeting point.
+>
+> 2) I want every POI listed at tour card and program card on click to display the tiny popup.
+> Popup contain description for the clicked POI (the same locale) and an icon-link that
+> navigates to places page and scrolls to the same POI record at that page.
+
+"Program card" and "tour card" are the two views of §7.2 and §7.3 — the homepage accordion and
+the date page. "Section above" is the `highlights` block that stands directly above the place
+list in both `[from code]`.
+
+**Improvement 1 — typography.** The place list is set like the block above it, not like the
+meeting point. Stated as a relation and nothing more: which face that is, and every other
+property of the block, is design's (§10). The owner settled a question that normally belongs to
+design, and it is recorded as his, not converted into a design rationale. Checked by AC 27.
+
+**Improvement 2 — the popup.** Clicking a place in either view opens a small panel carrying
+**that place's short description in the locale being viewed** — the same record the list page
+prints (§5: one place, described once) — **and an icon-link to the places list page that
+arrives at that place's own entry** (AC 28, AC 29).
+
+Five answers taken on it the same day `[owner, decision 2026-08-24]`:
+
+| Question put | Answer | What it settles |
+|---|---|---|
+| Does the same description text now live in two places — the panel and the list page? | «да, описание POI показывается и в описании программы/тура, и на отдельной странице places» | Yes. **This is what finally supersedes the D1 answer**, and only in the direction the improvement takes: in v2.3 the description was absent from these two views altogether; now it is there on demand, and the list itself still prints names only (AC 15). One record, two places it is read from (§5) |
+| Does the popup show the map link? | «ссылку на карту всплывающий блок не показывает» | The panel holds the description and the icon-link, nothing else. **This keeps the D2 decision in force rather than bending it:** the map link still lives only on the list page, so neither of these two views can send a visitor off-site, and the booking flow stays uninterrupted — which is what the objection about external departures was about |
+| What happens on the collapsed mobile teaser? | «мобильный тизер без изменений» | Nothing. There is no place list in the teaser, so there is no popup either; the improvement lives where the list already is. **This confirms an existing limit, it does not add or relax one** — "the collapsed branch does not change" is recorded in `.claude/architecture-places-of-interest.md` §4 and its check A4, and the single relaxation on record stays the arrival of AC 25, which opens the target card. A place is still shown in no form on the teaser |
+| Can two panels be open at once? | «блок закрывается при клике по другому месту», and on the scope of that rule `[owner, decision 2026-08-25]`: «локального состяония достаточно» | At most one **per list**. A click on another place in the same list closes the open panel and opens that place's; the rule does not reach across lists. Consequence, accepted: the homepage can hold several open panels at once — one per expanded program card, two or more on a screen — while a date page has one list and therefore one panel. A rule about **state**, not about form, and a local state at that |
+| Is the panel's text rendered on the server, or built on the click? | «да, текст описаний попадает на главную страницу на сервере, ведь описание статическое, я считаю, что так будет быстрее работать» | **On the server.** The reason is his and is recorded with the decision: the text is static, so serving it with the page is faster than fetching it per click. What this buys and what it costs is below |
+
+**No visible close control** — design's decision, and it stands. The owner named a label for
+one «про запас» `[owner, decision 2026-08-25]`; it labels nothing today, so it is kept in
+[D §5] with the condition under which it would apply, and §7.4 stays a list of strings the
+feature actually shows.
+
+**What the owner did not settle, and what happens to it.** Every other way the panel can close —
+a click outside it, Escape, a second click on the same place, navigating away — is design's to
+decide; it is interaction form, nothing product-level turns on it, and no item is opened. The
+one-panel rule above binds design; the rest is theirs (§10).
+
+**What the popup is not.** Not a page per place: no URL, no route, nothing in the sitemap —
+§4's non-goal and AC 20 both stand, and AC 29 states that in checkable form. Not a second place
+to write about a site either: the text is the one record's description (§5), so these views and
+the list page cannot drift apart.
+
+**The text is server-rendered** `[owner, decision 2026-08-24]`, with the owner's own reason:
+the description is static, so shipping it with the page is faster than fetching it on the click.
+This was the last thing about the panel that was open; it is a decision, not a boundary, and
+what it settles is not only speed.
+
+- **What it buys, beyond the reason given.** The panel's content becomes **present in the
+  rendered HTML**, so half of AC 28 stops being an eye-check and becomes a terminal one.
+  *Present is not visible:* markup hidden by default stays hidden without JavaScript, so a
+  visitor with JS off has the text in the document and no way to open it — the same as before
+  the improvement, minus nothing. This document claims presence and nothing more.
+- **What still holds, restated because it changed nature.** "The list prints names" (AC 15) used
+  to be a property of the data — the description was not there at all. It is now a property of
+  **display**: the text sits in the document beside every entry and is not shown until the panel
+  opens. Checking on rendered HTML therefore has to tell *present* from *displayed*, which is
+  what the architect's A9 separates; AC 15 says which of the two it means.
+- **What it costs → R18.** The same description text now sits in the server-rendered HTML of
+  **two indexable pages** — the homepage and `/places/` — and the homepage is the stronger of
+  the two. §2.1 makes `/places/` accountable for ranking on one named query, so the page has to
+  win with text its own site repeats on a page that outranks it. Recorded as the owner's cost,
+  not as an objection: he weighed speed and took it.
+
+**What this improvement costs, stated rather than absorbed.** The objection D2 was raised on —
+one attribute shown through two affordances — comes back in a smaller form and is accepted: the
+same place name is inert on the list page and clickable in the two program views. A visitor has
+to be able to tell which is which before clicking, and that is design's (§10). Separately, the
+short description now serves two layouts again (§5), so "short by design" is once more a field
+without a stated limit, this time with a panel called "tiny" to fit into.
 
 ---
 
@@ -677,6 +800,13 @@ architect's (`.claude/architecture-places-of-interest.md` §7):
 - **The remaining named programs, then the other eight**, in whatever order the guide's texts
   arrive — one place at a time, since the queue admits places, not programs.
 
+**The two improvements of §7.5 are not content and do not queue behind it.** They change how
+an existing list is shown and what a click on it does, so they can be built and released
+independently of which places have descriptions — with one caveat that follows from the data:
+a panel can only be opened on a place that exists, so AC 28 and AC 29 become checkable at the
+same moment the first described place ships. How they are cut into branches is the architect's,
+like the rest of §7 there.
+
 One dependency worth knowing before the first release, because it decides what is checkable
 when `[from code]`: AC 25's harder half — arriving at a program whose card the homepage did not
 render — cannot be observed while `Acap` is the only linked program, because `Acap` is always
@@ -751,7 +881,9 @@ context.md's open items.
 8. One page exists listing every place; each entry shows the place name as plain text, its
    short description, the map link as the labelled string of §7.4, and the **full** name of
    every program that visits it — `TourProgram.title`, not the short form `shortTitle`
-   `[owner, decision 2026-08-17]`. The place name is not a link, here or anywhere else.
+   `[owner, decision 2026-08-17]`. **On this page the name is neither a link nor a control** —
+   nothing happens when it is clicked. (In the two program views it opens the panel of AC 28;
+   the name is a link in no view at all.) Each entry also carries the anchor AC 29 requires.
 9. Every map link, opened manually, lands on the correct location. Checked **once per
    place** — the link is not localised since v2.2 `[owner, decision 2026-08-13]`, so there is
    one link to open, not two. Checked before merge; no automation claimed.
@@ -799,9 +931,18 @@ context.md's open items.
 ### 9.3 Program and date views
 
 15. Each program's description lists its places in the homepage accordion (§7.2) — the
-    caption of §7.4 followed by the place names, **with no short descriptions, no map links
-    and no link on the name** `[owner, decision 2026-08-17]` — in the program's own stable
-    order (AC 7), with the day grouping where the program has one (AC 24).
+    caption of §7.4 followed by the place names, **with no short descriptions and no map links
+    in the list, and no navigation from a name** `[owner, decision 2026-08-17]` — in the
+    program's own stable order (AC 7), with the day grouping where the program has one (AC 24).
+    Since v2.4 a name is a control that opens the panel of AC 28, and this criterion says
+    **what the list displays, not what the document contains**. The distinction is load-bearing
+    now that the panel's text is server-rendered `[owner, decision 2026-08-24]`: the description
+    of every listed place **is present in the HTML** beside its entry, and none of it is
+    **displayed** in the list until a panel opens. So this criterion is checked by looking at
+    the list — names, no descriptions, no map links — while presence of the panel text is
+    checked in the HTML by AC 28. A grep that finds a description in the rendered page proves
+    nothing against this criterion; a description showing in the list fails it. The architect
+    separates the two checks as A9.
     **How to check it until GitHub issue #53 is fixed** `[owner, decision 2026-08-17]`: the
     homepage renders the desktop shape on the server, so only the first three program cards
     are expanded in the rendered HTML `[from code]`, while context.md question 17 requires
@@ -809,13 +950,40 @@ context.md's open items.
     three and take the rest from AC 16 — the date page carries the list in its HTML always.
     The defect itself is out of scope here: it predates this feature and is fixed on its own
     branch.
-16. A date page lists the same places, in the same order, **in the same day grouping and in
-    the same composition** (AC 15), as its program. Free order removes the obligation to match
+16. A date page lists the same places, in the same order, **in the same day grouping, the same
+    composition and — since v2.4 — the same behaviour on a click** (AC 15, AC 28), as its
+    program. Free order removes the obligation to match
     the route; it does not permit the two views of one list to disagree. Checked by opening a
     program in the accordion and its date page side by side.
 17. A date's `bonus` renders exactly as it does today, in its current position, and never
     inside the place list — including when the bonus names a place that is also in the
     catalogue.
+27. In both views the place list is set in the same typeface as the `highlights` block directly
+    above it, and not in the meeting-point style it uses today `[owner, improvement 1]`.
+    Checked by looking at the two blocks in one screen, in both views.
+28. Clicking a place in either view opens a panel carrying **that place's short description in
+    the locale being viewed, and an icon-link (AC 29) — and no map link**
+    `[owner, improvement 2]`, `[owner, decision 2026-08-24]`. Two halves, checked differently:
+    the panel's **text is present in the rendered HTML** for every listed place, in the locale
+    served — checkable from a terminal — and the panel is **displayed** only after the click.
+    Presence without display is the intended state, not a defect (§7.5).
+    **One panel per list** `[owner, decision 2026-08-25]`: clicking a second place in the same
+    list closes the first panel and opens the second. The rule does not reach across lists, so
+    a homepage with several expanded program cards can show one open panel in each; a date page
+    has one list and therefore one panel. Checked by opening two places in one list, then one
+    place in each of two cards.
+    The text matches the list page's description for the same place, character for character
+    (§5 — one record). Nothing to check on the collapsed mobile teaser: it shows no place list
+    and therefore no panel `[owner, decision 2026-08-24]`.
+29. Every entry on the list page carries a stable anchor, and the icon-link in the panel brings
+    the visitor to the list page **at that place's entry** `[owner, improvement 2]`. Checked in
+    both locales, from both views, on a place that is not the first entry on the page. The
+    link's accessible name is the list page's own title, from the same key that renders it
+    `[owner, decision 2026-08-25]` (§7.4) — checked by reading the name off the rendered link,
+    not by finding the words somewhere in the markup.
+    **No new URL:** the target is the existing list-page address carrying a fragment, so AC 20
+    stands and `sitemap.ts` is untouched — the same reading applied to `#<id>tour-card` in
+    AC 25, and anchors are deliberately absent from the sitemap (context.md CONSTRAINTS).
 
 ### 9.4 Non-regression
 
@@ -843,9 +1011,11 @@ context.md's open items.
 
 ---
 
-## 10. Boundary with the architect
+## 10. Boundary with the architect and with design
 
-This document states *what* must be observable, not *how*. Left to the architect: where the
+This document states *what* must be observable, not *how*, and since v2.4 that applies to
+design as well as to the architect — the second improvement is an interaction, and most of an
+interaction is form. Left to the architect: where the
 place data lives and in what shape, how a place is linked to a program, how the list page is
 routed and rendered, and how the sitemap entry is produced. The constraints that bind those
 choices are stated as requirements, not as designs: RU/EN parity as a pair (AC 3, 4), one
@@ -873,6 +1043,31 @@ the mechanism chosen and §8 A2 the evidence that it fires.
   holds it in the build, by a type assertion inside the linking table (§2.6 there). This
   document required the state not to exist; how it is prevented was, and stays, his.
 
+**v2.4 adds one more for the architect, and closes two that were his for a day** (§7.5):
+
+- **Anchors on the catalogue entries, and arrival at one** (AC 29). This document requires a
+  stable anchor per entry and that the visitor lands on the right one; where the scrolling
+  lives is his, and it is the mirror of the mechanism AC 25 already needed.
+- **Where the state of the open panel lives — answered by the owner, not by this document**
+  `[owner, decision 2026-08-25]`: local state is enough, so the rule binds one list and not a
+  page (AC 28). What remains his is only how that state is held.
+- **Whether the panel's text reaches the server-rendered HTML of `/` — answered**
+  `[owner, decision 2026-08-24]`: it does, for speed. This document no longer waits on it; what
+  it did with the answer is R18 and the presence-versus-display split in AC 15 and AC 28.
+
+**And three for design, named so they are not lost between documents** (§7.5):
+
+- **The typeface relation of improvement 1** — this document states "the same as the block
+  above"; which face that is, and everything else about how the list looks, is design's.
+- **The panel itself** — size, position, whether it has a heading or a close control, what it
+  does on a narrow screen. The only rules from here are its contents (AC 28) and one open at a
+  time.
+- **Every other way it closes** — click outside, Escape, a second click on the same place,
+  navigating away. The owner did not speak to these and this document does not invent them.
+- **Telling a clickable name from an inert one.** The same place name is a control in the two
+  program views and plain text on the list page; a visitor must be able to see which before
+  clicking. This is the residue of the D2 objection, accepted with the improvement.
+
 ---
 
 ## 11. Risks
@@ -883,7 +1078,9 @@ kept their numbers and their rows** — neither closed, both changed shape and s
 both say what they used to say. **R13, R14 and R15 are new in v2.2.**
 **R4 is closed in v2.3**: the catalogue now links to programs (§7.1, AC 25), so the absence it
 named — a place can say a program's name but cannot reach it — no longer exists. Its row is
-removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3.**
+removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3, R18 in v2.4;
+R17 was rewritten in v2.4 on measured facts** — it kept its number and its row, and it says
+something narrower than it used to.
 
 | # | Risk | Source | Severity |
 |---|---|---|---|
@@ -895,11 +1092,12 @@ removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3.**
 | R9 | **Photos deferred.** Entries must be able to gain a photo later without being rewritten. `images.unoptimized: true` `[from code]` means nothing resizes images automatically, so whenever photos arrive, sizing is a manual content step and a Core Web Vitals exposure. | `[owner, 13]`, `[from code]` | low |
 | R10 | **The 2027 reviews link needs a dimension that does not exist.** `Reviews!A:F` column C is a *program* id, and `FeedbackForm` does not collect a place. Linking reviews to places is not a display change. | `[from code]`, context.md q31 | low (later) |
 | R11 | **`bonus` as a mechanism is unfit for city happenings.** A rodeo on one Saturday needs a one-off label, but `bonus` holds a translation key requiring edits to both `messages/*.json` plus a deploy. Untouched by decision, so the cost stays. AC 24's day label is deliberately built the other way — a parameter, not a key per label — so this feature does not add a second instance of it. | `[owner, 15, 17]`, context.md GLOSSARY | low (deferred) |
-| R13 | **Duplication with the program's own copy.** `TourProgram.highlights` and `TourProgram.description` `[from code, types/tour.ts]` already name sights in prose, so one accordion can name the same site twice — once in the program text, once in the place list. Kept deliberately `[owner, decision 2026-08-13]`, and **both lists confirmed to stay** `[owner, decision 2026-08-17]` — provisionally: the owner's word is «пока». Same shape as R5, same consequence — it will read as a bug to anyone who did not read this. The duplicated on-page text shrank in v2.3: the place list in the accordion is now names only (§7.2), so what repeats is a name, not a description. | `[owner, decision 2026-08-13]`, `[owner, decision 2026-08-17]`, `[from code]` | low |
+| R13 | **Duplication with the program's own copy.** `TourProgram.highlights` and `TourProgram.description` `[from code, types/tour.ts]` already name sights in prose, so one accordion can name the same site twice — once in the program text, once in the place list. Kept deliberately `[owner, decision 2026-08-13]`, and **both lists confirmed to stay** `[owner, decision 2026-08-17]` — provisionally: the owner's word is «пока». Same shape as R5, same consequence — it will read as a bug to anyone who did not read this. The duplicated on-page text shrank in v2.3: the place list in the accordion is now names only (§7.2), so what repeats is a name, not a description. **v2.4 makes that conditional again:** the popup shows the same description the list page prints `[owner, decision 2026-08-24]`, so if the mechanism renders panels into the homepage's HTML, what repeats between `/` and `/places/` is a paragraph per place rather than a name. Which way it goes is the architect's and is owed back (§10); the severity above is written for the smaller case. | `[owner, decision 2026-08-13]`, `[owner, decision 2026-08-17]`, `[from code]` | low |
 | R14 | **Which places belong is a judgment with no test.** New in v2.2. AC 2 is withdrawn and `[owner, 1]` is a description, not a criterion `[owner, decision 2026-08-13]`: nothing in these documents can say a proposed place does not belong. Membership is judged outside the project (§5.1) and is revisable (§13 item 8). What this does **not** cost, since O13 was answered: coverage still has a boundary — the owner plans to cover **all 12 programs** `[owner, 14]`, `[owner, decision 2026-08-13]`, and the program set is finite and enumerable `[from code]`, so "every program has a list" remains a sayable completed state even though "the catalogue holds the right places" does not. What remains: the criteria can check an entry, never the set. Mitigated by shape, not by process — a removal costs no URL (§5). **Severity is this document's read**, lowered once O13 closed. | `[owner, 1]`, `[owner, 14]`, `[owner, decision 2026-08-13]` | low *(medium before O13 was answered)* |
 | R15 | **A second day that exists on the page and nowhere in the schedule.** New in v2.2. Only day 1 is scheduled; day 2 is not marked in the calendar at all `[owner, decision 2026-08-13]`, while the place list shows a "Day 2" group `[owner, decision 2026-08-13]`. Two observable consequences, both accepted: a visitor sees day-2 places on a page whose date is a single day, with the second date stated nowhere; and the calendar shows a two-day program as a one-day entry. A third is mechanical and worth knowing before the first such date is added `[from code]`: past-versus-upcoming is decided from that single `date`/`time` via `parseCentralTime`, so the event leaves "upcoming" once day 1 has passed — while day 2 is still ahead. **Dormant today** — no `Auswe` date exists in `data/upcomingTours.ts` or `data/RecentTours.ts` `[from code]`; it activates the first time one is scheduled. | `[owner, decision 2026-08-13]`, `[from code]` | low |
 | R16 | **A place and a meeting point can be the same physical site under two names.** §6 forbids any link between the two, so a date page can show one object twice, in two blocks, under two names — `landOffice` in the place list is today's Capitol Visitors Center, which is also `Haust`'s meeting point `[from code]`. Neither R5 (bonus) nor R13 (`highlights`) covers this neighbour. **Dormant:** only `capitol` is linked in the data today `[from code]`; it activates when that place ships. **No owner answer exists** — design raised it as thread D14 and it went unanswered, and choosing one name for the object is an open question of the architecture document (§10 item 6 there). Nothing here treats it as settled: what is settled is only that the two entities are not linked `[owner, 16]`. | `[owner, 16]`, `[from code]` | low |
-| R17 | **The Russian catalogue reads as two alphabets.** New in v2.3. The order is alphabetical by the displayed name (§7.1, AC 26) `[owner, decision 2026-08-17]`, and in the Russian collation Latin sorts before Cyrillic — while roughly a third of the compiled set carries a Latin name in Russian too (`Old Bakery & Emporium`, `Millett Opera House`, `Norwood Tower`, `Austin History Center`, `North Cottage`, `Chateau Bellevue`, `Southwestern University`) `[from code, .claude/architecture-places-of-interest.md §9]`. So the RU page runs one alphabet and then another. This is a consequence of the owner's decision, recorded rather than fixed — **and recorded so that it is not filed as a defect**: it is the correct output of an alphabetical sort, not a sorting bug. It changes nothing the criteria check (AC 26 asserts the order, not its pleasantness). Reversing it would need a decision the owner has not been asked for. | `[owner, decision 2026-08-17]`, `[from code]` | low |
+| R17 | **A Latin-named place would sit apart from the Russian alphabet.** Opened in v2.3 on two wrong facts and **rewritten here on measured ones.** Corrected: in the Russian collation **Cyrillic sorts before Latin**, not the other way round — `Intl.Collator('ru')` on full ICU orders «Аврора, Капитолий, Яблоко, Norwood Tower, Old Bakery» `[from code]`, so a Latin name lands in a tail after the Cyrillic run, not ahead of it. Corrected: the premise does not hold on the shipped data — **none of the 37 Russian names begins with a Latin letter** `[from code, data/poi.ru.ts]`; the Russian form comes first and the Latin one is parenthesised after it («Старая пекарня и лавка (Old Bakery and Emporium)»), so the page sorts as one alphabet from top to bottom. The earlier count came from the draft name table in the architecture document, which is material and not data. **Kept, not deleted, because its purpose survives:** if any place ever takes a Latin string as its *Russian* name, the RU page grows a tail of such entries below «Я», and that is the correct output of an alphabetical sort rather than a sorting bug — this row is what stops it being filed as one. Condition of return: a Russian name whose first character is Latin. | `[owner, decision 2026-08-17]`, `[from code, data/poi.ru.ts]` | low — **not realised on the current set** |
+| R18 | **The catalogue's own text is repeated on a page that outranks it.** New in v2.4. The panel's description is server-rendered `[owner, decision 2026-08-24]`, so the same paragraph per place sits in the HTML of two indexable pages — the homepage and `/places/` — while §2.1 makes `/places/` accountable for ranking on one named query. A site competing with itself for the same text usually ends with the search engine picking one page, and the homepage is the stronger candidate. **Two amplifiers, both `[from code]`:** until issue #53 is fixed the homepage ships three expanded cards in its server HTML, so it carries the descriptions of every place of those three programs on every device; and the weight of `/` grows with each described place of those programs, which nothing in this project measures (context.md names Core Web Vitals as part of the search surface). **Accepted, not mitigated:** the owner weighed speed and took it, and the alternative — building the panel on the click — was the thing he declined. **Severity is this document's read**, and it is the only risk here that touches the measured goal directly. | `[owner, decision 2026-08-24]`, `[from code]` | medium |
 
 ### 11.1 Combinations that change the decision
 
@@ -927,6 +1125,11 @@ removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3.**
   label and a tour date all render together. No
   fix happens in this feature (naming is out of scope, `bonus` is a non-goal), so the pair is
   carried, not treated. Both surface on the date page, which is where a later fix would go.
+- **R13 + R18.** Both are duplication and they now stack on one page: the homepage names a
+  site in the program's prose, again in the place list, and since v2.4 carries its whole
+  description in the same HTML. R13 is about what a reader sees twice, R18 about what a search
+  engine indexes twice; the second is the one that touches the measured goal. Recorded as a
+  pair because a later fix — if one is ever wanted — would be the same edit for both.
 - **R9 + R10.** Both are content-model debts payable in later versions; neither should
   influence the v1 decision, and they are named here so they are not counted into it.
 
@@ -934,14 +1137,16 @@ removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3.**
 
 ## 12. Open items
 
-O0–O20 are closed; the records are in [D §3]. Numbers continue from there and are not reused.
+O0–O21 are closed; the records are in [D §3]. Numbers continue from there and are not reused.
 
-**None.** The architect's review of PRD v2.3 (`.claude/architecture-places-of-interest.md`
-v1.1, §10 items 7–9) raised two, O19 and O20, and the owner answered both the same day; what
-each settled is stated where it applies — §7.4 and §2.1 for the strings, AC 25 and §10 for the
-arrival. Of the design objections in `.claude/answers.md`, eleven of fourteen carry an owner
-answer and v2.3 carries those answers; the other three (D11, D12, D14) need none — their
-remainders are design's, or already stated in AC 9 and R16.
+**None.** The one v2.4 raised, O21, the owner answered: the icon-link is named by the page
+title (§7.4), and the close label he added «про запас» labels a control design has not built,
+so it is held in [D §5] rather than in the specification. The proposal this document had made
+for the link («на странице мест») is superseded by his word.
+
+**The other questions v2.4 raised were answered the same day and are not items.** What each
+settled is recorded where it applies — the table in §7.5 carries the questions, the answers
+verbatim and their consequences.
 
 What remains before release is content (R2), not decisions.
 

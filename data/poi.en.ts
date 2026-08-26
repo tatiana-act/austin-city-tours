@@ -49,11 +49,6 @@ export const poiEn: Record<PoiId, PoiText> = {
     description:
       "The 1933 Dewitt C. Greer State Highway Building at 125 E. 11th Street has housed the Texas Department of Transportation since it opened. Designed by Carleton Adams, this eight-story Moderne building sits a block east of the Capitol.",
   },
-  dep_housing: {
-    name: 'Texas Department of Housing and Community Affairs',
-    description:
-      "Created in 1991, the Texas Department of Housing and Community Affairs is the state's lead agency for affordable housing and community assistance, headquartered in a 1953 Modern building at 221 E. 11th Street across from the Capitol.",
-  },
   land_office: {
     name: 'General Land Office Building',
     description:

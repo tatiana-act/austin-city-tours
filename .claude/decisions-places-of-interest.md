@@ -6,8 +6,10 @@ requirement — an implementer who reads only the PRD is not missing an instruct
 
 Markers are the PRD's: `[owner, N]` — answer to interview question N (21 questions,
 2026-08-13, in English). `[owner, decision <date>]` — a decision taken *after* the interview,
-on a question the PRD put to the owner; three dates carry them — 2026-08-13, 2026-08-17 (the
-answers to the design objections, quoted verbatim in `.claude/answers.md`) and 2026-08-18.
+on a question the PRD put to the owner; the dates carrying them are 2026-08-13, 2026-08-17 (the
+answers to the design objections, quoted verbatim in `.claude/answers.md`), 2026-08-18 and
+2026-08-24/25. `[owner, improvement N]` — one of the two improvements ordered after PRD v2.3
+and quoted verbatim in PRD §7.5; the request carried no date and none is invented.
 `[from code]` — read from the repository.
 
 **The interview has never been repeated.** Across every revision, no `[owner, N]` statement
@@ -32,6 +34,7 @@ would destroy the only guarantee these documents make about their own facts.
 | **v2.1** | Slicing moved out of the acceptance criteria into its own §8 Release plan — it is a plan, not an observable criterion — and the sections below it shifted by one. The measurement criterion (v2.0 AC 24) was deleted: it asserted a condition already satisfied, and its one live instruction, the optional Search Console reading, moved into PRD §2.1. Two remnants of self-explanation removed, and the URL-segment rationale in §7.1 cut to its result. |
 | **v2.2** | Ten owner decisions, relayed through `.claude/architecture-places-of-interest.md` §0: **no place count** (§2.2), one record per place, RU/EN parity and program coverage enforced by the build, **production from the first place**, a footer entry, one non-localised map link, the day grouping shown in both views. AC 2 withdrawn and AC 7b replaced; R2 and R3 rewritten and kept live; R13–R15 opened. O11–O17 were opened by those decisions and answered the same day. |
 | **v2.3** | The owner's answers to design objections `D1`–`D14` (`.claude/answers.md`): the short description lives on the list page only; the map link too, and the place name is a link nowhere; program names are shown in full and **become links to the homepage**; the catalogue is ordered alphabetically; no language switcher outside the homepage; both lists in the accordion kept, provisionally; two states declared impossible (no place without a description, no empty linking table). AC 8, 15 and 16 tightened, AC 25 and AC 26 added; **R4 closed**, R16 and R17 opened, R13 marked provisional. Then, against the architect's v1.1 review: §7.4 completed to **all six** visitor-facing strings, AC 25 reformulated so arrival is observable and includes the card opening on a phone, §8.1's slices restated as what each must prove, §5.1 corrected against the repository (one linked place, not thirty). O18, O19 and O20 were opened and closed inside the revision. |
+| **v2.4** | Two improvements ordered after v2.3 (PRD §7.5): the place list is set like the `highlights` block above it, and a click on a place opens a panel with that place's description and an icon-link to its entry on the list page. New AC 27–29; AC 8, 15, 16 rewritten; **R18 opened**. Six answers taken while writing it — the description now lives in both places, the panel shows no map link, the collapsed mobile teaser is untouched, one panel per **list** (local state), the text is **server-rendered** for speed, and the icon-link is named by the page title. O21 opened and closed inside the revision. **R17 rewritten on measured facts** — the collation direction was stated backwards and the premise did not hold on the shipped data; the risk kept its number and narrowed to a condition that has not occurred. |
 
 ---
 
@@ -241,7 +244,19 @@ Numbers are retained and never reused, following context.md's convention.
   arrival through this link only; the teaser is unchanged for every other route into the
   homepage, which is what the architecture document had recorded as untouched.
 
-*(O11–O20 are closed here; PRD §12 points at this section instead of repeating them.)*
+- **O21. CLOSED v2.4** `[owner, decision 2026-08-25]`: «O21: close control label "close" /
+  "закрыть", accessible name for the link should be the title of the places page». Was: the
+  popup's icon-link had no accessible name and a close control had no label, so two strings a
+  visitor (or a screen reader) meets would have shipped with a document behind them instead of
+  an owner. Answer: the link is named by the **page title**, and a close label was given
+  besides. **How each landed, and why differently:** the link's name went into PRD §7.4 as a
+  **pointer to the title row**, not as a copy — one string, one source, and AC 13 ties that
+  title to the query the page is measured on, so a second copy could have drifted away from it.
+  The close label labels nothing: design decided the panel has no visible close control, and
+  the owner's follow-up — «строка "про запас"» — confirms he was stocking a string, not ordering
+  a control. It is therefore held here (§5) rather than in the specification.
+
+*(O11–O21 are closed here; PRD §12 points at this section instead of repeating them.)*
 
 ---
 
@@ -405,6 +420,19 @@ apart, and the answer named a caption for the place list («Вы увидите�
 O18) — so the pair is now distinguished by words the owner chose, not by strings a document
 invented. Reversing it later removes a list; nothing else in the feature depends on there
 being two.
+
+### A string kept in reserve — «закрыть» / "close"
+
+`[owner, decision 2026-08-25]`, on a control that does not exist: the panel of PRD §7.5 has no
+visible close affordance — design's call, unchanged by this — and the owner named a label for
+one anyway, «про запас».
+
+**Kept here and not in PRD §7.4** because that table lists the strings the feature shows, and
+this one shows nothing today; a specification that carries labels for absent controls stops
+being readable as a description of the product. **The condition under which it applies:** if
+design ever gives the panel a visible close control, its label is «закрыть» / "close" and no
+question goes back to the owner — the answer already exists and is here. If design never does,
+nothing is owed and nothing is lost.
 
 ### Content order — a plan decision recorded with its cost
 
