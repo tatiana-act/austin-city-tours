@@ -36,6 +36,7 @@
     },
     "Places": {
         "title": "Что посмотреть в Остине",
+        "back": "← Austin City Tours",
         "metaDescription": "Достопримечательности Остина",
         "seenOnTours": "Можно увидеть на экскурсиях:",
         "mapLink": "показать на карте",

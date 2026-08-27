@@ -36,6 +36,7 @@
     },
     "Places": {
         "title": "Places to see in Austin",
+        "back": "← Austin City Tours",
         "metaDescription": "Austin sightseeing",
         "seenOnTours": "Can be seen on tours:",
         "mapLink": "locate on map",

@@ -18,14 +18,19 @@ import type { PoiText } from '@/types/poi';
 
 /**
  * A place as the program view shows it: the accordion on the homepage and the
- * tour date page. Neither the description nor the map link is in this shape —
- * those two live on the list page only (PRD §7.2, §7.3), and leaving them out
- * of the type is what makes AC 15 and AC 16 hold by construction instead of by
- * review.
+ * tour date page.
+ *
+ * Since v2.4 it carries the description, because the panel a name opens shows
+ * it (PRD AC 28) — the same record the list page prints, read from two places
+ * and written once (PRD §5). What the type still keeps out is `mapUrl`: the map
+ * link lives on the list page only, and that stays held by the shape of the
+ * data rather than by discipline. That the list itself prints names only
+ * (AC 15) is now held by the markup invariant of architecture §4.3 instead.
  */
 export interface ProgramPoi {
   id: PoiId;
   name: string;
+  description: string;
   /** Present only for programs whose route is split across days (`Auswe`). */
   day?: number;
 }
@@ -82,6 +87,7 @@ export function getProgramPoi(programId: string, locale: string): ProgramPoi[] {
   return refs.map(ref => ({
     id: ref.poi,
     name: texts[ref.poi].name,
+    description: texts[ref.poi].description,
     day: ref.day,
   }));
 }

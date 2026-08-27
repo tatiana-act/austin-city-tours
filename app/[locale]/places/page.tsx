@@ -45,7 +45,7 @@ export default async function PlacesPage({
       {/* Back bar */}
       <div className="tour-detail-back-bar">
         <Link href={`/${locale}`} className="tour-detail-back-link">
-          ← Austin City Tours
+          {t('back')}
         </Link>
       </div>
 
@@ -57,9 +57,15 @@ export default async function PlacesPage({
               "more coming" (PRD AC 7b). It is simply the list. */}
           <ul className="mx-auto flex max-w-3xl flex-col gap-10">
             {places.map(place => (
+              // The anchor sits on the entry, not on its name, so an arrival
+              // from a panel lands on the whole record; `scroll-mt` keeps the
+              // name off the top edge (architecture §4.2, design §2.5). Built
+              // from the id, not the name: the name is localized, the anchor
+              // must not be.
               <li
                 key={place.id}
-                className="border-b border-gray-200 pb-8 last:border-b-0 last:pb-0"
+                id={`poi-${place.id}`}
+                className="scroll-mt-12 border-b border-gray-200 pb-8 last:border-b-0 last:pb-0"
               >
                 {/* The place name is plain text, here and everywhere else
                     (PRD §7.1). */}
