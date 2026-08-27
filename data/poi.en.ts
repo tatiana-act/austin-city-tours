@@ -7,181 +7,181 @@ export const poiEn: Record<PoiId, PoiText> = {
   capitol: {
     name: 'Texas State Capitol',
     description:
-      "The 1888 Texas State Capitol dominates downtown Austin at the head of Congress Avenue. At over 300 feet tall, it is one of the tallest state capitols in the nation — taller even than the U.S. Capitol — and houses the offices of the Governor and Legislature.",
+      "The 1888 Capitol building towers over downtown Austin at the head of Congress Avenue. It is one of the tallest state capitols in the United States — taller even than the Capitol in Washington.",
   },
   old_bakery: {
     name: 'Old Bakery and Emporium',
     description:
-      "Built in 1876 for Swedish baker Charles Lundberg, this is one of the oldest surviving commercial structures on Congress Avenue. Now a city-run artisan emporium, it sits half a block from the Capitol grounds.",
+      "On Congress Avenue, just a stone's throw from the Capitol, stands the old bakery building. It was built back in 1876 for Swedish baker Charles Lundberg. Inside, elements of the original historic décor have been preserved.",
   },
   millet: {
     name: 'Millett Opera House',
     description:
-      "Charles F. Millett's 1878 Opera House on Ninth Street was, at its opening, one of the largest performance halls in Texas, with 24-inch limestone walls and 800 seats. Though its stage days are over, the building survives as the home of the private Austin Club.",
+      "Charles Millett's 1878 Opera House on Ninth Street was, at its opening, one of the largest performance halls in Texas — a full 800 seats! Though the stage is gone, the building survives to this day with minimal changes, and now belongs to the private Austin's Club.",
   },
   st_mary: {
     name: "Saint Mary's Cathedral",
     description:
-      "Designed by Nicholas J. Clayton and completed in 1884, Saint Mary Cathedral is the mother church of the Catholic Diocese of Austin. This Gothic Revival limestone landmark, with roots in the 1850s, anchors the block at 10th and Brazos.",
+      "Designed by Nicholas J. Clayton and completed in 1884, Saint Mary Cathedral is the mother church of the Catholic Diocese of Austin.",
   },
   paramount: {
     name: 'Paramount Theatre',
     description:
-      "The 1915 Paramount Theatre on Congress Avenue is a Classical Revival landmark by architect John Eberson. Listed on the National Register of Historic Places, it has hosted vaudeville, films, and live performances for more than a century.",
+      "The 1915 Paramount Theatre on Congress Avenue is built in the Neoclassical style. Listed on the National Register of Historic Places, it has delighted audiences with vaudeville, film, and live performances for more than a century. Above the windows sit notable reliefs of theatrical masks.",
   },
   norwood: {
     name: 'Norwood Tower',
     description:
-      "The 1929 Norwood Tower at 7th and Colorado is Austin's only Gothic Revival high-rise. When it opened it was the city's tallest commercial building and its first fully air-conditioned office tower — a monument to 1920s downtown ambition.",
+      "Austin's only Neo-Gothic skyscraper was built in 1929 and partially rebuilt in 1983. It was a favorite building of President Lyndon Johnson's wife, Claudia \"Lady Bird\" Johnson; her daughters purchased the penthouse and still own it today.",
   },
   angelina: {
     name: 'Angelina Eberly Statue',
     description:
-      "At Sixth and Congress, a bronze Angelina Eberly by sculptor Pat Oliphant marks the spot where the innkeeper fired a six-pound cannon in 1842 to rouse the town against President Sam Houston's men hauling off the Republic's archives. Her shot ignited the 'Archive War' and helped keep Austin the capital.",
+      "This monument honors a brave woman, innkeeper Angelina Eberly. On a dark night in 1842 she fired a cannon to rally the townspeople against President Sam Houston's men, who were hauling away the Republic's archives. Her decisive act preserved Austin's status as the capital of Texas.",
   },
   driskill: {
     name: 'The Driskill',
     description:
-      "Colonel Jesse Driskill's 1886 Romanesque Revival hotel at 6th and Brazos is the oldest operating hotel in Austin. Once billed as the finest hotel south of St. Louis, the Driskill remains one of the most storied landmarks in Texas.",
+      "The 1886 Driskill hotel, built in the Romanesque Revival style at the corner of 6th and Brazos, is the oldest operating hotel in Austin. Once famed as the finest hotel south of St. Louis, the Driskill remains one of the most legendary landmarks in Texas.",
   },
   txdot: {
     name: 'TxDOT Headquarters',
     description:
-      "The 1933 Dewitt C. Greer State Highway Building at 125 E. 11th Street has housed the Texas Department of Transportation since it opened. Designed by Carleton Adams, this eight-story Moderne building sits a block east of the Capitol.",
+      "This eight-story 1933 building is one of the finest examples of Art Deco style. By day the Texas Department of Transportation runs things here, but by night the building passes into the realm of ghosts and spirits. The last successful hunt for otherworldly forces took place in 2010!",
   },
   land_office: {
     name: 'General Land Office Building',
     description:
-      "The 1857 Old General Land Office Building on the Capitol grounds is the oldest surviving state government office building in Austin. Designed in castle-like Rundbogenstil style by German architect C. C. Stremme, it later employed O. Henry and now serves as the Capitol Visitors Center.",
+      "Built in 1857 in the style of German Baroque castles. For a time William Sydney Porter — the future writer O. Henry — worked here.",
   },
   history_cen: {
     name: 'Austin History Center',
     description:
-      "The 1933 Renaissance Revival building at 810 Guadalupe began life as Austin's central library and today houses the Austin History Center, the city's primary local-history archive. It sits beside Wooldridge Square on one of Austin's original 1839 town squares.",
+      "A 1933 building in the Neo-Renaissance style. Austin's former central library, today it holds the city's main archive: historical documents, photographs, and letters — witnesses to times gone by.",
   },
   woolridge: {
     name: 'Wooldridge Square',
     description:
-      "Wooldridge Square is the only one of Austin's four original 1839 town squares still serving as a park. Dedicated in 1909, its bowl-shaped lawn and Classical Revival gazebo form a natural amphitheater between the courthouse and the History Center.",
+      "In 1909, through the efforts of Mayor Alexander Wooldridge, one of Austin's earliest squares was redeveloped as a park. The park's crown jewel is a charming gazebo-pergola in the Neoclassical style.",
   },
   travis_court: {
     name: 'Travis County Courthouse',
     description:
-      "The 1931 Travis County Courthouse at 1000 Guadalupe is a PWA Moderne landmark named for civil-rights plaintiff Heman Marion Sweatt. The third courthouse built for the county, it rises beside Wooldridge Square just north of the old central library.",
+      "North of Wooldridge Square rises the Travis County Courthouse, built in the Art Deco style. The building's entrance is adorned with beautiful bas-reliefs.",
   },
   hirshfield: {
-    name: 'Henry Hirshfeld Honeymoon Cottage',
+    name: 'Henry Hirshfeld Mansion',
     description:
-      "The 1873 Honeymoon Cottage at 305 W. 9th Street was built for merchant Henry Hirshfeld and his bride Jennie, paired with an 1885 Italianate residence by John Andrewartha. Together they form one of downtown Austin's rare surviving family compounds, on the National Register since 1973.",
+      "Built in 1886 for a businessman, banker, and civic leader, it became a reflection of his life's success. Beside it survives an 1873 cottage that Hirshfeld built for his young family when he was still a small entrepreneur.",
   },
   bremond: {
     name: 'Bremond Block Historic District',
     description:
-      "The Bremond Block is a surviving cluster of eleven Victorian homes built between the 1850s and 1910 for the banking and mercantile Bremond family. Listed on the National Register in 1970, it is one of Texas's few intact upper-class 19th-century residential districts.",
+      "A jewel of Austin, an elite district of several generations of a single family of entrepreneurs and bankers. An ensemble of eleven Victorian homes built between 1850 and 1910 for the Bremond family.",
   },
   john_bremond: {
     name: 'John Bremond House',
     description:
-      "The 1886 John Bremond Jr. House at Seventh and Guadalupe is the showpiece of the Bremond Block — a Second Empire mansion with a crested mansard roof and cast-iron gallery. Since 1969 it has served as headquarters of the Texas Classroom Teachers Association.",
+      "The 1886 John Bremond House is the jewel of the Bremond Block, the most beautiful mansion in the Second French Empire style. Since 1969 it has housed the headquarters of the Texas Classroom Teachers Association.",
   },
   pier_bremond: {
     name: 'Pierre Bremond House',
     description:
-      "Built in 1898 at 402 W. 7th Street, the Pierre Bremond House was the last of the Bremond Block mansions to rise. This Late Victorian home completes the family compound that defines one of Austin's premier historic districts.",
+      "Built in 1898, the Pierre Bremond House completed the formation of the Bremond family block. This home is built in a strict yet elegant Queen Anne style.",
   },
   eug_bremond: {
     name: 'Eugene Bremond House',
     description:
-      "The 1873 Eugene Bremond House at 404 W. 7th Street is an Italianate home at the heart of the family compound that gives the Bremond Block its name. Eugene, with brother John, anchored the banking and mercantile fortunes that built the district.",
+      "The 1873 Eugene Bremond House is an Italian-style residence, the only surviving wooden mansion in the Bremond Block.",
   },
   north_cottage: {
     name: 'North Cottage',
     description:
-      "The so-called North Cottage sits beside Chateau Bellevue on San Antonio Street in the Bremond Block area. Its identity is ambiguous in the sources, but it most likely refers to the 1874 cottage of Harvey and Catherine North, founders of the adjacent Chateau.",
+      "An 1874 cottage of Harvey and Catherine North, founders of the nearby Chateau Bellevue.",
   },
   chateau: {
     name: 'Chateau Bellevue',
     description:
-      "Chateau Bellevue, the 1874 Romanesque Revival mansion at 708 San Antonio Street, was built by Harvey and Catherine North and remodeled in 1892 by architect Alfred Giles for Major Ira Evans. Home of the Austin Woman's Club since 1929, it is the crown jewel of the Bremond Block.",
+      "Chateau Bellevue, an 1874 Romanesque Revival mansion, was built by architect Alfred Giles for Harvey and Catherine North and remodeled in 1892 for Major Ira Evans. Since 1929 it has been the home of the Austin Woman's Club. The jewel of the Bremond Block!",
   },
   mayfield: {
     name: 'Mayfield Park',
     description:
-      "Just off West 35th Street, Mayfield Park pairs a restored 1870s cottage with terraced gardens, koi ponds, and a flock of free-roaming peacocks on a bluff over Lake Austin. Left to the city in 1971 and listed on the National Register, it is a serene relic of old Austin.",
+      "A fully restored 1870s cottage with terraced gardens, koi ponds, and a flock of free-roaming peacocks. A serene corner of old Austin.",
   },
   covert: {
     name: 'Covert Park at Mount Bonnell',
     description:
-      "Climb the 106 limestone steps to the top of Mount Bonnell — one of the highest public overlooks in Austin — for a sweeping view of Lake Austin, the Pennybacker Bridge, and the downtown skyline. Donated as Covert Park in 1939, it has been an Austin sightseeing staple since the 1850s.",
+      "Climb the limestone steps to the top of Mount Bonnell — one of the highest overlooks in Austin — and you'll be rewarded with wonderful views of a bend in the Colorado River and the downtown skyscrapers.",
   },
   bat_bridge: {
     name: 'Ann W. Richards Congress Avenue Bat Bridge',
     description:
-      "Each summer evening at sunset, up to 1.5 million Mexican free-tailed bats stream out from beneath the Congress Avenue Bridge in one of Austin's signature free spectacles. The world's largest urban bat colony took hold after the bridge's 1980 reconstruction created perfect roosting crevices.",
+      "Every summer evening at sunset you can witness a mesmerizing sight: thousands upon thousands of bats stream out from beneath the bridge for their evening hunt. The world's largest urban colony of Mexican free-tailed bats took hold after the bridge's 1980 reconstruction, which created ideal conditions for roosting.",
   },
   williamson: {
     name: 'The Williamson Museum',
     description:
-      "Set inside the former Farmers State Bank building on Georgetown's historic square, the Williamson Museum tells the story of the county from pioneer days forward. Established in 1997 and free to visit, it also offers guided tours of the courthouse across the street.",
+      "The history of the county from its first settlers to the present day. The museum is housed in the former Farmers State Bank building on Georgetown's historic square.",
   },
   wil_court: {
     name: 'Williamson County Courthouse',
     description:
-      "The copper-domed Williamson County Courthouse has anchored Georgetown's town square since 1911 — the fifth such building and a Beaux-Arts showcase by Austin architect Charles H. Page. Restored in 2008 to its classical grandeur, it remains the working centerpiece of one of Texas's prettiest downtowns.",
+      "Built with Masonic funds in the Beaux-Arts style. It was here that one of Texas's most famous cases of a century ago was heard: the case of Dan Moody versus the Ku Klux Klan.",
   },
   onion_dome: {
     name: 'Old Masonic Lodge Building',
     description:
-      "Look up at the corner of Main and 7th in Georgetown for one of Texas's rarest architectural touches: a Byzantine onion dome crowning the 1900 Old Masonic Lodge. Built by the Belford Lumber Company for the San Gabriel Masonic Lodge, the dome vanished for decades and has been replicated twice since.",
+      "Built by Charles Belford in 1900 on commission from the San Gabriel Masonic Lodge. The building's most unusual feature is its decorative onion-shaped dome.",
   },
   city_post: {
     name: 'City Post',
     description:
-      "Georgetown's 1932 federal post office — a Georgian Revival gem of pink Texas granite and imported marble — now houses City Post Chophouse, preserving its original mailboxes and mahogany trim. It is a contributing property in the Courthouse Historic District.",
+      "The building is constructed in a strict Neoclassical style. At various times it has housed both the federal post office and City Hall, and in 2021 the City Post Chophouse restaurant opened. Inside, the original finishes from its days as a post office have been preserved.",
   },
   gtown_art: {
     name: 'Georgetown Art Center',
     description:
-      "Just off the Georgetown square, the city's old firehouse (circa 1892) has been reborn as the Georgetown Art Center, with wide engine-bay doors now framing a rotating gallery. Run by the nonprofit Georgetown Art Works, it blends local history with contemporary art and classes.",
+      "The old firehouse (circa 1892) has been rebuilt as an art center. Here local history meets contemporary art.",
   },
   grace_center: {
     name: 'Grace Heritage Center',
     description:
-      "This tiny Carpenter Gothic chapel, built in 1881–1882 for Grace Episcopal Church, is Georgetown's oldest wood-framed church and sits just off the historic square. Moved twice to save it, the deconsecrated sanctuary now serves as a heritage center and event venue.",
+      "This intimate Gothic-style chapel, built in 1881–1882 for Grace Episcopal Church, is Georgetown's oldest wooden house of worship, standing by the historic square. Moved twice to save it, today it serves as a heritage center and event venue.",
   },
   chisholm: {
     name: 'Chisholm Trail and Brushy Creek',
     description:
-      "Round Rock grew up at a natural ford across Brushy Creek, where a round limestone rock gave the town its name and guided cattle drives on the Chisholm Trail from 1867 to 1884. Wagon ruts worn into that rock are still visible today — a tangible link to the post–Civil War cattle drives that opened Texas to market.",
+      "Round Rock grew up at a natural ford across Brushy Creek. Since a settlement named Brushy Creek already existed in Texas, the place was named for the round limestone rock lying in the creek nearby. That is how Round Rock got its name.",
   },
   rr_hall: {
     name: 'Round Rock City Hall',
     description:
-      "Round Rock City Hall at 221 E. Main Street sits in the heart of the city's 1876 railroad-era downtown, where limestone commercial buildings still line the historic district. It is the modern civic hub of one of the fastest-growing cities in the United States.",
+      "Round Rock City Hall stands in the heart of downtown, where limestone buildings form a historic district. It is the modern hub of one of the fastest-growing cities in the United States.",
   },
   woodbine: {
     name: 'Woodbine Mansion',
     description:
-      "Round Rock's Woodbine Mansion was built 1895–1900 by the Page Brothers for a prosperous Swedish-immigrant family, then restyled in 1931 from Queen Anne to Neoclassical with a row of Ionic columns. A Recorded Texas Historic Landmark since 1973, it is now an events venue.",
+      "The Woodbine Mansion in Round Rock was built in 1895–1900 by the Page Brothers for a prosperous family of Swedish immigrants, and remodeled in 1931 in the Neoclassical style.",
   },
   rr_post: {
     name: 'Round Rock Old Post Office',
     description:
-      "At 107 S. Mays Street stands Round Rock's 1878 Old Post Office and Masonic Lodge, a brick building with uniquely detailed parapets and arches. It hosted the town's post office for some 70 years and the Masonic Lodge for a century, anchoring the National Register historic district.",
+      "Round Rock's Old Post Office is an 1878 brick building. On the ground floor the city post office operated for over 70 years, while the upper floor long housed a Masonic lodge.",
   },
   sam_bass: {
     name: 'Round Rock Cemetery and Sam Bass Gravesite',
     description:
-      "In Old Round Rock Cemetery lies Sam Bass, the 19th-century train robber killed by Texas Rangers in the 1878 downtown shootout — a Wild West legend the city still commemorates. His grave, chipped away by souvenir hunters, is now marked with a modern stone near a historic freedmen's burial ground.",
+      "In Round Rock's old cemetery rests Sam Bass, a 19th-century train robber — a Wild West legend the city still honors to this day. One of Round Rock's main streets is named in his honor!",
   },
   sw_university: {
     name: 'Southwestern University',
     description:
-      "Founded in 1840 from the charter of Rutersville College, Southwestern University in Georgetown is widely regarded as Texas's oldest institution of higher education — a claim affirmed by a 2016 Texas Senate proclamation. The red-brick campus anchors Georgetown's southern edge and a deep Methodist educational legacy.",
+      "Founded in 1840, Southwestern University in Georgetown is considered the oldest institution of higher education in Texas. Today it is a small private university.",
   },
   inner_space: {
     name: 'Inner Space Cavern',
     description:
-      "Hidden beneath I-35 for tens of thousands of years, Inner Space Cavern was discovered in 1963 when highway drillers punched through 40 feet of limestone into a vast, fossil-filled cave. Now a show cave since 1966, it offers tours through formations that are still actively growing.",
+      "Hidden beneath Interstate 35 for tens of thousands of years, Inner Space Cavern was only discovered in 1963, when highway drillers broke through 40 feet of limestone into a vast cave full of fossils.",
   },
 };
