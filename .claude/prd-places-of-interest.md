@@ -1,19 +1,27 @@
 # PRD: Places of Interest (POI)
 
-version: 2.4 | date: 2026-08-25 | status: buildable — no open items
+version: 2.8 | date: 2026-08-29 | status: buildable — no open items
 source: owner interview, 21 questions, 2026-08-13, plus the owner's post-interview
-decisions of 2026-08-13 and of 2026-08-16/17/18, plus the two improvements ordered after v2.3
+decisions of 2026-08-13 and of 2026-08-16/17/18, plus the three improvements ordered after
+v2.3 — two before v2.4 and one on 2026-08-28
 companion: `.claude/context.md` (v1.0, 2026-08-11) — on conflict, context.md wins
 objections and answers: `.claude/answers.md` — threads `D1`–`D14`, opened by design
-2026-08-16 against PRD v2.2, answered by the owner 2026-08-16/17
+2026-08-16 against PRD v2.2, answered by the owner 2026-08-16/17; `D15`–`D18` opened by design
+2026-08-28 against v2.4, of which v2.5 answered three — `D16`, `D17` and the 2026-08-28
+addition to `D11`; `A1`, opened by the architect 2026-08-28 against v2.5, answered in v2.6
+together with the owner's closure of `D17` the same day; **`D18`, whose product half this
+revision carries** — design chose the conditional mark (v1.4 §3.2) and the criterion for it is
+this document's, and v2.8 completes it with the one thing v2.7 held back
 rationale, alternatives weighed, closed items, revision history:
 `.claude/decisions-places-of-interest.md` (cited below as **[D]**)
 
 Markers. `[owner, N]` — answer to interview question N. `[owner, decision <date>]` — a
-decision taken after the interview, on a question this document put to the owner; three dates
-carry them, 2026-08-13, 2026-08-17 and 2026-08-18. `[owner, improvement N]` — one of the two
-improvements ordered after v2.3, quoted verbatim in §7.5; **the request carried no date, so
-none is invented** — the same rule §2.1 applies to numbers. `[from code]` — read from the
+decision taken after the interview, on a question this document put to the owner; six dates
+carry them — 2026-08-13, 2026-08-17, 2026-08-18, 2026-08-24, 2026-08-25 and 2026-08-28.
+`[owner, improvement N]` — one of the three improvements ordered after v2.3, quoted verbatim
+in §7.5. **Improvements 1 and 2 carried no date,
+so none is invented** — the same rule §2.1 applies to numbers; **improvement 3 carries one,
+2026-08-28, and it is used.** `[from code]` — read from the
 repository. Nothing here is unsourced.
 
 **Provenance.** v2.2's ten owner decisions did not reach this document directly: they were
@@ -22,7 +30,17 @@ relayed here under `[owner, decision 2026-08-13]`. v2.3 carries the owner's answ
 design objections `D1`–`D14`, quoted verbatim in `.claude/answers.md` and dated 2026-08-16/17
 (`[owner, decision 2026-08-17]`), plus the answer to O20 of 2026-08-18. v2.4 adds the two
 improvements of §7.5 and the answers taken on them — five on 2026-08-24, the scope of the
-one-panel rule and the icon-link's name on 2026-08-25 — and nothing else. No interview answer was added, altered or removed in any revision.
+one-panel rule and the icon-link's name on 2026-08-25 — and nothing else. v2.5 adds improvement 3
+of 2026-08-28 with its criterion (AC 30), recomputes the §7.2 premise on the shipped data, and
+brings the `[from code]` figures the landed data overtook into line with it. v2.6 changes one
+check and one attribution and no rule: AC 30 clause c gets a way of creating the state it judges
+(thread `A1`), and the missing threshold becomes the owner's own decision with his reason for
+having named it (`D17`, closed 2026-08-28). v2.7 adds one criterion, AC 31, on a requirement §10
+already made and nothing had checked: the mark that tells a clickable name from an inert one is
+carried only where the click works. v2.8 adds nothing to that criterion's subject and one line
+to its scope: the mark is judged on screen and prints unchanged, which design decided the same
+day (`D18`, 2026-08-29) after v2.7 had already been written to the earlier instruction. No
+interview answer was added, altered or removed in any revision.
 
 Written in English because the interview was in English; context.md is in Russian.
 
@@ -179,7 +197,8 @@ feature's interview did not revisit them.
   explaining it. → AC 8, 9, 12.
 - **US3 — visitor on a date page.** As someone who arrived on a specific date, I want the
   place list right there, so I do not have to go and find the program. → AC 16, 17, 24. Since
-  v2.4 a place there also tells me what it is, without leaving the page → AC 28.
+  v2.4 a place there also tells me what it is, without leaving the page → AC 28, and since v2.5
+  what it says is brought into view rather than left under the window edge → AC 30.
 - **US4 — searcher.** As someone searching for what to see in Austin, I want to land on
   this site. → AC 12, 13, 14. **Served for the one named query only**, not for individual
   place names; no acceptance criterion covers the place-name case, deliberately (§2).
@@ -250,7 +269,7 @@ Fields:
 | Field | Required | Per locale | Notes |
 |---|---|---|---|
 | name | yes | **yes**, RU + EN | |
-| short description | yes | **yes**, RU + EN | `[owner, 3]` short by design. **Serves two layouts again since v2.4** — a paragraph on the list page and the body of the popup (§7.5); the single-layout premise that made its length a non-question in v2.3 is gone. Since the panel is server-rendered, its length is also what the homepage's HTML weighs per place (R18). Still no number: one is not invented before the texts exist, and both readers of this field — a "tiny" panel and a page budget — are watched by design and by the architect rather than bounded here |
+| short description | yes | **yes**, RU + EN | `[owner, 3]` short by design. **Serves two layouts again since v2.4** — a paragraph on the list page and the body of the popup (§7.5); the single-layout premise that made its length a non-question in v2.3 is gone. Since the panel is server-rendered, its length is also what the homepage's HTML weighs per place (R18). **Since v2.5 the band is measured rather than guessed** — 36 descriptions, 88–304 characters, mean 198 `[from code, data/poi.ru.ts, 2026-08-28]` — and it is still not a committed number: the shipped texts are the bound, and a longer one fails no criterion here. Three readers now depend on the length and each has an answer that is not a limit — the paragraph on the list page (any length), the panel, whose "visible in full" outcome degrades to "top first" past about a screen (AC 30), and the homepage's weight per place (R18) |
 | map link | yes | **no — one per place** | `[owner, decision 2026-08-13]`. **Google Maps** `[owner, decision 2026-08-13]`, chosen from the two options in `[owner, 19]`. Matches the precedent in the repo: every `meetingPointLink` today is a `maps.app.goo.gl` short link `[from code]`. Provisional and reversible; [D §5] prices the reversal — one link per place, so N edits at whatever size the catalogue has reached |
 | photo | **no** | — | `[owner, 13 revised]` deferred; entries must be able to gain one later without being rewritten — R9 |
 
@@ -276,13 +295,15 @@ AC 2 and the completion condition it carried. Which places exist, and which prog
 which, is **compiled outside this project** `[owner, decision 2026-08-13]`: it arrives as a
 set, and this document neither sizes it nor schedules it.
 
-`[owner, 5]` said **no place text existed in either language**. That is still true of the
-descriptions and no longer true of the rest: names, map links and program↔place links for
-**30 places across 4 programs** were compiled outside the project and are held as material in
-`.claude/architecture-places-of-interest.md` §9. What is in the data files is smaller and is
-governed by the queue below — `[from code, 2026-08-18]` **one place** (`capitol` in `Acap`),
-its description still `'TBD'`, all four files untracked. So what remains of the pipeline is
-descriptions, in both languages, through the one person `[owner, 4]` names.
+`[owner, 5]` said **no place text existed in either language**, and the data has overtaken that
+`[from code, 2026-08-28]`: **36 places across six programs** — `Acap` 8, `Haust` 5, `Gcrt` 7,
+`Rrock` 5, `Brmn` 10, `Auswe` 14 — are linked in `data/poi.programs.ts` and carry a name and a
+description in both `data/poi.ru.ts` and `data/poi.en.ts`; `grep -c "'TBD'"` returns 0 on both,
+and all four files are tracked. The material compiled outside the project — names, map links and
+program↔place links, held in `.claude/architecture-places-of-interest.md` §9 — is now a source
+for what has not shipped rather than a plan for what has. What remains of the pipeline is the
+descriptions of the other six programs, in both languages, through the one person `[owner, 4]`
+names.
 
 **A place enters the data when its description is written, not before**
 `[owner, decision 2026-08-13]`. The program↔place table is the **release queue**: a place is
@@ -298,9 +319,9 @@ becomes a thing that never reaches the repository.
 - **A place without a description.** The description is shown unconditionally wherever it is
   shown at all (§7.1); nothing guards against an empty one. What holds this is the queue
   above plus the release check, not the compiler — `'TBD'` is a non-empty string and
-  satisfies AC 3 to the letter. Today's data does not meet it yet: `capitol` carries
-  `description: 'TBD'` `[from code]`, which is legitimate on `dev` and does not go to
-  production.
+  satisfies AC 3 to the letter. Today's data meets it: no `'TBD'` remains in either text file
+  `[from code, 2026-08-28]`. It did not on 2026-08-18, when `capitol` was the only linked place
+  and carried a placeholder — legitimate on `dev`, and it never went to production.
 - **An empty catalogue.** The program↔place table is never empty, so the list page never
   renders with no entries. Plain type inference does not catch this one — an *empty* linking
   table compiles, because the inferred place-id type degrades to `never`, which empty text
@@ -311,13 +332,14 @@ becomes a thing that never reaches the repository.
 
 Two consequences worth having in writing:
 
-- **The 30-place set is material, not the shipped set.** It is the compiled result of the work
-  decision 1 places outside this project — names, map links and program↔place links, all of
-  which exist. Under the queue it enters the data one place at a time, each with its two
-  descriptions. Nothing in it is wasted; it is staged rather than finished.
-- **The choice arrived before the first commit** `[from code]`, so it cost nothing: the files
-  are untracked, and trimming them to the written set was an edit to the working tree, not a
-  rewrite of history.
+- **The material set has been overtaken by the shipped one.** It was the compiled result of the
+  work decision 1 places outside this project — names, map links and program↔place links. Under
+  the queue it entered the data as descriptions arrived, and six programs' worth has arrived
+  `[from code, 2026-08-28]`. Nothing in it was wasted; what is left of it is the six programs
+  still unwritten.
+- **The queue cost nothing to adopt** `[from code]`: it arrived before the first commit of these
+  files, so trimming them to the written set was an edit to the working tree, not a rewrite of
+  history.
 
 **Consequence of removing the count, not softened.** The number was what made "done"
 sayable. Without it there is no state at which the catalogue is complete, no arithmetic to
@@ -376,8 +398,8 @@ touching a place entry. This is the single structural commitment v1 makes to v2.
 ### Multi-day programs
 
 `[owner, decision 2026-08-13]` A program whose route is split across days keeps that split,
-and **shows it**. Today this is `Auswe` alone `[from code]` — days 1 and 2; every other
-program's list renders flat. The grouping is a property of the program↔place pair, so a
+and **shows it**. Today this is `Auswe` alone `[from code]` — days 1 and 2, **9 places and 5**
+`[from code, data/poi.programs.ts, 2026-08-28]`; every other program's list renders flat. The grouping is a property of the program↔place pair, so a
 place that appears on day 1 of one program and inside a flat list of another is still one
 place with one description (§5).
 
@@ -451,7 +473,7 @@ not because `Acap` meets at its south gates. No deduplication, no cross-linking.
 
 ## 7. Views
 
-Three views ship together; §7.4 names the strings they add, and §7.5 carries the two
+Three views ship together; §7.4 names the strings they add, and §7.5 carries the three
 improvements ordered after v2.3.
 
 ### 7.1 Places list page
@@ -548,7 +570,8 @@ no map links, and no navigation from a name. Checked by AC 15.
 AC 28) `[owner, improvement 2]`. This narrows the v2.3 answer rather than reversing it: the
 list still shows names, and the description reaches this view **only on demand**. What is set
 in this typeface, and what tells a clickable name from the inert one on the list page, is
-design's (§10).
+design's (§10) — with one thing about it required here since v2.7: the mark is carried only where
+the click works, which is AC 31.
 
 **Typography** `[owner, improvement 1]`: the place list is set in the same face as the
 `highlights` block directly above it — «Вам понравится» / "You will love it" `[from code]` —
@@ -558,10 +581,30 @@ the face itself, and every other property of the block, is design's (§10). Chec
 **The full list stands between the program's description and the booking button, and that is
 accepted** `[owner, decision 2026-08-17]`: no truncation, no "first N", no "the rest is on
 the places page". Cost, accepted: on a mobile column the call to action moves several screens
-down for the longest programs. The owner's answer reads "only one such program"; the data
-says **two** — `Auswe` 15 places, `Brmn` 10 `[from code]` — and eight of the twelve program
-sets have not reached the repository yet, so the count can grow. This corrects the premise,
-not the decision, which holds at either count.
+down for the longest programs.
+
+**The premise has now been corrected twice, in the same direction; the decision holds at the
+corrected figures.** The owner's answer read "only one such program"; v2.4 recorded two. The
+shipped data says `[from code, data/poi.programs.ts, 2026-08-28]`: `Auswe` has **14** places, not
+15, and they are split by day — 9 and 5 — so its longest run under one label is nine names, while
+`Brmn`'s **10** flat is the longest uninterrupted run in the data. Six of the twelve program sets
+have still not reached the repository, so the count can grow.
+
+**The height was read off the English names, and the binding locale is Russian** [design §3.5,
+thread D16]. Russian names run about half again as long — mean 32 characters against 22, longest
+56 against 42 `[from code, data/poi.ru.ts, data/poi.en.ts]` — and in a narrow column that lands as
+roughly **twice the lines**, because a name that wraps costs a whole one: day 1 of `Auswe` is ≈ 13
+lines of names in RU against ≈ 7 in EN [design §3.5]. **The accepted cost is the Russian one**,
+and it is about twice what the previous text described. The decision is not reopened by that: "no truncation" answered
+the question in its own terms and not by a number, and design does not contest it on the corrected
+figures either.
+
+**When it goes back to the owner** (this document's reading, not his word): a single uninterrupted
+run longer than `Brmn`'s ten, or a third long program among the six sets still to arrive. Below
+that, what changed is the premise, not the decision. **The panel adds to this transiently** — an
+open panel (§7.5) stands inside the list and pushes the button further down for as long as it is
+open; that is the improvement the owner ordered, and AC 30 is what keeps the panel itself readable
+when it happens.
 
 **Duplication with the program's own copy is accepted, not resolved**
 `[owner, decision 2026-08-13]`, and **both lists stay** `[owner, decision 2026-08-17]` — the
@@ -579,8 +622,12 @@ grouping as §7.2 shows it, so a visitor does not have to go find the program.
 licenses the two views to disagree (AC 16, AC 24). **Identical composition too**
 `[owner, decision 2026-08-17]`: the same caption, names only, no map links in the list.
 **Identical behaviour since v2.4** `[owner, improvement 2]`: the same popup on the same click,
-and the same typography rule (§7.2, §7.5). Two views of one list may not disagree, and that now
-covers what a click does, not only what is printed.
+and the same typography rule (§7.2, §7.5). **Since v2.5 that includes where the page ends up
+after the click** `[owner, improvement 3]` — AC 30 holds in this view exactly as in the accordion,
+and this is the view where it can be checked on a phone without waiting on issue #53: the date
+page carries its list in the HTML on every device (AC 15, AC 16).
+Two views of one list may not disagree, and that now covers what a click does, not only what is
+printed.
 
 ### 7.4 Strings this document names
 
@@ -634,7 +681,7 @@ The list page needs no caption of its own — its `h1` is one. The existing `wha
 («Что увидим») is superseded by the caption above, and `openMap` («На карте») by the map-link
 string.
 
-### 7.5 The two improvements ordered after v2.3
+### 7.5 The three improvements ordered after v2.3
 
 Quoted as given, because everything below is read off them:
 
@@ -644,6 +691,12 @@ Quoted as given, because everything below is read off them:
 > 2) I want every POI listed at tour card and program card on click to display the tiny popup.
 > Popup contain description for the clicked POI (the same locale) and an icon-link that
 > navigates to places page and scrolls to the same POI record at that page.
+
+And the third, ordered on 2026-08-28 against the built slice S6 `[owner, improvement 3]`:
+
+> 3) if user clicks POI name, and description is not visible, we shall scroll to make it fully
+> visible… if it is possible, we shall scroll if less than 50 % of the popup description is
+> visible.
 
 "Program card" and "tour card" are the two views of §7.2 and §7.3 — the homepage accordion and
 the date page. "Section above" is the `highlights` block that stands directly above the place
@@ -693,7 +746,9 @@ what it settles is not only speed.
   rendered HTML**, so half of AC 28 stops being an eye-check and becomes a terminal one.
   *Present is not visible:* markup hidden by default stays hidden without JavaScript, so a
   visitor with JS off has the text in the document and no way to open it — the same as before
-  the improvement, minus nothing. This document claims presence and nothing more.
+  the improvement, minus nothing. This document claims presence and nothing more. **What the
+  name looks like in that state is AC 31:** since the click is not there, the mark that promises
+  it is not there either.
 - **What still holds, restated because it changed nature.** "The list prints names" (AC 15) used
   to be a property of the data — the description was not there at all. It is now a property of
   **display**: the text sits in the document beside every entry and is not shown until the panel
@@ -710,7 +765,62 @@ one attribute shown through two affordances — comes back in a smaller form and
 same place name is inert on the list page and clickable in the two program views. A visitor has
 to be able to tell which is which before clicking, and that is design's (§10). Separately, the
 short description now serves two layouts again (§5), so "short by design" is once more a field
-without a stated limit, this time with a panel called "tiny" to fit into.
+without a stated limit, this time with a panel called "tiny" to fit into — §5 records the band
+the shipped texts occupy, and that band is a measurement, not a limit.
+
+**Improvement 3 — an opened panel is brought into view** `[owner, improvement 3]`. Ordered
+2026-08-28 against the built slice S6 and quoted above in his own words: what he asked for is one
+outcome and one threshold.
+
+**The outcome is required here.** After the click the panel the visitor opened is visible whole,
+not cut by the window edge — AC 30, which is where the improvement becomes checkable. Nothing
+covered it before: AC 28 says what the panel carries and how many may stand open, and no criterion
+said where the page ends up.
+
+**There is no threshold, and since 2026-08-28 that is the owner's own decision**
+`[owner, decision 2026-08-28]` [thread D17; design §3.7,
+`.claude/design-decisions-places-of-interest.md` §19]. Design used the latitude in his own words
+(«if it is possible») and wrote the rule without one — bring the panel in always, by the minimum
+offset; put to him, he took it, for a reason of his own: «I want to keep the code small and
+simple».
+
+**What the 50 % was for came with that answer, and it was not what v2.5 recorded.** The threshold
+guarded **noticeability**, not readability: «if just a small part of the popup with description is
+visible — user can miss it and do not realize it appeared. If large fraction of the popup is
+visible — user will scroll by himself if he is interested». Read that way, removing it cannot cost
+him the thing he was protecting — a panel brought in whole is never less noticeable than one left
+cut. What it costs is the other side, and he took it knowingly: the page also moves in the cases
+the threshold spared, where the visitor could see enough to scroll for himself. The reservation
+stands as written — a restored threshold lands as a condition on clause b of AC 30 and nowhere
+else — but it is **no longer expected to be used**, the number being settled by him rather than
+left with design.
+
+**What is requirement here and what is form.** The observable outcomes of AC 30 are this
+document's. How the page moves — animated or instant, over what duration, and what
+`prefers-reduced-motion` does — is design's (§10); where the measure-then-scroll step lives is the
+architect's and the coder's (§10).
+
+**A panel taller than the window is a shipped state — but not one the texts reach on their own**
+[design §3.5, threads D11 and A1]. On a phone, in the narrowest column, the longest Russian
+description in the set runs about eleven lines, roughly 290 px against a window about twice that
+`[from code, data/poi.ru.ts, 2026-08-28]`: at the browser's default text size "visible whole" is
+attainable for every description that has shipped. What makes it unattainable is a visitor who
+**enlarges the browser's text** — nothing here fixes the root font size, and the card's grid and
+the page gutter are in pixels while the card's padding and the type are not, so the column holds
+its width, the text column narrows, and the panel gains lines and line height at once while the
+window gains nothing `[from code, app/globals.css]`. That is an ordinary accessibility setting, so
+the state ships and the branch is required, not hypothetical. **Turning the phone does not produce
+it** and is recorded so nobody arrives at it twice: landscape shortens the window, but the card
+column widens with it and the panel loses lines faster than the window loses height. The rule
+degrades in one direction only: the panel's top goes under the top edge of the window and the
+rest is read by ordinary scrolling. AC 30 keeps that as its own clause — with its own way of creating the state, because a
+clause that cannot be made to happen cannot be made to fail — so that a human checking it renders
+one verdict per case instead of one verdict for both.
+
+**What it does not touch.** AC 29 — arrival at a catalogue entry through the icon-link — is
+another page and another mechanism, and it stays as written. Design records the two as one
+visibility rule with two applications; that reading is theirs, and this document does not turn it
+into a requirement.
 
 ---
 
@@ -771,28 +881,29 @@ it either way.
 Остин», resolved against the catalogue `[from code, data/tours.ts]`: **`Acap`**, **`Haust`**,
 **`Brmn`**, **`Auswe`**. The remaining eight follow in whatever order the texts arrive.
 
-Those four are compiled as material — names, map links and program↔place links for all 30
-places (§5.1). The ordering above therefore no longer decides which *sets* are compiled; it
-decides which **descriptions** are written first, and the queue admits a place to the data
-only when its two descriptions exist.
+All four have since been written and linked, together with `Gcrt` and `Rrock` — 36 places across
+six programs `[from code, 2026-08-28]` (§5.1). The ordering above therefore decided which
+**descriptions** were written first, and the queue admitted each place only when its two
+descriptions existed; what it now orders is the six programs still unwritten.
 
 Useful when commissioning: `Acap` and `Auhnry` `[from code, data/tours.ts]` both walk
 Congress Avenue and both take in the Driskill and the O. Henry material, and a place is
 written **once** however many programs visit it (§5, §6). So `Auhnry`, not in the first four,
 will already have most of its list once `Acap` is written. **The count that matters is
-distinct places, not programs** — 8 + 6 + 10 + 15 pairings across the first four programs
-resolve to **30 distinct places**.
+distinct places, not programs** — 8 + 5 + 10 + 14 pairings across the first four programs
+resolve to **28 distinct places**, and with `Gcrt` and `Rrock` the six shipped sets resolve to
+**36** `[from code, data/poi.programs.ts, 2026-08-28]`.
 
 Order of slices, stated as what each one has to deliver; how they are cut into branches is the
 architect's (`.claude/architecture-places-of-interest.md` §7):
 
 - **A one-place rehearsal, which stays on `dev`.** One program with one place proves the whole
   rendering path — data shape, both locales, program view, date view, map link, metadata — at
-  the smallest possible content cost. It exists already, on `capitol` in `Acap`, with the
-  description still `'TBD'` `[from code]`, which is why it cannot be released: `'TBD'` does not
-  go to production (§5.1). Decision 5 would permit a one-place release, but a single place is
-  exactly the "very small increment" the cadence answer asks to avoid, so the first **release**
-  is the slice below.
+  the smallest possible content cost. It was done on `capitol` in `Acap`, with the description
+  still `'TBD'`, and it was never releasable for that reason: `'TBD'` does not go to production
+  (§5.1). **It has been overtaken** `[from code, 2026-08-28]` — six programs' lists are written
+  and no placeholder remains — so what stands between the data and a release is the owner's
+  switch and the criteria of §9, not the content.
 - **The first multi-stop route**, from the four named above. Proves what a single-place program
   cannot: several places inside one program, in a stable order, identical between the program
   view and the date view (AC 16), and an alphabetical catalogue of more than one entry (AC 26).
@@ -800,17 +911,24 @@ architect's (`.claude/architecture-places-of-interest.md` §7):
 - **The remaining named programs, then the other eight**, in whatever order the guide's texts
   arrive — one place at a time, since the queue admits places, not programs.
 
-**The two improvements of §7.5 are not content and do not queue behind it.** They change how
+**The three improvements of §7.5 are not content and do not queue behind it.** They change how
 an existing list is shown and what a click on it does, so they can be built and released
 independently of which places have descriptions — with one caveat that follows from the data:
-a panel can only be opened on a place that exists, so AC 28 and AC 29 become checkable at the
-same moment the first described place ships. How they are cut into branches is the architect's,
+a panel can only be opened on a place that exists, so AC 28, AC 29 and AC 30 became checkable at
+the same moment the first described place shipped — which, since 2026-08-28, has happened
+`[from code]`. AC 30 needs one more thing than the other two: a list long enough to push the panel
+under the window edge on a phone, which `Auswe` provides and a five-place program may not — and its
+clause c needs one more still, an enlarged browser text size, which no list can supply. **AC 31
+queues with them and needs nothing further** — any rendered list carries a name to look at.
+How they are cut into branches is the architect's,
 like the rest of §7 there.
 
 One dependency worth knowing before the first release, because it decides what is checkable
 when `[from code]`: AC 25's harder half — arriving at a program whose card the homepage did not
-render — cannot be observed while `Acap` is the only linked program, because `Acap` is always
-among the first cards rendered. It becomes observable with the first program outside that set.
+render — was unobservable while `Acap` was the only linked program, because `Acap` is always among
+the first cards rendered. **It is observable since 2026-08-28** `[from code]`: the homepage renders
+`Acap`, `Haust` and `Gcrt` first, and `Rrock`, `Brmn` and `Auswe` are linked and sit outside that
+set.
 
 Each slice must leave `dev` in a state that could be released without embarrassment — AC 7a
 checks that, and now it is not a hypothetical: the release decision is still the owner's, but
@@ -975,6 +1093,8 @@ context.md's open items.
     The text matches the list page's description for the same place, character for character
     (§5 — one record). Nothing to check on the collapsed mobile teaser: it shows no place list
     and therefore no panel `[owner, decision 2026-08-24]`.
+    **Where the page ends up after that click is AC 30, not this criterion:** here what the panel
+    carries and how many stand open, there whether the one just opened can be read.
 29. Every entry on the list page carries a stable anchor, and the icon-link in the panel brings
     the visitor to the list page **at that place's entry** `[owner, improvement 2]`. Checked in
     both locales, from both views, on a place that is not the first entry on the page. The
@@ -984,6 +1104,71 @@ context.md's open items.
     **No new URL:** the target is the existing list-page address carrying a fragment, so AC 20
     stands and `sitemap.ts` is untouched — the same reading applied to `#<id>tour-card` in
     AC 25, and anchors are deliberately absent from the sitemap (context.md CONSTRAINTS).
+30. **A panel that opens ends up readable**, in either view of AC 28 `[owner, improvement 3]`, by
+    the threshold-free rule of §7.5 (design §3.7), which the owner took on 2026-08-28. This is
+    behaviour, not appearance: it is checked by doing it, and **no part of it can be failed from a terminal** —
+    it is a human check throughout. Each clause below therefore stands alone and is written to
+    yield one verdict:
+    a. **A panel that was already fully visible does not move the page.** Click it and nothing
+       scrolls.
+    b. **A panel that was cut off ends up whole**, and comes to rest **against the window edge it
+       was overflowing** — not centred, not scrolled past. That resting position is how "the
+       minimum offset" is observed: a panel that lands in the middle of the window fails this
+       clause even though all of it shows. Both directions count — a panel cut off at the bottom
+       (the ordinary case) and one cut off at the top (the list scrolled up out of view).
+    c. **A panel taller than the window arrives top first:** its first line sits under the top
+       edge and the rest is read by ordinary scrolling. Arriving with its last line at the bottom
+       edge fails, because the text then starts off-screen.
+       **The state has to be made before it can be judged, and no shipped description makes it at
+       the default text size** — the longest Russian one is about eleven lines in the narrowest
+       column `[from code, 2026-08-28]`. Make it by **enlarging the browser's text** to the largest
+       step it offers, then opening the longest description **in the locale being checked** — today
+       `grace_center` in `Gcrt` in Russian, `bat_bridge` in `Auswe` in English
+       `[from code, 2026-08-28]`, so the Russian half of this clause is the one check of AC 30 that
+       leaves `Auswe`. Landscape does not make it: the window shortens and the card column widens
+       with it (§7.5). **Judged only once the open panel is visibly taller than the window.** If it
+       is not, the case was never created and that is what is reported — not "passed", and not the
+       terminal-versus-human "not checked" of the first line either.
+    d. **The page settles in one motion.** There is no readable pause in which the opened panel
+       stands cut off and the page moves afterwards. Whether the motion is animated or instant is
+       design's (§10) and is not judged here.
+    e. **Closing does not scroll.** Closing a panel — by whichever ways design chose (§10) —
+       leaves the scroll position where it was. Content below rising as the panel collapses is
+       layout, not a scroll, and passes.
+    f. **A click on a second name in the same list runs the rule once, on the panel that opened**
+       (AC 28's one-panel rule): the page ends up showing the second panel whole, not the first.
+    Checked **on a phone**, in **both locales**, on `Auswe` — the program with the day grouping,
+    whose day-1 run is the tallest list in the data (§7.2, AC 24) — **except clause c, which names
+    its own subject and its own text size, because no list at the default one can produce the state
+    it judges**. AC 29's arrival on the list page is a different criterion with a different
+    mechanism and is not covered here.
+31. **A name is marked as a control only where it can act as one** `[design v1.4 §3.2, thread
+    D18]`. §7.2 makes the place name a control in the two program views while §7.1 keeps it inert
+    on the list page, and §10 requires a visitor to tell the two apart before clicking. Without
+    scripts the panel does not open (§7.5), so the mark would be promising what cannot happen —
+    this criterion is what keeps it honest. Observable, in one action: **with scripts available
+    the name in the list carries a resting mark that the inert name on the list page does not;
+    with scripts disabled it carries none and the two look alike.** Checked on one screen, on one
+    place in the two forms it takes — the name inside a program's list and the same name as a
+    catalogue entry — by switching scripts off and back; judged on what is visible at rest, not
+    on which mark design chose (§10), so a change of mark does not change this criterion. **Judged
+    on screen, and there only.** On paper the mark stays: the removal is keyed to `scripting`,
+    which is not `none` when printing, so the dotted mark reaches the page `[design v1.4 §3.2,
+    thread D18, 2026-08-29]`. That is a decision, not an oversight, and it breaks no promise —
+    §10 asks a visitor to tell the two names apart **before clicking**, and paper has no click.
+    A checker who prints the page files nothing on this.
+    **Two findings that are accepted and are not defects — a checker who meets them files
+    nothing:**
+    - **Without scripts the name is still announced and focusable.** The button role, the tab stop
+      and `aria-expanded` are server-rendered and stay, so a screen reader calls it a button,
+      `Tab` lands on it, and pressing does nothing. Only markup could remove them, and markup may
+      not move (`.claude/architecture-places-of-interest.md` §4.3.2); the residue is accepted with
+      the choice and is smaller than the one it replaces.
+    - **The moment before hydration** — scripts present, mark already visible, handler not
+      attached. No means exists for it (`.claude/architecture-places-of-interest.md` §4.3.2), and
+      it is **not judged here**: whether a click made in that window is replayed after hydration
+      is observed but not promised, so the outcome ranges from "opens late" to "does nothing" and
+      cannot yield one verdict.
 
 ### 9.4 Non-regression
 
@@ -1055,7 +1240,7 @@ the mechanism chosen and §8 A2 the evidence that it fires.
   `[owner, decision 2026-08-24]`: it does, for speed. This document no longer waits on it; what
   it did with the answer is R18 and the presence-versus-display split in AC 15 and AC 28.
 
-**And three for design, named so they are not lost between documents** (§7.5):
+**And four for design, named so they are not lost between documents** (§7.5):
 
 - **The typeface relation of improvement 1** — this document states "the same as the block
   above"; which face that is, and everything else about how the list looks, is design's.
@@ -1066,7 +1251,27 @@ the mechanism chosen and §8 A2 the evidence that it fires.
   navigating away. The owner did not speak to these and this document does not invent them.
 - **Telling a clickable name from an inert one.** The same place name is a control in the two
   program views and plain text on the list page; a visitor must be able to see which before
-  clicking. This is the residue of the D2 objection, accepted with the improvement.
+  clicking. This is the residue of the D2 objection, accepted with the improvement. **Still
+  design's, and now decided** (v1.4 §3.2, thread D18): the mark is conditional on scripts being
+  available. Which mark it is remains theirs and the mechanism the architect's; what this document
+  took from the decision is the observable — AC 31 — because a mark that outlives the click it
+  promises breaks the requirement in this bullet rather than serving it. **The requirement is a
+  screen one**, and since v2.8 AC 31 says so: on paper the mark prints and design decided it
+  stays (`D18`, 2026-08-29), which costs this bullet nothing — there is no click on paper to
+  tell apart in advance.
+
+**v2.5 adds one item to each side** (§7.5):
+
+- **Design's:** the rule by which an opened panel is brought into view — always, by the minimum
+  offset, top first when the panel is taller than the window, nothing on close, and how the motion
+  looks. It carries **no threshold**: design proposed dropping it under the owner's «if it is
+  possible» and **he took the proposal on 2026-08-28**, so the absence is his and not a latitude
+  design is holding (thread D17, §7.5). This document takes the observable outcomes of that rule as
+  AC 30 and adds no threshold of its own.
+- **The architect's and the coder's:** where the measure-then-scroll step lives. A panel has no
+  geometry until it is open, so the order is open → measure → scroll; that ordering follows from
+  the requirement rather than picking a mechanism for it. Which component holds it, and which
+  scrolling API, is his — the same shape as AC 25's and AC 29's mechanisms.
 
 ---
 
@@ -1080,11 +1285,18 @@ both say what they used to say. **R13, R14 and R15 are new in v2.2.**
 named — a place can say a program's name but cannot reach it — no longer exists. Its row is
 removed and the closure is recorded in [D §6]. **R16 and R17 are new in v2.3, R18 in v2.4;
 R17 was rewritten in v2.4 on measured facts** — it kept its number and its row, and it says
-something narrower than it used to.
+something narrower than it used to. **v2.5 opens no new risk:** R2, R16, R17 and R18 are corrected
+against the landed data, each keeping its number and its row, and R16 stops being dormant.
+**v2.6 opens none and closes none** — it changes a check and an attribution, and no risk sits on
+either. **v2.7 opens none either:** AC 31 checks a requirement §10 already carried, and the
+state it names — no scripts — is R-free, being accepted in §7.5 rather than mitigated. **v2.8
+opens none:** it bounds AC 31 to the screen, and print carries no risk here because the project
+serves it with nothing at all `[from code: no @media print rule anywhere]` — naming a medium out of
+scope removes no cover that existed.
 
 | # | Risk | Source | Severity |
 |---|---|---|---|
-| R2 | **Content is the critical path and now has no end either.** Rewritten in v2.2. The descriptions still do not exist — 30 places committed, every `description` a `'TBD'` placeholder `[from code]` — and they still pass through one person at roughly one batch every 2–3 weeks. What changed: the release no longer waits for them all `[owner, decision 2026-08-13]`, so value is no longer withheld until the last text; and no count is committed `[owner, decision 2026-08-13]`, so there is no longer a number this risk can be sized against or a completion date it can miss. It became smaller as a delivery risk and less legible as a schedule risk. | `[owner, 4, 5]`, `[owner, decision 2026-08-13]`, `[from code]` | medium *(was high)* |
+| R2 | **Content is the critical path and now has no end either.** Rewritten in v2.2. Six programs' worth of descriptions now exist — **36 places, both locales, no `'TBD'` left** `[from code, 2026-08-28]` — and the other six programs' texts still pass through one person at roughly one batch every 2–3 weeks. What v2.5 changes is extent, not shape: half the catalogue has landed, and there is still no number at which it is finished. What changed: the release no longer waits for them all `[owner, decision 2026-08-13]`, so value is no longer withheld until the last text; and no count is committed `[owner, decision 2026-08-13]`, so there is no longer a number this risk can be sized against or a completion date it can miss. It became smaller as a delivery risk and less legible as a schedule risk. | `[owner, 4, 5]`, `[owner, decision 2026-08-13]`, `[from code]` | medium *(was high)* |
 | R3 | **Discoverability, mitigated in v2.2.** Rewritten. Entry was from the tour description only, inside a homepage accordion a search visitor never opens. The footer link `[owner, decision 2026-08-13]` is present on every page and crawlable, so the page now has a site-wide internal link — which is also the first thing the SEO goal in §2 needed. What remains: the footer is a weak position, and no main-navigation entry exists, which `[owner, 18]` ruled out. **The downgrade is this document's reading of a decision that did not rate it**; the mitigation is the owner's, the severity is not. | `[owner, 18]`, `[owner, decision 2026-08-13]` | low *(was medium)* |
 | R5 | **Double representation.** The same object can show as a place in the list and as a bonus label on the same date page. Accepted deliberately, but it will look like a bug to anyone who did not read this. | `[owner, 21]` | low |
 | R6 | **Terminology.** "Event" now covers a tour date *and* a one-off city occurrence. Resolved in this document's prose only, not in the code, and no vocabulary will be agreed while this feature is built `[owner, decision 2026-08-13]`. Mitigation is the standing rule in §1. | context.md q24, `[owner, 15]`, `[owner, decision 2026-08-13]` | medium |
@@ -1095,9 +1307,9 @@ something narrower than it used to.
 | R13 | **Duplication with the program's own copy.** `TourProgram.highlights` and `TourProgram.description` `[from code, types/tour.ts]` already name sights in prose, so one accordion can name the same site twice — once in the program text, once in the place list. Kept deliberately `[owner, decision 2026-08-13]`, and **both lists confirmed to stay** `[owner, decision 2026-08-17]` — provisionally: the owner's word is «пока». Same shape as R5, same consequence — it will read as a bug to anyone who did not read this. The duplicated on-page text shrank in v2.3: the place list in the accordion is now names only (§7.2), so what repeats is a name, not a description. **v2.4 makes that conditional again:** the popup shows the same description the list page prints `[owner, decision 2026-08-24]`, so if the mechanism renders panels into the homepage's HTML, what repeats between `/` and `/places/` is a paragraph per place rather than a name. Which way it goes is the architect's and is owed back (§10); the severity above is written for the smaller case. | `[owner, decision 2026-08-13]`, `[owner, decision 2026-08-17]`, `[from code]` | low |
 | R14 | **Which places belong is a judgment with no test.** New in v2.2. AC 2 is withdrawn and `[owner, 1]` is a description, not a criterion `[owner, decision 2026-08-13]`: nothing in these documents can say a proposed place does not belong. Membership is judged outside the project (§5.1) and is revisable (§13 item 8). What this does **not** cost, since O13 was answered: coverage still has a boundary — the owner plans to cover **all 12 programs** `[owner, 14]`, `[owner, decision 2026-08-13]`, and the program set is finite and enumerable `[from code]`, so "every program has a list" remains a sayable completed state even though "the catalogue holds the right places" does not. What remains: the criteria can check an entry, never the set. Mitigated by shape, not by process — a removal costs no URL (§5). **Severity is this document's read**, lowered once O13 closed. | `[owner, 1]`, `[owner, 14]`, `[owner, decision 2026-08-13]` | low *(medium before O13 was answered)* |
 | R15 | **A second day that exists on the page and nowhere in the schedule.** New in v2.2. Only day 1 is scheduled; day 2 is not marked in the calendar at all `[owner, decision 2026-08-13]`, while the place list shows a "Day 2" group `[owner, decision 2026-08-13]`. Two observable consequences, both accepted: a visitor sees day-2 places on a page whose date is a single day, with the second date stated nowhere; and the calendar shows a two-day program as a one-day entry. A third is mechanical and worth knowing before the first such date is added `[from code]`: past-versus-upcoming is decided from that single `date`/`time` via `parseCentralTime`, so the event leaves "upcoming" once day 1 has passed — while day 2 is still ahead. **Dormant today** — no `Auswe` date exists in `data/upcomingTours.ts` or `data/RecentTours.ts` `[from code]`; it activates the first time one is scheduled. | `[owner, decision 2026-08-13]`, `[from code]` | low |
-| R16 | **A place and a meeting point can be the same physical site under two names.** §6 forbids any link between the two, so a date page can show one object twice, in two blocks, under two names — `landOffice` in the place list is today's Capitol Visitors Center, which is also `Haust`'s meeting point `[from code]`. Neither R5 (bonus) nor R13 (`highlights`) covers this neighbour. **Dormant:** only `capitol` is linked in the data today `[from code]`; it activates when that place ships. **No owner answer exists** — design raised it as thread D14 and it went unanswered, and choosing one name for the object is an open question of the architecture document (§10 item 6 there). Nothing here treats it as settled: what is settled is only that the two entities are not linked `[owner, 16]`. | `[owner, 16]`, `[from code]` | low |
-| R17 | **A Latin-named place would sit apart from the Russian alphabet.** Opened in v2.3 on two wrong facts and **rewritten here on measured ones.** Corrected: in the Russian collation **Cyrillic sorts before Latin**, not the other way round — `Intl.Collator('ru')` on full ICU orders «Аврора, Капитолий, Яблоко, Norwood Tower, Old Bakery» `[from code]`, so a Latin name lands in a tail after the Cyrillic run, not ahead of it. Corrected: the premise does not hold on the shipped data — **none of the 37 Russian names begins with a Latin letter** `[from code, data/poi.ru.ts]`; the Russian form comes first and the Latin one is parenthesised after it («Старая пекарня и лавка (Old Bakery and Emporium)»), so the page sorts as one alphabet from top to bottom. The earlier count came from the draft name table in the architecture document, which is material and not data. **Kept, not deleted, because its purpose survives:** if any place ever takes a Latin string as its *Russian* name, the RU page grows a tail of such entries below «Я», and that is the correct output of an alphabetical sort rather than a sorting bug — this row is what stops it being filed as one. Condition of return: a Russian name whose first character is Latin. | `[owner, decision 2026-08-17]`, `[from code, data/poi.ru.ts]` | low — **not realised on the current set** |
-| R18 | **The catalogue's own text is repeated on a page that outranks it.** New in v2.4. The panel's description is server-rendered `[owner, decision 2026-08-24]`, so the same paragraph per place sits in the HTML of two indexable pages — the homepage and `/places/` — while §2.1 makes `/places/` accountable for ranking on one named query. A site competing with itself for the same text usually ends with the search engine picking one page, and the homepage is the stronger candidate. **Two amplifiers, both `[from code]`:** until issue #53 is fixed the homepage ships three expanded cards in its server HTML, so it carries the descriptions of every place of those three programs on every device; and the weight of `/` grows with each described place of those programs, which nothing in this project measures (context.md names Core Web Vitals as part of the search surface). **Accepted, not mitigated:** the owner weighed speed and took it, and the alternative — building the panel on the click — was the thing he declined. **Severity is this document's read**, and it is the only risk here that touches the measured goal directly. | `[owner, decision 2026-08-24]`, `[from code]` | medium |
+| R16 | **A place and a meeting point can be the same physical site under two names.** §6 forbids any link between the two, so a date page can show one object twice, in two blocks, under two names — `landOffice` in the place list is today's Capitol Visitors Center, which is also `Haust`'s meeting point `[from code]`. Neither R5 (bonus) nor R13 (`highlights`) covers this neighbour. **Realised since 2026-08-28** `[from code]`: `land_office` is linked to `Haust`, whose `meetingPoint` reads «Встречаемся возле Texas Capitol visitors center» — one building, two names, on one date page. What was dormant is now the shipped state; it is not a defect, since §6 forbids the link deliberately. **No owner answer exists** — design raised it as thread D14 and it went unanswered, and choosing one name for the object is an open question of the architecture document (§10 item 6 there). Nothing here treats it as settled: what is settled is only that the two entities are not linked `[owner, 16]`. | `[owner, 16]`, `[from code]` | low |
+| R17 | **A Latin-named place would sit apart from the Russian alphabet.** Opened in v2.3 on two wrong facts and **rewritten here on measured ones.** Corrected: in the Russian collation **Cyrillic sorts before Latin**, not the other way round — `Intl.Collator('ru')` on full ICU orders «Аврора, Капитолий, Яблоко, Norwood Tower, Old Bakery» `[from code]`, so a Latin name lands in a tail after the Cyrillic run, not ahead of it. Corrected: the premise does not hold on the shipped data — **none of the 36 Russian names begins with a Latin letter** `[from code, data/poi.ru.ts, 2026-08-28]`; the Russian form comes first and the Latin one is parenthesised after it («Старая пекарня и лавка (Old Bakery and Emporium)»), so the page sorts as one alphabet from top to bottom. The earlier count came from the draft name table in the architecture document, which is material and not data. **Kept, not deleted, because its purpose survives:** if any place ever takes a Latin string as its *Russian* name, the RU page grows a tail of such entries below «Я», and that is the correct output of an alphabetical sort rather than a sorting bug — this row is what stops it being filed as one. Condition of return: a Russian name whose first character is Latin. | `[owner, decision 2026-08-17]`, `[from code, data/poi.ru.ts]` | low — **not realised on the current set** |
+| R18 | **The catalogue's own text is repeated on a page that outranks it.** New in v2.4. The panel's description is server-rendered `[owner, decision 2026-08-24]`, so the same paragraph per place sits in the HTML of two indexable pages — the homepage and `/places/` — while §2.1 makes `/places/` accountable for ranking on one named query. A site competing with itself for the same text usually ends with the search engine picking one page, and the homepage is the stronger candidate. **Two amplifiers, both `[from code]`:** until issue #53 is fixed the homepage ships three expanded cards in its server HTML, so it carries the descriptions of every place of those three programs on every device — on the shipped data that is 17 distinct places and about 3,500 characters of Russian description `[from code, 2026-08-28]`; and the weight of `/` grows with each described place of those programs, which nothing in this project measures (context.md names Core Web Vitals as part of the search surface). **Accepted, not mitigated:** the owner weighed speed and took it, and the alternative — building the panel on the click — was the thing he declined. **Severity is this document's read**, and it is the only risk here that touches the measured goal directly. | `[owner, decision 2026-08-24]`, `[from code]` | medium |
 
 ### 11.1 Combinations that change the decision
 
@@ -1117,7 +1329,7 @@ something narrower than it used to.
   strength, not its v2.1 strength.**
 - **R13 + R5 + R16.** Three accepted duplications meet on one date page, so a single object
   can be named up to four times: in the program's `highlights` prose, in the place list, as a
-  `bonus` label, and — once `landOffice` ships — as the meeting point under a different name.
+  `bonus` label, and — since `land_office` shipped `[from code, 2026-08-28]` — as the meeting point under a different name.
   None is treated in v1 (§4). All surface in the same view, which is where a later fix
   would go; recorded together so the *combined* appearance is not mistaken for a new defect
   when someone first sees them at once.
