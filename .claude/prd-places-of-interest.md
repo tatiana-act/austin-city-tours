@@ -1,6 +1,6 @@
 # PRD: Places of Interest (POI)
 
-version: 2.8 | date: 2026-08-29 | status: buildable — no open items
+version: 2.9 | date: 2026-08-29 | status: buildable — no open items
 source: owner interview, 21 questions, 2026-08-13, plus the owner's post-interview
 decisions of 2026-08-13 and of 2026-08-16/17/18, plus the three improvements ordered after
 v2.3 — two before v2.4 and one on 2026-08-28
@@ -39,8 +39,12 @@ having named it (`D17`, closed 2026-08-28). v2.7 adds one criterion, AC 31, on a
 already made and nothing had checked: the mark that tells a clickable name from an inert one is
 carried only where the click works. v2.8 adds nothing to that criterion's subject and one line
 to its scope: the mark is judged on screen and prints unchanged, which design decided the same
-day (`D18`, 2026-08-29) after v2.7 had already been written to the earlier instruction. No
-interview answer was added, altered or removed in any revision.
+day (`D18`, 2026-08-29) after v2.7 had already been written to the earlier instruction. v2.9
+repairs AC 31 itself on two testing threads: `T11` — its observable compared two names that can
+never look alike, and now compares only the mark; `T12` — a browser that does not know
+`scripting` keeps the mark, which the mechanism decided and the criterion had not listed among
+what it accepts. No requirement moved in either. No interview answer was added, altered or
+removed in any revision.
 
 Written in English because the interview was in English; context.md is in Russian.
 
@@ -1148,16 +1152,22 @@ context.md's open items.
     scripts the panel does not open (§7.5), so the mark would be promising what cannot happen —
     this criterion is what keeps it honest. Observable, in one action: **with scripts available
     the name in the list carries a resting mark that the inert name on the list page does not;
-    with scripts disabled it carries none and the two look alike.** Checked on one screen, on one
+    with scripts disabled neither name carries it.** The comparison is the mark and nothing
+    else — since v2.9, because "the two look alike" was false however the page behaved: a
+    catalogue entry's name is a heading and a list name is inline muted text, so the two differ
+    in size, weight and colour in every state `[from code]`. None of that difference is this
+    criterion's business, and a checker who notices it files nothing. Checked on one screen, on one
     place in the two forms it takes — the name inside a program's list and the same name as a
     catalogue entry — by switching scripts off and back; judged on what is visible at rest, not
-    on which mark design chose (§10), so a change of mark does not change this criterion. **Judged
+    on which mark design chose (§10), so a change of mark does not change this criterion.
+    **Judged in a browser that knows the `scripting` media feature** (Chrome 120 and Safari 17
+    and later); in one that does not, the third accepted finding below governs instead. **Judged
     on screen, and there only.** On paper the mark stays: the removal is keyed to `scripting`,
     which is not `none` when printing, so the dotted mark reaches the page `[design v1.4 §3.2,
     thread D18, 2026-08-29]`. That is a decision, not an oversight, and it breaks no promise —
     §10 asks a visitor to tell the two names apart **before clicking**, and paper has no click.
     A checker who prints the page files nothing on this.
-    **Two findings that are accepted and are not defects — a checker who meets them files
+    **Three findings that are accepted and are not defects — a checker who meets them files
     nothing:**
     - **Without scripts the name is still announced and focusable.** The button role, the tab stop
       and `aria-expanded` are server-rendered and stay, so a screen reader calls it a button,
@@ -1169,6 +1179,13 @@ context.md's open items.
       it is **not judged here**: whether a click made in that window is replayed after hydration
       is observed but not promised, so the outcome ranges from "opens late" to "does nothing" and
       cannot yield one verdict.
+    - **A browser that does not know `scripting` keeps the mark, with scripts off as well.** The
+      rule is written as removal on purpose: an unknown media feature means the query never
+      matches, so such a browser keeps the behaviour already accepted instead of losing the mark
+      for good, and that trade was made deliberately
+      (`.claude/architecture-places-of-interest.md` §4.3.2, design v1.4 §3.2). It is named here
+      because the wording above would otherwise oblige a checker on such a browser to file the
+      very decision the rule exists to carry.
 
 ### 9.4 Non-regression
 
@@ -1290,7 +1307,8 @@ against the landed data, each keeping its number and its row, and R16 stops bein
 **v2.6 opens none and closes none** — it changes a check and an attribution, and no risk sits on
 either. **v2.7 opens none either:** AC 31 checks a requirement §10 already carried, and the
 state it names — no scripts — is R-free, being accepted in §7.5 rather than mitigated. **v2.8
-opens none:** it bounds AC 31 to the screen, and print carries no risk here because the project
+opens none, and neither does v2.9** — one bounds AC 31 to the screen, the other repairs its
+comparison and names a third accepted state; no risk sat on any of it. Print carries none here because the project
 serves it with nothing at all `[from code: no @media print rule anywhere]` — naming a medium out of
 scope removes no cover that existed.
 
