@@ -22,22 +22,21 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
       ],
       "@/components/*": [
-        "components/*"
+        "./components/*"
       ],
       "@/types/*": [
-        "types/*"
+        "./types/*"
       ],
       "@/lib/*": [
-        "lib/*"
+        "./lib/*"
       ],
       "@/data/*": [
-        "data/*"
+        "./data/*"
       ]
     }
   },

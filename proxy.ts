@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server';
 
 const handleI18nRouting = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
     const acceptLanguage = request.headers.get('accept-language') || '';
 
     // Unified logic: If Accept-Language contains ru, uk, or kk, force it to 'ru'

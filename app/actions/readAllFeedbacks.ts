@@ -1,6 +1,6 @@
 import { GoogleAuth } from 'google-auth-library';
 import { sheets_v4 } from '@googleapis/sheets';
-import { Review } from 'types/review';
+import { Review } from '@/types/review';
 import { unstable_cache } from "next/cache";
 
 async function fetchFromGoogle(): Promise<Review[]> {
