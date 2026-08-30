@@ -1,6 +1,6 @@
 // components/UpcomingToursSection.tsx
 import React from 'react';
-import { Review } from 'types/review'
+import { Review } from '@/types/review'
 import { TourProgram } from "@/types/tour";
 import ReviewCard from './ReviewCard';
 import {useTranslations} from "next-intl";
