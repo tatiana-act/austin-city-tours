@@ -32,7 +32,7 @@ const RecentEventCard: React.FC<PastTourCardProps> = ({ tour, tourName, locale }
 
     return (
 
-        <div className="upcoming-tour-card p-2 bg-white rounded-lg shadow-md max-w-md mx-auto relative" id={'tour-card-' + tour.id.valueOf()}>
+        <div className="upcoming-tour-card p-2 bg-white rounded-lg shadow-md w-full max-w-md mx-auto relative" id={'tour-card-' + tour.id.valueOf()}>
             <Modal isOpen={openPopupIndex === 2} onClose={closePopup} title={tFeedback('title')}>
                 <FeedbackForm tourName={tourName} tourId={tour.tourProgramId} date={tour.date} onClose={closePopup} />
             </Modal>
