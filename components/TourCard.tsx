@@ -1,36 +1,65 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TourProgram } from '@/types/tour';
+import type { ProgramPoi } from '@/lib/poi';
 import Image from 'next/image';
+import PoiList from './PoiList';
 import {useTranslations} from "next-intl";
 
 interface TourCardProps {
   tour: TourProgram;
+  /** Places this program visits. Empty for a program that has none yet. */
+  poi: ProgramPoi[];
   onBookTour: (tourId: string) => void;
   isCompact?: boolean;
+  /**
+   * The visitor arrived at this card by the link from the places list, so it
+   * shows its details straight away — on a phone too, where the card would
+   * otherwise be a teaser (PRD AC 25, architecture §4.1). Set for at most one
+   * card at a time.
+   */
+  hasArrived?: boolean;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tour, onBookTour, isCompact = false }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const prevExpanded = useRef(isExpanded);
+/**
+ * What the visitor did to this card. Three states rather than a boolean: an
+ * arrival opens a card the visitor has not touched, but must not override a
+ * card the visitor deliberately collapsed, and "collapsed" is not the same as
+ * "untouched" once an arrival is in play (architecture §4.1).
+ */
+type CardInteraction = 'untouched' | 'expanded' | 'collapsed';
+
+const TourCard: React.FC<TourCardProps> = ({ tour, poi, onBookTour, isCompact = false, hasArrived = false }) => {
+  const [interaction, setInteraction] = useState<CardInteraction>('untouched');
+  const prevInteraction = useRef(interaction);
 
   useEffect(() => {
-    if (prevExpanded.current && !isExpanded) {
+    // Collapsing scrolls back to the top of the card, so the visitor does not
+    // land in the middle of the grid. Driven by the visitor's own action, not
+    // by `showDetails`, which also flips when hydration discovers the layout.
+    if (prevInteraction.current !== 'collapsed' && interaction === 'collapsed') {
       const elementId = tour.id.valueOf() + 'tour-card';
       const element = document.getElementById(elementId);
       element?.scrollIntoView({ behavior: 'smooth' });
     }
-    prevExpanded.current = isExpanded;
-  }, [isExpanded, tour.id]);
+    prevInteraction.current = interaction;
+  }, [interaction, tour.id]);
 
   const handleBookClick = () => {
     onBookTour(tour.id);
   };
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  // Details show on a roomy layout always; on a compact one if the visitor
+  // opened the card, or arrived at it by link and has not collapsed it since.
+  // The arrival is folded into this expression instead of being written into
+  // state from an effect (architecture §4.1, and context.md question 20).
+  const showDetails =
+    !isCompact ||
+    interaction === 'expanded' ||
+    (hasArrived && interaction !== 'collapsed');
 
-  const showDetails = !isCompact || isExpanded;
+  const toggleExpand = () => {
+    setInteraction(showDetails ? 'collapsed' : 'expanded');
+  };
   const t = useTranslations('ToursSection');
 
   // Collapsed on mobile: the photo, the title and a two-line faded teaser are
@@ -99,6 +128,8 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onBookTour, isCompact = false
         </div>
 
         {tour.extra && <div className="tour-highlights">{tour.extra}</div>}
+
+        <PoiList poi={poi} />
 
         <div className="meeting-point">
           <strong>{t('meetingPoint')}</strong>{' '}

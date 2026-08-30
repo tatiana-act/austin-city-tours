@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+    /* Brand palette — the two blues already used throughout the hand-written
+       rules below, so utilities and existing classes cannot drift apart. */
+    --color-brand: #667eea;
+    --color-brand-dark: #764ba2;
+    --color-ink: #333333;
+    --color-ink-muted: #666666;
+
     --animate-float: float 20s ease-in-out infinite;
     --animate-slide-up: slideInUp 1s ease-out forwards;
 
@@ -274,6 +281,56 @@ body {
     left: 0;
     color: #4CAF50;
     font-weight: bold;
+}
+
+/* The popup panel under a program's list of places (design §3.3): a brand
+   rule down the left, no background, no box.
+
+   The gap between rule and text is derived, not picked. The panel's text has to
+   land on the same vertical as the text of the `highlights` items in the same
+   card, which is 1.5rem from the block's left edge (`.highlights-list li`
+   below); the rule sits on that edge and takes 4px, so the gap is 1.5rem − 4px.
+   Nothing is set on the right: there is no rule and no background there, so the
+   panel's right edge is the block's. Top and bottom are 0.25rem and do not grow
+   with the horizontal value — vertical air already comes from the line height.
+
+   Written here rather than as `pl-4 py-1` utilities because the `* { padding:
+   0; margin: 0 }` reset at the top of this file is unlayered and Tailwind's
+   utilities are not: the reset wins, and every padding and margin utility in
+   this project silently computes to zero. */
+.poi-panel {
+    border-left: 4px solid var(--color-brand);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+}
+
+/* The whole mark that says a place name in a program's list is a control:
+   dotted underline and the pointer cursor (design §3.2). Both live in one rule
+   rather than in utilities on the element, because both are dropped together in
+   the state below — split across two places, one of them would outlive the
+   other. Colour, hover and focus are not part of the mark and stay on the
+   element. */
+.poi-name {
+    text-decoration: underline dotted;
+    text-underline-offset: 4px;
+    cursor: pointer;
+}
+
+/* Without scripts the panel never opens, so the mark would be promising what
+   cannot happen: it comes off, and the name looks like the inert one on the
+   catalogue page (PRD AC 31, design §3.2, architecture §4.3.2).
+
+   Written as removal and never as addition. A browser that does not know the
+   `scripting` feature does not match this query and keeps the mark — today's
+   behaviour, already accepted. The same thing written as `@media (scripting:
+   enabled)` would strip the mark there forever: a rare state fixed at the cost
+   of the ordinary one. Printing is not this state — `scripting` is not `none`
+   there, so the mark prints, which is a decision (design §3.2) and the reason
+   the project still has no `@media print` rule. */
+@media (scripting: none) {
+    .poi-name {
+        text-decoration: none;
+        cursor: auto;
+    }
 }
 
 .meeting-point {

@@ -1,9 +1,12 @@
 import React from 'react';
+import Link from 'next/link';
 import { FaFacebook, FaTelegram, FaInstagram, FaPhone, FaEnvelope } from 'react-icons/fa';
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 
 const Footer: React.FC = () => {
   const t = useTranslations('Footer');
+  const tPlaces = useTranslations('Places');
+  const locale = useLocale();
   return (
     <footer className="footer">
       <div className="container">
@@ -64,6 +67,16 @@ const Footer: React.FC = () => {
               </div>
             }
           </div>
+          {/* Site-wide entry point to the places page — the footer is on every
+              page, and it is not the main navigation. */}
+          <p>
+            <Link
+              href={`/${locale}/places`}
+              className="font-semibold text-white underline underline-offset-4 transition-colors hover:text-gray-300"
+            >
+              {tPlaces('title')}
+            </Link>
+          </p>
           <p>&copy; 2026 Austin City Tours</p>
         </div>
       </div>

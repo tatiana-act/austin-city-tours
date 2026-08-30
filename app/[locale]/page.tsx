@@ -14,6 +14,7 @@ import { headers } from 'next/headers';
 import { getTourSchedule } from '@/lib/tourSchedule';
 import RecentEventsSection from '@/components/RecentEventsSection';
 import HashScrollHandler from '@/components/HashScrollHandler';
+import { getProgramPoi, type ProgramPoi } from '@/lib/poi';
 
 export default async function Home({
   params
@@ -31,13 +32,19 @@ export default async function Home({
     tours.map(tour => [tour.id, tour] as const),
   );
 
+  // `ToursSection` and `TourCard` are client components, so the places are read
+  // here on the server and handed down as a prop rather than imported there.
+  const poiByProgram: Record<string, ProgramPoi[]> = Object.fromEntries(
+    tours.map(tour => [tour.id, getProgramPoi(tour.id, locale)] as const),
+  );
+
   const { futureUpcomingTours, mergedPastTours } = getTourSchedule();
 
   return (
     <main>
       <HashScrollHandler />
       <Hero allTours={allTours} />
-      <HomeClient allTours={allTours} tours={tours} upcomingTours={futureUpcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
+      <HomeClient allTours={allTours} tours={tours} poiByProgram={poiByProgram} upcomingTours={futureUpcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
       <RecentEventsSection pastTours={mergedPastTours} tours={tours} locale={locale} />
       <ReviewSection reviews={allReviews} allTours={allTours} />
       <FAQSection faqs={faqs} />

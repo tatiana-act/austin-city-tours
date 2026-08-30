@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Tour detail pages and /tours/next (a redirect) are intentionally excluded:
     // the detail pages are date-based and expire (soft-404s in Search Console),
     // and /tours/next always redirects, so it isn't a real content page.
-    const routes = ['', 'about', 'tours/calendar']
+    const routes = ['', 'about', 'tours/calendar', 'places']
 
     return routes.flatMap((path) =>
         routing.locales.map((locale) => {

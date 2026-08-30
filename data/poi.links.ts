@@ -1,0 +1,44 @@
+import type { PoiId } from '@/data/poi.programs';
+
+// One link per place, shared by both locales — a map URL does not depend on the
+// language. Canonical Google Maps search URLs rather than `maps.app.goo.gl`
+// short links: those are minted by Google when a human shares a pin, so they
+// cannot be generated. Replacing one with a short link is a one-line edit.
+export const poiMapUrl: Record<PoiId, string> = {
+  capitol: 'https://maps.app.goo.gl/wG9EQkfPH27FRVZKA',
+  old_bakery: 'https://maps.app.goo.gl/YqqNUK1zKNZ8MNYf8',
+  millet: 'https://maps.app.goo.gl/Srea7V3YAw9yruGc6',
+  st_mary: 'https://maps.app.goo.gl/hrjZdVS9BNi8pCFR6',
+  paramount: 'https://maps.app.goo.gl/menxV99DxfNJf6fF6',
+  norwood: 'https://maps.app.goo.gl/adZb2MaW9xdV8VYK6',
+  angelina: 'https://maps.app.goo.gl/8YeerjLDqSbPjGZg8',
+  driskill: 'https://maps.app.goo.gl/B6D5UaTKALXX9QkQA',
+  txdot: 'https://maps.app.goo.gl/g3v8TyAujRtY4AkM7',
+  land_office: 'https://maps.app.goo.gl/gKZxx7RMvmWzwba48',
+  history_cen: 'https://maps.app.goo.gl/fnrjuiBPJoq72i2V8',
+  woolridge: 'https://maps.app.goo.gl/u39kAWXmKnMrwYTB7',
+  travis_court: 'https://maps.app.goo.gl/DCLqmt75RXSmb9qV6',
+  hirshfield: 'https://maps.app.goo.gl/Pc45vocMjx86auck9',
+  bremond: 'https://maps.app.goo.gl/Fp6szM62hTxCV4sn9',
+  john_bremond: 'https://maps.app.goo.gl/U8EELp3x4iYo3yMA7',
+  pier_bremond: 'https://maps.app.goo.gl/7wafMGLrfpCBGWKDA',
+  eug_bremond: 'https://maps.app.goo.gl/3ksgYDDrvFCFbMhD7',
+  north_cottage: 'https://maps.app.goo.gl/KFA7ooDj2tfaqThM6',
+  chateau: 'https://maps.app.goo.gl/Yee8ssHEsdrAP19J6',
+  mayfield: 'https://maps.app.goo.gl/BxcwTHDn6SVUD3tt6',
+  covert: 'https://maps.app.goo.gl/LZ839WaEK1FAapqY8',
+  bat_bridge: 'https://maps.app.goo.gl/AP3rhueQnWKWLDLw8',
+  williamson: 'https://maps.app.goo.gl/e8Cb4AbY9DNpAffNA',
+  wil_court: 'https://maps.app.goo.gl/LoUPb5jkLAy1kHEG9',
+  onion_dome: 'https://maps.app.goo.gl/tv6KTKmQhN1hjTCJA',
+  city_post: 'https://maps.app.goo.gl/kgKuGDYrpN9ZSnAT8',
+  gtown_art: 'https://maps.app.goo.gl/UNmjDL6YPmMNYPUp9',
+  grace_center: 'https://maps.app.goo.gl/HjiZL9aroTjeb57n8',
+  chisholm: 'https://maps.app.goo.gl/5m7zPyTLebePdsXa6',
+  rr_hall: 'https://maps.app.goo.gl/uJq6fHM6hRTbPBcE7',
+  woodbine: 'https://maps.app.goo.gl/ioXYDu2HYJpEGbo48',
+  rr_post: 'https://maps.app.goo.gl/xPtiDNVP7ybo9LFL6',
+  sam_bass: 'https://maps.app.goo.gl/EXBAEJtmB2VoPcaX9',
+  sw_university: 'https://maps.app.goo.gl/D8K9Lw4dfGeEZJef6',
+  inner_space: 'https://maps.app.goo.gl/LitLeHdiyFGfPW2n7',
+};

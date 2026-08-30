@@ -2,6 +2,9 @@
 
 import { useEffect } from 'react';
 
+/** Suffix of a program card's anchor: `<programId>tour-card`. */
+const PROGRAM_ANCHOR_SUFFIX = 'tour-card';
+
 /**
  * Scrolls to the element referenced by the URL hash after the page mounts.
  *
@@ -13,6 +16,13 @@ import { useEffect } from 'react';
  * ResizeObserver and re-scroll on every layout change (e.g. as async content
  * finishes rendering). Stop once the layout has been stable for a short while,
  * or after a hard cap so we never observe forever.
+ *
+ * It also carries the missing half of the arrival from the places list: a
+ * `<programId>tour-card` hash announces the program once, so `ToursSection` can
+ * load the card if it is not among the rendered ones and show it open (see the
+ * architecture doc §4.1). The announcement reuses the existing window event
+ * because this component and `HomeClient` are siblings with no shared client
+ * state; its meaning is now wider than its name.
  */
 export default function HashScrollHandler() {
   useEffect(() => {
@@ -50,6 +60,29 @@ export default function HashScrollHandler() {
 
       rescroll();
     };
+
+    // A program card, not an event card: `tour-card-<eventId>` ends with the
+    // id, and the bare `tour-card` belongs to nothing. Every other anchor —
+    // `#upcomingCalendar` and the rest — is left alone.
+    if (id.endsWith(PROGRAM_ANCHOR_SUFFIX) && id !== PROGRAM_ANCHOR_SUFFIX) {
+      const tourId = id.slice(0, -PROGRAM_ANCHOR_SUFFIX.length);
+      // Deferred by one turn on purpose: sibling effects run in render order,
+      // and this component sits above `HomeClient` in the tree, so a synchronous
+      // dispatch would fire before `ToursSection` has subscribed. Mount effects
+      // of one commit all run before any timer, so a zero delay is enough.
+      timers.push(
+        setTimeout(() => {
+          if (cancelled) return;
+          // Sent whether or not the card is already rendered: a rendered card
+          // still has to arrive open (architecture §4.1).
+          window.dispatchEvent(
+            new CustomEvent('show-all-tours-and-scroll', {
+              detail: { tourId, expand: true },
+            }),
+          );
+        }, 0),
+      );
+    }
 
     const poll = () => {
       if (cancelled) return;
