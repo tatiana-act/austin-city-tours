@@ -6,6 +6,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import Footer from '@/components/Footer';
 
 import type { Graph } from 'schema-dts';
 import type { Metadata } from 'next'
@@ -151,6 +152,10 @@ export default async function RootLayout({
         />
         <NextIntlClientProvider messages={messages}>
           {children}
+          {/* Mounted here, once, so every route gets a footer — including ones
+              added later. Previously each page mounted its own and the tour date
+              page was missed (issue #54). */}
+          <Footer />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import Footer from '@/components/Footer';
 import { getPoiCatalog } from '@/lib/poi';
 import type { Metadata } from 'next';
 
@@ -112,8 +111,6 @@ export default async function PlacesPage({
           </ul>
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }

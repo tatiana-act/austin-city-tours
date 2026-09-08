@@ -1,7 +1,6 @@
 import React from 'react';
 import Hero from '@/components/Hero';
 import FAQSection from '@/components/FAQSection';
-import Footer from '@/components/Footer';
 import { tours as toursRu } from '@/data/tours';
 import { tours as toursEn } from '@/data/tours.en';
 import { faqs as faqsRu } from '@/data/faq';
@@ -48,7 +47,6 @@ export default async function Home({
       <RecentEventsSection pastTours={mergedPastTours} tours={tours} locale={locale} />
       <ReviewSection reviews={allReviews} allTours={allTours} />
       <FAQSection faqs={faqs} />
-      <Footer />
     </main>
   );
 }

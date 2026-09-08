@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import Footer from '@/components/Footer';
 import CalendarSection from '@/components/CalendarSection';
 import { tours as toursRu } from '@/data/tours';
 import { tours as toursEn } from '@/data/tours.en';
@@ -63,8 +62,6 @@ export default async function CalendarPage({
         locale={locale}
         variant="standalone"
       />
-
-      <Footer />
     </main>
   );
 }

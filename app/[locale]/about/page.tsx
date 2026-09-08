@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import Footer from '@/components/Footer';
 import AboutBio from '@/components/AboutBio';
 import { tours as toursRu } from '@/data/tours';
 import { tours as toursEn } from '@/data/tours.en';
@@ -78,8 +77,6 @@ export default async function AboutPage({
           </div>
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }
