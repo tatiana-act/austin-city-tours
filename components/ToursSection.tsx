@@ -9,6 +9,14 @@ interface ToursSectionProps {
   /** Places per program id, passed straight through to each card. */
   poiByProgram: Record<string, ProgramPoi[]>;
   onBookTour: (tourId: string) => void;
+  /**
+   * The server's guess at the device, from the user-agent (`page.tsx`). Used as
+   * the media-query value for the server render and the hydrating render, which
+   * have no `window` to ask. A guess, not a measurement: hydration replaces it
+   * with the real viewport, so a wrong guess costs one correction instead of
+   * rendering the wrong shape on every phone.
+   */
+  isMobileDevice: boolean;
 }
 
 // Mobile shows one column, so keep the initial list short — otherwise the
@@ -42,9 +50,9 @@ function readAnnouncement(
 /**
  * Reads a media query as React state without writing state from an effect.
  * The server — and the first client render, which has to produce the same
- * markup — sees `false`; React re-reads the real value while hydrating.
+ * markup — sees `serverValue`; React re-reads the real value while hydrating.
  */
-function useMediaQuery(query: string): boolean {
+function useMediaQuery(query: string, serverValue: boolean): boolean {
   const subscribe = useCallback(
     (onChange: () => void) => {
       const mediaQuery = window.matchMedia(query);
@@ -54,16 +62,20 @@ function useMediaQuery(query: string): boolean {
     [query],
   );
 
+  const getServerSnapshot = useCallback(() => serverValue, [serverValue]);
+
   return useSyncExternalStore(
     subscribe,
     () => window.matchMedia(query).matches,
-    () => false,
+    getServerSnapshot,
   );
 }
 
-const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBookTour }) => {
-  const isThreeColumn = useMediaQuery(THREE_COLUMN_QUERY);
-  const isMobile = useMediaQuery(MOBILE_QUERY);
+const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBookTour, isMobileDevice }) => {
+  // A phone is never wide enough for three columns, and a device that is not a
+  // phone usually is — so one guess answers both queries until hydration.
+  const isThreeColumn = useMediaQuery(THREE_COLUMN_QUERY, !isMobileDevice);
+  const isMobile = useMediaQuery(MOBILE_QUERY, isMobileDevice);
 
   // What the current layout shows before "load more" is pressed, and how much
   // that button adds.
@@ -71,8 +83,12 @@ const ToursSection: React.FC<ToursSectionProps> = ({ tours, poiByProgram, onBook
   const increment = isThreeColumn ? 3 : isMobile ? MOBILE_INITIAL_COUNT : 2;
 
   // Tracked separately from the layout and only ever grown, so a resize can
-  // widen the list but never hides tours the visitor already loaded.
-  const [requestedCount, setRequestedCount] = useState(0);
+  // widen the list but never hides tours the visitor already loaded. It starts
+  // at the count the server rendered: a desktop guess that hydration corrects to
+  // a narrow window would otherwise drop cards the visitor can already see.
+  const [requestedCount, setRequestedCount] = useState(
+    isMobileDevice ? MOBILE_INITIAL_COUNT : 6,
+  );
   const visibleCount = Math.max(layoutCount, requestedCount);
 
   // The program a visitor arrived at from the places list. Kept here rather

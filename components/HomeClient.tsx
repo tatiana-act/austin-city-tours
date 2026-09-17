@@ -25,7 +25,7 @@ const HomeClient: React.FC<HomeClientProps> = ({ allTours, tours, poiByProgram, 
         <BookingManager allTours={allTours}>
             {(handleBookTour) => (
                 <>
-                    <ToursSection tours={tours} poiByProgram={poiByProgram} onBookTour={handleBookTour} />
+                    <ToursSection tours={tours} poiByProgram={poiByProgram} onBookTour={handleBookTour} isMobileDevice={isMobileDevice} />
                     <CalendarSection allTours={allTours} upcomingTours={upcomingTours} recentTours={pastTours} locale={locale} />
                     <UpcomingToursSection allTours={allTours} upcomingTours={upcomingTours} onReserveSpot={handleBookTour} isMobileDevice={isMobileDevice} locale={locale} />
                 </>
