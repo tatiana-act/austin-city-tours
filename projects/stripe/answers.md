@@ -64,6 +64,7 @@ D1. [меняет решение] prd.md v1.4 AC 6, [41]; architecture.md v1.0 �
                                                    · дизайнер · 09-18
     → "accept the rest": "Price per person" / «Цена за одного человека» [owner, 73] · 09-18
     → внесено: prd.md v1.11 §5 V2, AC 6                     · 09-18
+    → внесено: design.md v1.3 §4, §8; design-decisions.md §12  · 09-18
 
 ## Контактная форма на видах даты · внесён → prd.md v1.5
 
@@ -142,6 +143,10 @@ A7. [к сведению] prd.md v1.4 §5 V4 has three states and none for "the 
     → no: an unreadable status is an honest 5xx error page, never "booking not found";
       "not found" only for an id that does not exist [owner, 66]  · 09-18
     → внесено: prd.md v1.8 §3, §5 V4, AC 23, AC 24, §7 R10 and its combination · 09-18
+    → внесено: architecture.md v1.3 §0.1, §1 V16, V17, §3, §4.4, §5, §7.1, §8, §10 S3;
+      architecture-decisions.md §1, §14, §19 — 5xx via the route's `error.tsx` [66]; an id
+      missing from the sheet is checked with Stripe (search + last-hour sessions) and shown
+      from Stripe's data [70]                               · 09-18
 
 D5. [к сведению] architecture.md v1.0 §4.4, §5; prd.md v1.4 §7 (R10 combination): an unreadable
     sheet shows "booking not found"; design.md v1.0 §6.3 draws "not found" neutral (outline, no
@@ -154,6 +159,7 @@ D5. [к сведению] architecture.md v1.0 §4.4, §5; prd.md v1.4 §7 (R10 
     → PRD OQ5, "accept the rest": an id absent from the sheet is checked with Stripe; a
       paid one shows the reservation or the error page, never "not found" [owner, 70] · 09-18
     → внесено: prd.md v1.11 §5 V4, AC 13, AC 24, §7, §11     · 09-18
+    → внесено: design.md v1.3 §1, §6.3, §6.4, §8, §9, §10; design-decisions.md §9 · 09-18
 
 ## Страница оплаты Stripe · открыт
 
@@ -188,6 +194,13 @@ D2. [меняет решение] prd.md v1.4 [27], [28], [29]; architecture.md 
       back to an English Stripe page still sees the screen after payment and the date page in
       Russian                                                · 09-18
     → ждёт архитектора
+    → внесено: design.md v1.3 §4, §8 (label is the owner's [74]); design-decisions.md §12 · 09-18
+    → architect, to the designer's line: yes. `success_url`, `cancel_url` and
+      `metadata.locale` (hence the QR and status page) use `pageLocale`; only Stripe's own
+      `locale` and the strings sent to Stripe use `checkoutLocale`, so a Russian payer
+      returns to `/ru/` pages even after an English Stripe page. The label is the owner's
+      text [74], not a draft                                · 09-18
+    → внесено: architecture.md v1.3 §4.1 (two-locale table, parameter block), §7.1 · 09-18
 
 ## Смысл чарджбэка · открыт
 
@@ -231,6 +244,7 @@ A13. [меняет решение] prd.md v1.7 §10 [65] lets `payments-stripe-p
      → "accept the rest" (Q7): not merged into `dev` before the production decision;
        no production switch is built [owner, 72]              · 09-18
      → внесено: prd.md v1.11 §9, §10; decisions.md §5       · 09-18
+     → внесено: architecture.md v1.3 §11 Q7                 · 09-18
 
 ## Share и Save на экране после оплаты · внесён → prd.md v1.11
 
@@ -243,6 +257,7 @@ D6. [меняет решение] prd.md v1.4 §5 V3, AC 9, [40]; architecture.m
     → "accept the rest": Save always, Share in addition where supported; supersedes
       [40] [owner, 75]                                      · 09-18
     → внесено: prd.md v1.11 US2, §5 V3, AC 9; decisions.md §1 [40], §2 · 09-18
+    → внесено: design.md v1.3 §5.2, §5.3, §5.4, §8, §10; design-decisions.md §6, §7 · 09-18
 
 ## Переключатель языка на странице статуса · внесён → prd.md v1.9
 
@@ -263,6 +278,8 @@ D7. [меняет решение] prd.md v1.4 §5 V4, [43]; context.md v1.2 USER
       stays with the owner                                  · 09-18
     → внесено: architecture.md v1.2 §1 V10, §10 S3          · 09-18
     → внесено: design.md v1.2 §6.6 (access cookie, checked in S3)  · 09-18
+    → внесено: design.md v1.3 §6.2, §9 (switcher and its light form removed, former §6.6);
+      design-decisions.md §10                               · 09-18
 
 ## Действующая бронь на другую дату · внесён → prd.md v1.10
 
@@ -273,6 +290,7 @@ D8. [к сведению] prd.md v1.4 §3 (exactly three states), §5 V4: a vali
                                                    · дизайнер · 09-18
     → "D8 it is enough if we just display the date" [owner, 69]  · 09-18
     → внесено: prd.md v1.10 §3, §5 V4                       · 09-18
+    → внесено: design.md v1.3 §6.4, §9; design-decisions.md §8  · 09-18
 
 ## Дата без цены · внесён → prd.md v1.8
 
@@ -286,6 +304,7 @@ D9. [к сведению] prd.md v1.4 AC 2, [32]; context.md v1.2 GLOSSARY (pric
     → внесено: prd.md v1.8 §5 V1, AC 2; decisions.md §2, §5  · 09-18
     → PRD OQ6, "accept the rest": the card's "0 USD" is hidden too [owner, 71] · 09-18
     → внесено: prd.md v1.11 §5 V1, AC 2                     · 09-18
+    → внесено: design.md v1.3 §3.1, §3.2, §3.3, §3.4, §9, §10  · 09-18
 
 ## Состояния, которых нет в архитектуре · открыт
 
@@ -313,3 +332,4 @@ D11. [к сведению] architecture.md v1.0 §4.1; prd.md v1.4 AC 4: a page 
                                                    · дизайнер · 09-18
      → "accept the rest": to the date page, no button, no message [owner, 76] · 09-18
      → внесено: prd.md v1.11 AC 4                           · 09-18
+     → внесено: design.md v1.3 §3.4 (cites [76])            · 09-18

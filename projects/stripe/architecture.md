@@ -1,7 +1,7 @@
 # Architecture: Stripe payments pilot
 
-version 1.2 | date 2026-09-18
-inputs: `prd.md` v1.7; `decisions.md` (cited **[D]**, owner answers up to [65]);
+version 1.3 | date 2026-09-18
+inputs: `prd.md` v1.11; `decisions.md` (cited **[D]**, owner answers up to [76]);
 `projects/context.md` v1.2
 rationale and rejected options: `architecture-decisions.md` (cited **[AD §N]**)
 objections to the PRD: `answers.md`, threads A1–A13
@@ -52,7 +52,8 @@ the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
 | title on the status page | from `programId` | from the event in the schedule | [AD §11] |
 | payment methods | `card` (with wallets) | dynamic payment methods | [AD §12] |
 | starting payment | `<form>` + Server Action + redirect | route handler `GET /pay/[eventId]`; client-side Stripe.js | [AD §13] |
-| status page, sheet unreachable | "booking not found" | a fourth, error state | [AD §14] |
+| status page, sheet or Stripe unreadable | throw → route `error.tsx`, 5xx (the owner's rule [66]) | render an error view with 200 | [AD §14] |
+| id not in the sheet | Stripe Search by `metadata.reservation_id`, plus last-hour Checkout Sessions | search only; recent sessions only; "not found" at once | [AD §19] |
 | status-page URL | path segment `/bookingstatus/{id}/` | query `?id=` | [AD §15] |
 | pay button restored by Back | remount the form on a back-forward restore | reload the page; leave it pending | [AD §16] |
 | "Confirming…" while V3 decides | route `loading.tsx`; one per-request state shared by page and metadata | no loading view; `<Suspense>` inside the page | [AD §17] |
@@ -73,12 +74,14 @@ the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
 | V7 | Non-2xx deliveries are retried: live mode up to 3 days with exponential backoff; test mode about 3 times over a few hours; an event can be re-sent by hand (Dashboard, `stripe events resend`) | [34], [35], [54], AC 20 | unverified | S2 | AC 20 relies on manual resend |
 | V8 | Stripe does not follow redirects on webhook delivery; a 3xx counts as failure | webhook URL (§4.3) | unverified | S2 | none; URL has the trailing slash anyway |
 | V9 | Vercel Protection Bypass for Automation accepts the secret as query parameter `x-vercel-protection-bypass`, on the branch URL of a protected preview | R9, AC 18–21 | unverified | S0, S2 | R9 materialises: AC 18–21 fail together — back to owner (PRD §7 combination R9) |
-| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch; the first visit leaves an access cookie on that host, so later navigation without the query (a language switch, design thread D7) stays admitted | [11, 60], AC 11 | unverified | S0, S3 | QRs die on push or revoke, and AC 11 ("still after later pushes") fails — back to owner [AD §9] |
-| V11 | Web Share with files (`navigator.canShare({ files })`) works in iOS Safari and Android Chrome, not in desktop Firefox; `<a download>` saves a data-URL PNG in both | [40], AC 9 | unverified | S1 | none; fallback covers it |
+| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch | [11, 60], AC 11 | unverified | S0, S3 | QRs die on push or revoke, and AC 11 ("still after later pushes") fails — back to owner [AD §9] |
+| V11 | Web Share with files (`navigator.canShare({ files })`) works in iOS Safari and Android Chrome, not in desktop Firefox; `<a download>` saves a data-URL PNG in every browser checked | [75], AC 9 | unverified | S1 | Share is not offered there; Save is always present |
 | V12 | `redirect()` to an external URL from a Server Action works | §4.1 | unverified | S1 | Action returns the URL, client assigns `location` |
 | V13 | PaymentIntent `metadata` can be updated after the payment succeeded; updates merge by key | §2.2, §4.2, §4.3 | unverified | S1 | flags move to Checkout Session metadata, if updatable |
 | V14 | `checkout.sessions.list({ payment_intent })` returns the session of a PaymentIntent | §4.3 dispute | unverified | S4 | name copied into PI metadata at fulfilment |
 | V15 | In Next 16 a route's `loading.tsx` is sent before the page's awaited work finishes, and `generateMetadata` does not hold it back (streamed metadata) for ordinary browsers | §4.2 | unverified | S1 | state 0 is the browser's own loading indicator, which design.md §5.2 accepts |
+| V16 | `paymentIntents.search` accepts `metadata['reservation_id']:'…' AND status:'succeeded'` in test and live mode; new objects are searchable usually within a minute, up to an hour during Stripe outages; search has a lower rate limit than other reads. `checkout.sessions.list` filters by `created` and `status` | [70], AC 24 | unverified | S3 | step 4 of §4.4 is replaced by a scan of all complete Checkout Sessions (pilot volume); the rule "not found only when Stripe does not know the id" stands |
+| V17 | A page that throws before anything is streamed gets HTTP 500 and the route's `error.tsx` inside the layout; the page's static `generateMetadata` (noindex) is still emitted | [66], AC 24 | unverified | S3 | another way to answer 5xx is chosen in S3; the 5xx itself is the requirement |
 
 ---
 
@@ -184,17 +187,19 @@ session exists. No timestamp, no counter (AC 14). Accepted format on input:
 | `lib/paymentCompletion.ts` | new, server | V3 decision table (§4.2), once per request | `getCompletionState = cache(async (sessionId: string \| undefined) => CompletionState)`; `CompletionState = { kind: 'A' } \| { kind: 'B'; reservation; qrDataUrl } \| { kind: 'C' }` |
 | `app/[locale]/payment/complete/page.tsx` | new | V3 (§4.2) | page, `generateMetadata` — both call `getCompletionState` |
 | `app/[locale]/payment/complete/loading.tsx` | new | state 0 of V3 (§4.2) | default |
-| `app/[locale]/bookingstatus/[reservationId]/page.tsx` | new | V4 (§4.4) | page, `generateMetadata` |
+| `lib/reservationLookup.ts` | new, server | §4.4 lookup: sheet, then Stripe | `lookupReservation(id): Promise<{ kind: 'found'; reservation: Reservation } \| { kind: 'absent' }>` — throws when the sheet or Stripe cannot be read |
+| `app/[locale]/bookingstatus/[reservationId]/page.tsx` | new | V4 (§4.4); throws on a lookup error | page; `generateMetadata` static (no data read), so noindex survives the error path |
+| `app/[locale]/bookingstatus/[reservationId]/error.tsx` | new, client | the error page in the page's locale (§4.4) [66] | default |
 | `app/[locale]/payment-policy/page.tsx` | new | V5 | page, `generateMetadata` |
 | `components/PayButton.tsx` | new, client | `<form action>` → `startCheckout`; hidden `eventId`, `locale`; pending label; error slot; keyed by the restore count (§4.1.1) | default |
 | `lib/pageRestore.ts` | new, client | count of back-forward-cache restores of this document (§4.1.1) | `usePageRestoreCount(): number` |
 | `components/PaymentNotice.tsx` | new | notice + policy link (V1) | default |
-| `components/QrActions.tsx` | new, client | Share / Save, back-forward-cache guard (§4.5) | default |
+| `components/QrActions.tsx` | new, client | Save always, Share where supported, back-forward-cache guard (§4.5) | default |
 | `data/paymentPolicy.ts`, `data/paymentPolicy.en.ts` | new, pair | maintainer's RU / EN texts [19] | `paymentPolicy: PaymentPolicyText` |
 | `types/paymentPolicy.ts` | new | §7.2 — both files must carry both fields | `PaymentPolicyText`, `PolicySection` |
-| `components/UpcomingSection.tsx` | changed | passes `payable = effectivePrice(event, program) > 0` per card | — |
-| `components/UpcomingTourCard.tsx` | changed | `book-button` → `PayButton` + `PaymentNotice` when `payable`, nothing otherwise (AC 1, 2); `onReserveSpot` no longer used by the card | — |
-| `app/[locale]/tours/[tourEventId]/page.tsx` | changed | `isPayable(event, program, new Date())` → `PayButton` + `PaymentNotice`, else nothing; `TourDetailClient` no longer mounted: no contact form on a priced date view (AC 1, 2, 4; [62]) | — |
+| `components/UpcomingSection.tsx` | changed | passes `effectivePrice = effectivePrice(event, program)` per card | — |
+| `components/UpcomingTourCard.tsx` | changed | when `effectivePrice > 0`: price line prints `effectivePrice` (today it prints `upcomingTour.price` whenever it is defined, `:85`, so an explicit `0` shows "0 USD"), and `book-button` → `PayButton` + `PaymentNotice`; otherwise neither price line nor button (AC 1, 2; [67, 71]); `onReserveSpot` no longer used by the card | — |
+| `app/[locale]/tours/[tourEventId]/page.tsx` | changed | price line only when `effectivePrice > 0` — the `t('free')` branch (`:80`) goes (AC 2; [67]); `isPayable(event, program, new Date())` → `PayButton` + `PaymentNotice`, else nothing; `TourDetailClient` no longer mounted: no contact form on a priced date view (AC 1, 2, 4; [62]) | — |
 | `messages/en.json`, `messages/ru.json` | changed, pair | strings of §7.1 | — |
 | `package.json` | changed | `stripe`, `qrcode`, `@types/qrcode` | — |
 
@@ -202,7 +207,10 @@ Untouched: `app/[locale]/layout.tsx`, `app/sitemap.ts`, `app/robots.ts`, `proxy.
 `i18n/routing.ts`, `next.config.ts`, `lib/site.ts`, `app/tgmessage.ts` (imported as is),
 `data/upcomingTours.ts` format, the `Bookings` / `Contacts` / `Reviews` tabs.
 
-On the home card, start time has not passed (the list hides it at start), so `payable`
+A card whose event has no own price but whose program is priced now shows the program's price;
+no date in `data/upcomingTours.ts` is in that case today `[from code]`.
+
+On the home card, start time has not passed (the list hides it at start), so the card
 checks price only; the date page applies the end-of-day rule (AC 4), which holds only if the
 page renders per request: it must stay `ƒ` in the build output (no `generateStaticParams`,
 no caching of the page).
@@ -224,7 +232,7 @@ export async function startCheckout(
 | input (zod, server) | outcome |
 |---|---|
 | `eventId` not in `upcomingTours`, or `locale` not in `routing.locales` | redirect to `/{locale}/` (`/en/` when the locale is invalid) |
-| `!isPayable(event, program, now)` | `redirect('/{locale}/tours/{eventId}/')` — page renders without the button |
+| `!isPayable(event, program, now)` — including a page left open overnight and tapped the next day | `redirect('/{locale}/tours/{eventId}/')` — the page renders without the button and with no message [76] |
 | Stripe API error | `{ failed: true }` → `PayButton` shows the start-failed string (§7.1) |
 | session created | `redirect(session.url)` [V12] |
 
@@ -233,7 +241,7 @@ Checkout Session parameters:
 ```ts
 {
   mode: 'payment',
-  locale,                                        // 'en' | 'ru' [V1]
+  locale: checkoutLocale,                        // 'en' | 'ru' [V1]
   payment_method_types: ['card'],                // [AD §12]
   line_items: [{
     quantity: 1,
@@ -242,19 +250,19 @@ Checkout Session parameters:
       currency: 'usd',
       unit_amount: Math.round(effectivePrice * 100),
       product_data: {
-        name: `${localizedProgramTitle} · ${formatDateToUserLocale(event.date, locale)}`,
-        description: perGuestString,             // §7.1
+        name: `${programTitle[checkoutLocale]} · ${formatDateToUserLocale(event.date, checkoutLocale)}`,
+        description: pricePerPerson[checkoutLocale],   // [73], §7.1
       },
     },
   }],
   custom_fields: [{
     key: 'name', type: 'text', optional: false,
-    label: { type: 'custom', custom: nameLabelString },   // ≤ 50 chars
+    label: { type: 'custom', custom: nameLabel[checkoutLocale] },   // [74], ≤ 50 chars
     text: { maximum_length: 100 },
   }],
-  custom_text: { submit: { message: paymentPolicy[locale].notice } },  // ≤ 1200 chars [V2]
-  success_url: `${origin}/${locale}/payment/complete/?session_id={CHECKOUT_SESSION_ID}`,
-  cancel_url:  `${origin}/${locale}/tours/${eventId}/`,
+  custom_text: { submit: { message: paymentPolicy[checkoutLocale].notice } },  // ≤ 1200 chars [V2]
+  success_url: `${origin}/${pageLocale}/payment/complete/?session_id={CHECKOUT_SESSION_ID}`,
+  cancel_url:  `${origin}/${pageLocale}/tours/${eventId}/`,
   expires_at: nowSeconds + 30 * 60,              // Stripe's minimum
   metadata: M,                                   // §2.2
   payment_intent_data: { metadata: M, description: `Reservation ${reservationId}` },
@@ -264,10 +272,12 @@ Checkout Session parameters:
 `origin` — the request's own origin (`x-forwarded-proto` + `host`), i.e. the host the payer
 is on and already has access to. Name and guests are asked only on Stripe's page [28]. [AD §2]
 
-`checkoutLocale` — the page's locale while V1 holds, otherwise `'en'`. `locale` above and every
-string the site sends to Stripe (item name and description, name label, notice) use
-`checkoutLocale`, so Stripe's page never mixes languages (design thread D2). The status-page
-language stays the page's locale (`metadata.locale`, [43]).
+Two locales, kept apart:
+
+| | value | used for |
+|---|---|---|
+| `pageLocale` | the locale of the page where the button was tapped (`formData.locale`) | `success_url`, `cancel_url`, `metadata.locale` and therefore the QR and status page [43] — a Russian payer returns to `/ru/` pages whatever Stripe's page showed |
+| `checkoutLocale` | `pageLocale` while V1 holds, otherwise `'en'` | Stripe's `locale` and every string the site sends to Stripe (item name and description, name label, notice), so Stripe's page never mixes languages (design thread D2) |
 
 #### 4.1.1 Pay button after the browser's Back
 
@@ -364,18 +374,39 @@ rows (Stripe retries sequentially; not observed as a normal path).
 
 ### 4.4 Status page — `/[locale]/bookingstatus/[reservationId]/` (V4)
 
-Dynamic, never cached, no login.
+Dynamic, never cached, no login, no language switcher [68]: the layout mounts only `Footer`,
+and `LanguageSwitcher` lives in `Hero`, which this page does not render `[from code]`.
+Language = the URL's locale, which the QR carries from the payer's locale (§4.5).
 
-| condition | state | shows |
+Lookup — `lookupReservation(id)` in `lib/reservationLookup.ts`, evaluated top to bottom:
+
+| step | condition | result |
 |---|---|---|
-| id fails the §2.4 format | not found | no sheet call |
-| `findReservation` → null | not found | — |
-| `findReservation` throws | not found | error logged server-side [AD §14] |
-| row, status `valid` | valid | name (B), guests (E), tour title from `programId` (J) in the page's locale, date (D) formatted with `formatDateToUserLocale`, status |
-| row, status `not valid` | not valid | same fields |
+| 1 | id fails the §2.4 format | **not found**; no sheet or Stripe call |
+| 2 | `findReservation(id)` throws | **error**: 5xx and the error page [66] |
+| 3 | row found | **valid** / **not valid** from column I, fields from the row |
+| 4 | no row → Stripe Search: `paymentIntents.search({ query: "metadata['reservation_id']:'<id>' AND status:'succeeded'", limit: 1 })` [V16] | PaymentIntent found → step 6 |
+| 5 | nothing found → Checkout Sessions created in the last hour, `status: 'complete'`, matched on `metadata.reservation_id` (covers search indexing lag, [V16]) | session with `payment_status === 'paid'` → step 6; none → **not found** |
+| 6 | reservation built from Stripe: name (session custom field `name`), guests (line-item quantity), `program_id`, `date`, `locale` (metadata); status **not valid** if the PaymentIntent's latest charge is disputed, else **valid** | shown as in step 3 [70] |
+| — | any Stripe call in steps 4–6 fails (including 429) | **error**: 5xx and the error page [66] |
 
-Never shows email (G), amount, or anything from Stripe. Language = the URL's locale, which the
-QR carries from the payer's locale (§4.5).
+| outcome | view | fields |
+|---|---|---|
+| valid / not valid | booking states | name, guests, tour title from `programId` in the page's locale, date formatted with `formatDateToUserLocale`, status |
+| not found | "booking not found" | nothing of any reservation |
+| error | the page throws; route `error.tsx` renders the error page in the page's locale, HTTP 5xx [V17] | nothing of any reservation |
+
+- The status page never writes: a reservation found only in Stripe stays without a row until
+  the webhook restores it (§4.3, single writer [AD §6]).
+- Never shown: email, amount. "Not found" is reached only when both the sheet (read
+  successfully) and Stripe (queried successfully) do not know the id [70].
+- Limits, accepted: each unknown id costs up to two Stripe calls, so guessed ids spend Stripe's
+  rate limit (a 429 shows the error page, never "not found"). A paid reservation older than an
+  hour, without a row, and not yet in the search index (Stripe search outage) reads as "not
+  found". The first case needs a guessed UUID; the second needs a failed write and a Stripe
+  outage together.
+
+[AD §14], [AD §19]
 
 ### 4.5 QR
 
@@ -384,8 +415,9 @@ QR carries from the payer's locale (§4.5).
 | Payload | `statusPageUrl(locale, id, origin)` = `new URL('/{locale}/bookingstatus/{id}/', base)` with every query parameter of `PILOT_SHARE_URL` appended; `base` = origin of `PILOT_SHARE_URL`, or the request origin when the variable is absent (local development only) [V10], [AD §9] |
 | Same URL goes to | sheet column H |
 | Image | PNG, generated on the server with `qrcode` (`toDataURL`), embedded as a data URL in state B's HTML. No endpoint serves it [AD §10] |
-| Share | `QrActions`: build a `File` (`image/png`) from the data URL; if `navigator.canShare?.({ files: [file] })` → Share button → `navigator.share({ files: [file] })`; otherwise Save = `<a href={dataUrl} download>` [V11] |
-| Server render | the Save form (server cannot know share support); Share replaces it on the client |
+| Save | always rendered, on the server and the client: `<a href={dataUrl} download>` [75], [V11] |
+| Share | added by `QrActions` on the client, next to Save, when `navigator.canShare?.({ files: [file] })` is true for a `File` (`image/png`) built from the data URL → `navigator.share({ files: [file] })`. Never replaces Save; a share error or cancel changes nothing [75] |
+| Server render | Save only (the server cannot know share support); Share appears after hydration |
 | Back-forward cache | on `pageshow` with `event.persisted === true`: `location.reload()` — the server then answers state C (AC 10) |
 
 ---
@@ -406,7 +438,9 @@ QR carries from the payer's locale (§4.5).
 | Webhook | Stripe API (retrieve, flag write) | 500 | — |
 | Webhook | dispute before its row exists | message sent; 500 until the row exists | Tatiana |
 | Webhook | redelivery window over | row stays missing; mismatch at stage end (PRD R10) | reconciliation |
-| Status page | sheet unreachable | "booking not found" (PRD §7, R10 combination) | scanner |
+| Status page | sheet unreachable | 5xx and the error page (§4.4) [66] | scanner |
+| Status page | id not in the sheet, Stripe holds a paid reservation | reservation shown from Stripe (§4.4) [70] | scanner |
+| Status page | Stripe unreachable or rate-limited during that check | 5xx and the error page [66] | scanner |
 
 ---
 
@@ -444,12 +478,13 @@ answers 400.
 | policy link label | V1 | draft [63] |
 | start failed | V1 | draft [63] |
 | pending label | V1 | draft [63] |
-| Stripe name-field label (≤ 50 chars) | V2 | draft [63] |
-| Stripe item description: the price applies to each guest | V2 | [61], AC 6; wording draft [63], design thread D1 |
+| Stripe name-field label (≤ 50 chars) | V2 | owner's text [74]: "Name for the guest list" / «Имя для списка гостей» — not a draft |
+| Stripe item description | V2 | owner's text [73]: "Price per person" / «Цена за одного человека» — not a draft (AC 6) |
 | Stripe item name | V2 | existing data: program title + formatted date — form only |
 | state 0 (`loading.tsx`), state A, state B heading, Share, Save | V3 | draft [63] |
 | state C | V3 | EN [46] and PRD §5 V3; RU draft [63] |
 | valid, not valid, booking not found, field labels | V4 | draft [63] |
+| error page (`error.tsx`) | V4 | draft [63] (AC 23, AC 24) |
 | `<title>` of V3, V4, V5 | V3–V5 | draft [63] |
 
 "Draft [63]": the coder writes EN and RU for stage 1 from the design.md §8 proposals; the
@@ -496,6 +531,7 @@ export interface PaymentPolicyText {
 | item | rule |
 |---|---|
 | V3, V4, V5 pages | `generateMetadata` returns `robots: { index: false, follow: false }` and overrides `alternates` so that no canonical and no hreflang are emitted (the layout's would otherwise point at the home page). Checked on rendered HTML |
+| V4 error page | 5xx, which search engines do not index; the page's `generateMetadata` reads no data, so its noindex is emitted on this path too [V17] |
 | `app/sitemap.ts`, `app/robots.ts`, `app/[locale]/layout.tsx` | unchanged (AC 15) |
 | `/api/stripe/webhook/` | not a page; no metadata |
 | Existing pages | canonical, hreflang, `og:url`, JSON-LD, `robots.txt`, `sitemap.xml` byte-identical to `dev` (context.md OPEN 34 checklist, item 4) |
@@ -532,7 +568,7 @@ Order S0 → S1 → S2 → S3 → S4. S1–S4 are the PRD §10 slices.
 | S0 | §9 steps 1–2 and 4; open `PILOT_SHARE_URL` with a deep path in a fresh private window; `curl` the branch URL with the bypass parameter | — | V9, V10 (deep path) |
 | S1 | `lib/payment.ts`, `startCheckout`, `PayButton` with `lib/pageRestore.ts`, `PaymentNotice`, `data/paymentPolicy*` (placeholder, §7.2 shape), V5 page, `lib/paymentCompletion.ts`, V3 page and `loading.tsx`, `QrActions`, `lib/reservationUrl.ts`, messages. Also checked: Back from Stripe leaves the pay button at rest (§4.1.1) | 1–10, 23 (V1, V3, V5) | V1–V4, V11–V13, V15 |
 | S2 | `lib/reservationSheet.ts` (append, find), `lib/reservationMessages.ts`, `lib/fulfillment.ts` (`fulfilCheckout`), webhook route; §9 steps 3, 5 | 16–20, 22 | V7, V8, V9 |
-| S3 | V4 page | 11–15, 23 (V4) | V10: a QR made before a later push still opens after it (AC 11); in a fresh private window, a second navigation without the share query stays admitted (D7) |
+| S3 | V4 page, `lib/reservationLookup.ts`, `error.tsx` | 11–15, 23 (V4), 24 | V10: a QR made before a later push still opens after it, on its deep path with its own token (AC 11); V16, V17. The second half of AC 24 (row not yet restored) needs S2 |
 | S4 | `setNotValid`, `handleDispute`, chargeback text | 21 | V5, V14 |
 
 Between S1 and S3 the QR points at a page that does not exist yet; AC 11 is checked in S3.
@@ -544,9 +580,9 @@ Between S1 and S3 the QR points at a page that does not exist yet; AC 11 is chec
 | # | question | answer | carried into |
 |---|---|---|---|
 | Q1 | QR without a Vercel login at stage 1 (A1) | answered [60]: every QR carries the shareable-link token; the link exists before stage 1 and is not revoked during a stage | §1 V10, §4.5, §6, §9, §10 S3 |
-| Q2 | Guest count on Stripe's page (A2) | answered [61]: Stripe's quantity selector, 1–15, default 1; item wording in design thread D1 | §4.1, §7.1 |
+| Q2 | Guest count on Stripe's page (A2) | answered [61]: Stripe's quantity selector, 1–15, default 1; item wording "Price per person" [73] | §4.1, §7.1 |
 | Q3 | Contact form on date views (A3) | answered [62]: AC 1 as written | §3 (`UpcomingTourCard`, date page) |
 | Q4 | Strings without a source (A4) | answered [63]: coder's EN/RU drafts for stage 1, the maintainer's texts before stage 2 | §7.1, §7.3 |
 | Q5 | Preview uses the production spreadsheet and chat? (A12) | answered [64]: yes, same values in Production and Preview | §2.3, §6, §9 |
 | Q6 | Pilot branch name (A12) | answered [65]: `payments-stripe-preview`, docs and code together | header, §4.3, §6, §9 |
-| Q7 | [65] lets the branch reach `dev` "together or not at all"; `dev` is released to `main` in batches, and nothing from the pilot may reach `main` [1]. Merged into `dev`, the next release would show pay buttons on production, with no Stripe variables there, so every button would end in the start-failed message, and priced date views would lose the contact form (A13) | **open**; blocks no slice, only a merge into `dev` | recommended: not merged into `dev` before the production decision (PRD §9); no production gate is built |
+| Q7 | Merging the branch into `dev` would carry payments to `main` at the next release (A13) | answered [72]: `payments-stripe-preview` is not merged into `dev` before the production decision (PRD §9); no production switch is built | §3 (no switch in any file), §6 (Stripe variables exist only on the branch) |

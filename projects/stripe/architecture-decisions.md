@@ -1,8 +1,8 @@
 # Architecture decisions: Stripe payments pilot
 
-companion to: `architecture.md` v1.2 (cited there as **[AD §N]**)
+companion to: `architecture.md` v1.3 (cited there as **[AD §N]**)
 holds: options, criterion and reasoning for each choice in `architecture.md` §0.1.
-Stripe and Vercel claims carry the §1 register ids (V1–V15); all are unverified.
+Stripe and Vercel claims carry the §1 register ids (V1–V17); all are unverified.
 
 ---
 
@@ -18,8 +18,8 @@ new store.
 (a) makes the row and the page one record, so they cannot disagree. (b) needs Search, which
 is eventually consistent (a fresh reservation may be unfindable for a while) and would still
 require the row separately. (c) is a new backend nobody approved.
-Cost of (a), already accepted by the PRD: while a row is missing the page says "not found"
-(PRD §7, R10 combination); Tatiana checks the Stripe dashboard [55, 58].
+The sheet stays the primary source. Stripe is read only as a fallback for an id missing from
+the sheet [70], and it is never written to from the status page (§19).
 
 ## 2. Guests and name on Stripe's page
 
@@ -31,7 +31,7 @@ Criterion: AC 6 — bounded 1–15, default 1, and the total equals price × gue
 page. Only (a) changes the amount; (b) bounds digit count, not value, and (b) and (c) leave the
 total at one unit. Cost: the control is Stripe's quantity selector, labelled by Stripe, not
 "guests" — mitigated by the item description saying the price is per guest; accepted
-[61], wording in design thread D1.
+[61], wording "Price per person" / «Цена за одного человека» [73].
 Name: a `text` custom field is the only way to ask a name that is not the cardholder's [27];
 Stripe still asks the name on card (V4), which the site never reads.
 
@@ -132,7 +132,7 @@ the first push after a QR is issued, and the choice returns to the owner between
 - (c) Generated in the browser.
 - (d) An image endpoint.
 
-Criterion: [40] share or save as an image other apps accept, shown once. PNG is what
+Criterion: [75] save always, and share where supported, as an image other apps accept, shown once. PNG is what
 messengers and photo galleries accept, and SVG often is not. (c) ships the library to the
 client for no gain. (d) is a second URL that serves the QR again, which [45] forbids.
 
@@ -164,14 +164,20 @@ Criterion: context.md CONSTRAINTS — data only through Server Actions, one `app
 exception, and it is the webhook. (b) is a second route outside that rule; (c) needs a
 publishable key and client code for what a redirect does. (a) also works without JS.
 
-## 14. Status page when the sheet cannot be read
+## 14. Status page when the status cannot be read
 
-- (a) Show "booking not found" and log — **chosen**.
-- (b) A fourth, error state.
+The owner set the behaviour: an honest 5xx with an error page, never "not found" [66]. The
+architect's part is the mechanism.
 
-Criterion: V4 has exactly three states [47, 49, 51], all localized (AC 23). (b) adds a state
-and strings the PRD does not have. For Tatiana, "not found" already means "check Stripe"
-(PRD §7, R10 combination), which is the right action in both cases. Thread A7.
+- (a) The page throws; the route's `error.tsx` renders the error page in the page's locale; the response is 500 — **chosen** (V17).
+- (b) The page renders an error view itself, with status 200.
+- (c) A Route Handler that serves the status page with an explicit status.
+
+Criterion: a real 5xx (AC 24), the page's locale (AC 23), noindex, and no second routing
+mechanism. (b) answers 200, which is exactly what [66] rules out. (c) would move a page out of
+the App Router and its layout, footer and next-intl setup. (a) uses the framework's own error
+path. It holds only if nothing is streamed before the throw: the route has no `loading.tsx`,
+and `generateMetadata` reads no data, so noindex does not depend on the failing read.
 
 ## 15. Status-page URL
 
@@ -225,3 +231,25 @@ needs headings and paragraphs only. (a) covers the stage-1 placeholder (one unti
 and a sectioned text alike, and it keeps the pair typed, so a missing field fails the build.
 Residual: lists, links and emphasis in the maintainer's text are not carried. If his files
 have them, the shape is revisited then, not now (architecture §7.2).
+
+## 19. An id missing from the sheet
+
+- (a) Stripe Search on PaymentIntents by `metadata.reservation_id`, then a scan of Checkout Sessions created in the last hour — **chosen** (V16).
+- (b) Search only.
+- (c) A scan of recent sessions only.
+- (d) "Not found" at once, as before [70].
+
+Criterion: [70] — "not found" only for an id Stripe does not know, and the reservation shown
+from Stripe's data where feasible. (d) is ruled out by the owner. (b) misses a reservation paid
+seconds ago: search indexes with a lag (usually under a minute, up to an hour in outages), and
+a payer scanning their own QR at once is exactly that case. (c) misses anything older than the
+window, and a row missing for good (R10, window passed) can be weeks old at the tour. (a)
+covers both: the scan covers the lag, and search covers everything older.
+Showing from Stripe is feasible. The name is the session's custom field, the guests are the
+line-item quantity, program, date and locale are in the metadata, and "not valid" is the
+latest charge's `disputed` flag. So the error page is needed only when Stripe itself cannot
+be read.
+Limits: up to two Stripe calls per unknown id, so guessed ids spend the rate limit, and a 429
+gives the error page, not "not found". A reservation older than an hour whose row is missing,
+during a Stripe search outage, reads as "not found". The status page does not write the row:
+that stays with the webhook (§6).

@@ -1,7 +1,7 @@
 # Design decisions: Stripe payments pilot
 
-companion to: `design.md` v1.2 (cited there as **[DD §N]**). Options, criterion, choice.
-Requirements are in `prd.md` v1.4; contracts are in `architecture.md` v1.2.
+companion to: `design.md` v1.3 (cited there as **[DD §N]**). Options, criterion, choice.
+Requirements are in `prd.md` v1.11; contracts are in `architecture.md` v1.2.
 
 ---
 
@@ -81,30 +81,38 @@ nothing is lost for a payer who started from a card.
 
 | option | result |
 |---|---|
-| **h1 → warning → QR → action → summary** | chosen |
-| QR and action only (the PRD's minimum) | rejected |
+| **h1 → warning → QR → Save and Share → summary** | chosen |
+| QR and buttons only (the PRD's minimum) | rejected |
 | Summary above the QR | rejected |
 
-Criterion: on a 360 × 640 phone, whether the QR and its action are in view on arrival, and
+Criterion: on a 360 × 640 phone, whether the QR and its buttons are in view on arrival, and
 whether a payer with two reservations can tell their QRs apart. With no summary, two QRs look the
 same, and the only way to check one is to scan it. The summary adds no data: it repeats the status
-page's fields in the status page's order. Above the QR, it pushes the action button below the
-fold (≈ 585 px against ≈ 560 px available). The warning comes before the QR so it is read before
+page's fields in the status page's order. Above the QR, it pushes the buttons below the fold
+(≈ 630 px against ≈ 560 px available). The warning comes before the QR so it is read before
 the payer acts.
 
 ## §7. Share and Save
 
 | option | result |
 |---|---|
-| **As the PRD says: Share where the image can be shared, otherwise Save; a failed share turns into Save** | chosen now |
-| Save always, Share in addition where supported | recommended to the owner, D6 |
+What is offered is the owner's: Save always, and Share as well where the browser supports it
+`[owner, 75]`, which supersedes `[owner, 40]`. Designed here: how the two sit.
 
-Criterion: how many ways are left to keep the QR when the first one fails. On a phone, the share
-sheet is closed by mistake, the target app fails, or the OS discards the browser tab while the
-payer is in the messenger. After that the page returns as state C and the QR is lost for good (R2).
-The fallback covers only an error reported by the browser. It does not cover a share that
-"succeeded" into nothing. Keeping Save costs one more button of the same kind. It is not built
-without the owner's answer, because `[owner, 40]` says "otherwise".
+| option | result |
+|---|---|
+| **Stacked: Save first as the primary button, Share under it in the outlined secondary look** | chosen |
+| Share first and primary where it exists | rejected |
+| Side by side | rejected |
+| Two primary buttons | rejected |
+
+Criterion: whether anything moves when Share arrives, and whether one button reads as the main
+action. The server renders only Save, since it cannot know share support [A §4.5]. Share is added
+on the client. Placed under Save, it appears in empty space, and Save stays where the payer's
+finger may already be. Placed first, it would push Save down after hydration. Side by side, two
+buttons in the 224 px QR width leave ≈ 108 px each, and «Поделиться QR-кодом» would wrap onto two
+lines. Two primary buttons give no main action. Save is primary because it is on every device and
+AC 9 requires it everywhere.
 
 ## §8. Status page: the order of answers
 
@@ -116,34 +124,34 @@ without the owner's answer, because `[owner, 40]` says "otherwise".
 Criterion: the order of Tatiana's questions at check-in. May they join? Is it for today? How many
 people? Who? The program is usually known from where she stands. The PRD lists content, not order
 [owner, 48]. Putting the date inside the status band makes "valid" and "for which day" one reading,
-which is the only protection against a valid QR for another date (D8).
+which is the only protection against a valid QR for another date: the owner wants no further
+state for it `[owner, 69]`.
 
 ## §9. How status is shown
 
 | option | result |
 |---|---|
-| **Word + glyph + fill colour; "not found" neutral (outline, no fill)** | chosen |
+| **Word + glyph + band. Valid and not valid are filled green and red. Not found has a solid neutral outline. The error page has a dashed neutral outline, a ↻ glyph and a line saying the payment is not affected** | chosen |
 | Colour only | rejected |
-| "Not found" in red, like "not valid" | rejected |
+| "Not found" or the error page in red, like "not valid" | rejected |
+| The error page as a plain page with no band | rejected |
+| The error page with the same band as "not found", only the text differing | rejected |
 
-Criterion: whether the three states are told apart without colour, in sunlight, and without one
-being read as another. The word carries the meaning, the glyph and colour back it up. "Not found"
-also covers an unreadable sheet and a row not yet restored [A §4.4], PRD R10. For Tatiana it means
-"check Stripe", not "turn away". Drawn in red, it would be read as "not paid".
+Criterion: whether the four views are told apart without colour, in sunlight, and without one
+being read as another. The word carries the meaning; the glyph, fill and border back it up.
+
+- "Not found" is only for an id nobody knows `[owner, 70]`. Neutral is enough for it, and it is
+  not red because a typo in a link is not a revoked booking.
+- The error page must not read as a lost payment `[owner, 66]`: no red, no ✕, no "not found". The
+  dashed border and the ↻ glyph mark it as temporary rather than final, and the line under the
+  word says so in words.
+- A page with no band would drop out of the one frame Tatiana scans at check-in.
+- A band identical to "not found" would leave the difference to one word, the very confusion
+  [66] rules out.
 
 ## §10. Language switcher on the status page
 
-| option | result |
-|---|---|
-| **Present, in a light-background form** | chosen, pending the owner's word (D7) |
-| Absent, page in the payment's language only | rejected |
-
-Criterion: who reads the page in a language other than the payer's. context.md USERS: a local
-books for guests, and their languages need not match. A QR shared with an English-speaking guest
-opens in Russian if the payer paid in Russian. The PRD does not ask for a switcher. The owner said
-no to one on `/places` (poi answers D5), but that page is reached from the home page, where the
-switcher exists, and this page is not. The existing component cannot be reused as drawn: it is
-white text for the dark hero.
+Not built: `[owner, 68]`, no switcher; the page stays in the payment's language.
 
 ## §11. Language of our labels on Stripe's page
 
@@ -160,7 +168,7 @@ which [owner, 29] accepted.
 
 | option | result |
 |---|---|
-| **Name: "Name for the guest list"; item: "Price per person"** | chosen, pending the owner (D1, D2) |
+| **Name: "Name for the guest list"; item: "Price per person"** | chosen; adopted by the owner as the final texts `[owner, 73, 74]` |
 | "Name" / "Price per guest" | rejected |
 
 Criterion: whether the payer enters the value the guide will read. If Stripe asks for "Name on

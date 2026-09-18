@@ -1,11 +1,10 @@
 # Design: Stripe payments pilot
 
-version 1.2 | date 2026-09-18
-inputs: `prd.md` v1.4 (cited by §, AC, `[owner, N]`), and `[owner, 63]` as carried into v1.5
-AC 23; `decisions.md` (**[D]**);
-`architecture.md` v1.2 (**[A]**); `projects/context.md` v1.2
+version 1.3 | date 2026-09-18
+inputs: `prd.md` v1.11 (cited by §, AC, `[owner, N]`); `decisions.md` (**[D]**), log through
+[76]; `architecture.md` v1.2 (**[A]**); `projects/context.md` v1.2
 rationale and rejected options: `design-decisions.md` (**[DD §N]**)
-objections: `answers.md`, items D1–D11
+objections: `answers.md`, items D1–D11 — answered by the owner [62–76], D10 by the architecture
 
 ⚙ marks a line that depends on a Stripe or Vercel claim still unverified in [A §1]; the V-number
 is named, and the fallback stands beside it.
@@ -25,16 +24,16 @@ punctuation of the §8 drafts; any spacing not named here, taken from the neares
 named here.
 
 **Architect [A]:** URLs; the state decision table of the screen after payment [A §4.2]; what the
-status page reads and when it answers "not found" [A §4.4]; Checkout Session parameters [A §4.1];
-QR payload and image [A §4.5]. Where this document needs a behaviour from there, it names it.
-The two behaviours asked for in D10 are in the architecture: the pay button after Back
-[A §4.1.1] and state 0 as `loading.tsx` [A §4.2].
+status page reads, and when it answers "not found", the reservation from Stripe's data, or the
+error page [A §4.4], `[owner, 66, 70]`; Checkout Session parameters [A §4.1]; QR payload and
+image [A §4.5]. Where this document needs a behaviour from there, it names it. The pay button after
+Back [A §4.1.1] and state 0 as `loading.tsx` [A §4.2] are the architecture's answers to D10.
 
-**Coder, for strings:** the EN and RU values of §8 are the stage-1 drafts the coder ships
-`[owner, 63]`.
+**Coder, for strings:** the EN and RU values of §8 marked "draft" are the stage-1 texts the coder
+ships `[owner, 63]`.
 
-**Maintainer:** replaces the §8 values before stage 2, together with the policy files
-`[owner, 19, 63]`. **Owner:** answers in `answers.md`.
+**Maintainer:** replaces the drafts before stage 2, together with the policy files
+`[owner, 19, 63]`.
 
 ---
 
@@ -44,15 +43,17 @@ The two behaviours asked for in D10 are in the architecture: the pay button afte
    `--color-brand` #667eea, `--color-brand-dark` #764ba2, `.form-error` #721c24, and two status
    colours from Tailwind's default palette, which the project already uses (`gray-800`,
    `indigo-500`, `yellow-400` in components): `green-700`, `red-700`. Buttons: `.book-button`
-   (primary). Page frame: white `main`, `min-h-screen`, as `/places`; back bar
-   `.tour-detail-back-bar` where named. No new font, no spinner, no icon set beyond `react-icons`.
+   (primary), the `.details-link` look (secondary, outlined). Page frame: white `main`,
+   `min-h-screen`, as `/places`; back bar `.tour-detail-back-bar` where named. No new font, no
+   spinner, no icon set beyond `react-icons`.
 2. **Contrast, WCAG AA** (4.5:1 below 18.66 px bold / 24 px):
    - small text in a brand colour is `brand-dark` — 6.4:1 on white, 5.3:1 on the date page's
      grey; `brand` (3.7:1) is never used for text in this feature;
    - `ink-muted` — 5.7:1 on white, 4.8:1 on #e9ecef — allowed;
    - status band: white on `green-700` 5.0:1, on `red-700` 6.5:1.
    - `.book-button` is white on a #667eea→#764ba2 gradient, 3.7:1 at the light end. Existing;
-     not changed here.
+     not changed here. The `.details-link` look is #667eea text on white, 3.7:1 at 600 weight;
+     where this feature uses it (§5.2), its text is `brand-dark` instead.
 3. **Links are identified without colour:** every text link this feature introduces is
    underlined permanently.
 4. **Focus:** every new control shows the browser's focus ring or an equal replacement; tab order
@@ -92,6 +93,13 @@ points at the notice, so a screen reader reads the notice with the button. [DD �
 The block is present only when the date is payable [A §3: card — effective price > 0; page —
 `isPayable`]. Otherwise none of its four elements is rendered and nothing takes their place (AC 2).
 
+**Price line on an unpriced date.** When the effective price is 0 or missing, the price line goes
+as well, on both views: the date page prints no 💲 line — neither "Free" / «Бесплатно» nor
+"0 USD" — and the card prints no 💲 line, including for a date whose own price is 0
+`[owner, 67, 71]`, AC 2. The rest of the card and the page are unchanged: title, date and time,
+bonus, share icons and "View details" stay where they are, and the space the price and the block
+took closes up.
+
 ### 3.2 On the date card (`UpcomingTourCard`)
 
 - The block replaces `book-button` inside `.upcoming-tour-actions`, under "View details". Card
@@ -103,8 +111,8 @@ The block is present only when the date is payable [A §3: card — effective pr
   language, §8) takes ≈ 3 lines at 272 px and ≈ 4 at 232 px. The address, 29 characters
   (≈ 210 px), fits one line at 232 px at default text size.
 - Five payable cards show five identical notices: AC 5 says "next to each pay button". Accepted.
-- Desktop: cards in a row stretch to the tallest, and an unpriced card has only "View details" at
-  its bottom. Mobile: one column; no other difference.
+- Desktop: cards in a row stretch to the tallest. An unpriced card has no price line and only
+  "View details" at its bottom. Mobile: one column; no other difference.
 
 ### 3.3 On the date page
 
@@ -113,6 +121,8 @@ The block is present only when the date is payable [A §3: card — effective pr
 - Desktop: block width = button width, 280 px, so the notice wraps under the button and reads with
   it; RU notice ≈ 4 lines. Mobile (≤ 768 px): the full width of the info column.
 - The background there is the grey gradient; contrast per §2.2.
+- An unpriced date shows date, time, duration and bonus (if any) in `.tour-detail-attributes`,
+  with no price line and no block (§3.1).
 
 ### 3.4 States
 
@@ -121,14 +131,14 @@ The block is present only when the date is payable [A §3: card — effective pr
 | rest | §3.1 |
 | pending — from tap until Stripe opens | button disabled, label "Opening payment…"; notice and link unchanged; other buttons on the page unaffected. Ends with Stripe opening in the same tab [DD §4] or with a failure |
 | failure — Stripe did not open [A §4.1 `failed`] | button back to its label and enabled; error line under it (§8). Focus stays on the button; the line is announced. The next tap clears it |
-| returned from Stripe with the browser's Back | rest, never pending; the error line is cleared too [A §4.1.1] (D10 (a)) |
+| returned from Stripe with the browser's Back | rest, never pending; the error line is cleared too [A §4.1.1] |
 | cancelled on Stripe (its "←" link) | the date page [A §4.1 `cancel_url`], block at rest, no banner — also when payment started from a card [DD §5] |
 | card declined | the payer stays on Stripe, which says so. No site view |
-| stale page: date stopped being payable (next day, or price set to 0) | tap → pending → the date page without the block [A §4.1]. No message (D11) |
+| stale page: date stopped being payable (next day, or price set to 0) | tap → pending → the date page without the block and without a message `[owner, 76]`, AC 4 [A §4.1] |
 | date removed from the pilot schedule | tap → pending → home [A §4.1]. No message |
-| effective price 0 or missing | no block (AC 2). The date page still prints "Free" / «Бесплатно», as today (D9) |
+| effective price 0 or missing | no block and no price line, on card and page (§3.1) `[owner, 67, 71]` |
 | after the start time, same day | card: gone from the list, as today; page: block shown (AC 4) |
-| from the next day | page: no block (AC 4) |
+| from the next day | page: no block (AC 4); the price line stays, since the date is priced |
 | empty | the block holds no list |
 | long text | §3.2, §3.3; the program title above the block wraps, as today |
 | stage 2 notice | the maintainer's text, up to 1200 characters [A §7.2]: the block grows, no "read more". Repeated on five cards, a long text dominates the list; one or two sentences is the advice to the maintainer (D4 (c)) |
@@ -142,11 +152,11 @@ Every line depends on [A §1] V1–V4, checked in slice S1.
 | item | what the payer sees | if the check fails |
 |---|---|---|
 | language | Stripe's own UI in the page's language ⚙V1 | English for every payer (PRD R4) |
-| our labels, item and notice | in the same single language as Stripe's UI (`checkoutLocale` [A §4.1]): if Stripe cannot show RU, all of them go EN too, so the page never mixes languages [DD §11]. The design reads `success_url` and `cancel_url` as keeping the page's locale, so the screens after Stripe stay in the payer's language; [A §4.1] leaves this open (D2) | — |
-| item | "<program title> · <date>" [A §4.1]; under it "Price per person" / «Цена за одного человека» — the count includes everyone who goes (D1) [DD §12] | — |
-| guest count | Stripe's quantity control, 1–15, default 1, Stripe's own label ⚙V3 | AC 6 cannot be met — product |
+| our labels, item and notice | in the same single language as Stripe's UI (`checkoutLocale` [A §4.1]): if Stripe cannot show RU, all of them go EN too, so the page never mixes languages [DD §11]. The screens after Stripe should stay in the payer's language; whether the return URLs keep the page's locale is the architect's (D2) | — |
+| item | "<program title> · <date>" [A §4.1]; under it "Price per person" / «Цена за одного человека» `[owner, 73]` | — |
+| guest count | Stripe's quantity control, 1–15, default 1, Stripe's own label ⚙V3 `[owner, 61]` | AC 6 cannot be met — product |
 | total | Stripe's, price × count | — |
-| name | required text field, label "Name for the guest list" / «Имя для списка гостей» (≤ 50 characters), distinct from Stripe's "Name on card" ⚙V4 (D2) [DD §12]; up to 100 characters [A §4.1] | — |
+| name | required text field, label "Name for the guest list" / «Имя для списка гостей» `[owner, 74]`, distinct from Stripe's "Name on card" ⚙V4; up to 100 characters [A §4.1] | — |
 | email, card | Stripe's | — |
 | notice | the site's notice text next to Stripe's pay button ⚙V2; plain text, no policy link | AC 7 lapses |
 | back | Stripe's "←" returns to the date page | — |
@@ -171,7 +181,7 @@ State letters A, B, C are the architecture's [A §4.2].
 
 **State 0 — confirming.** Shown while the server decides between A, B and C (two Stripe calls
 [A §4.2]). h1 "Confirming your payment…"; one line "Please don't close this page — your QR code
-will appear here." Text only. It is the route's `loading.tsx` [A §4.2] (D10 (b)). If V15 fails ⚙V15, the
+will appear here." Text only. It is the route's `loading.tsx` [A §4.2]. If V15 fails ⚙V15, the
 browser's own loading indicator is this state.
 
 **State A — not confirmed, no QR.** h1 "Payment not confirmed yet"; body: reload in a minute,
@@ -186,20 +196,20 @@ the QR is shown here once; if the message stays, email the address, Tatiana will
    one line in normal weight: show it to the guide at the start of the tour.
 3. QR: 224 × 224 CSS px on mobile, 256 × 256 on desktop; black on white with a white quiet
    zone; alt "QR code for your booking: {tour}, {date}".
-4. Action button, `.book-button`, width = QR width. Share where the browser can share the image
-   file, otherwise Save `[owner, 40]`. The server renders Save; Share replaces it on the client in
-   the same box, same size, so the swap moves nothing [A §4.5]. D6 asks to keep Save as well.
-   [DD §7]
+4. Actions, stacked, each as wide as the QR, 0.5 rem apart `[owner, 75]`, AC 9 [DD §7]:
+   - **Save**, always: `.book-button`. Rendered by the server, so it is there on arrival.
+   - **Share**, under Save, only where the browser can share the image file: the outlined
+     `.details-link` look with `brand-dark` text (§2.2). It is added on the client below Save, so
+     Save never moves [A §4.5].
 5. Summary: the same fields in the same order as the status page (§6.3) — Guests, Name, Tour,
    Date — so the payer sees what the guide will see and can tell two reservations apart.
 
-Arrival on a 360 × 640 phone (≈ 560 px under the browser's bars): h1, warning, QR and button take
-≈ 425 px and are in view without scrolling; the summary is below, reached by a short scroll.
+Arrival on a 360 × 640 phone (≈ 560 px under the browser's bars): h1, warning, QR and both buttons
+take ≈ 480 px and are in view without scrolling; the summary is below, reached by a short scroll.
 
 | event in B | result |
 |---|---|
-| Share → share sheet closed without choosing | nothing changes |
-| Share → error other than the payer's cancel | Save replaces Share in the same box |
+| Share → share sheet closed without choosing, or share error | nothing changes; Save is still there |
 | Save | the browser's download UI; the site shows nothing |
 | the payer stays | the QR stays until the page is left |
 | return from another tab or app, page kept in memory | the QR is still there |
@@ -217,14 +227,15 @@ tatiana.city.guide@gmail.com." `[owner, 46]`, the address a link. No reservation
 | empty — no session, malformed URL | A |
 | one reservation | B |
 | limit — 15 guests | "15" in the summary; two reservations in a row by one payer are told apart by their summaries |
-| long text | an 80-character RU title and a 100-character name wrap in the summary (§2.7); the summary grows below the button, never above the QR |
-| failure | A; a failed share falls back to Save |
+| long text | an 80-character RU title and a 100-character name wrap in the summary (§2.7); the summary grows below the buttons, never above the QR. «Поделиться QR-кодом» (19 characters) fits the 224 px button on one line |
+| failure | A; a failed share leaves Save in place |
 
 ### 5.4 Accessibility
 
 `<title>` = the state's h1. When B replaces state 0 in the same document, the new h1 is announced.
-The action button's accessible name is its label. The QR's alt names tour and date; the QR itself
-carries no information a screen-reader user needs beyond what Share and Save hand over.
+Each button's accessible name is its label; tab order is Save, then Share. The QR's alt names tour
+and date; the QR itself carries no information a screen-reader user needs beyond what Save and
+Share hand over.
 
 ---
 
@@ -232,30 +243,34 @@ carries no information a screen-reader user needs beyond what Share and Save han
 
 ### 6.1 Reader
 
-Tatiana at check-in, phone in hand, often outdoors; then the payer and guests. The page answers in
-this order: may this person join (status), for which date (date), how many people (guests), who
-(name), which program (tour). [DD §8]
+Tatiana at check-in, phone in hand, often outdoors; then the payer. The page answers in this
+order: may this person join (status), for which date (date), how many people (guests), who (name),
+which program (tour). [DD §8]
 
 ### 6.2 Frame
 
-White page; one centred column, max 480 px, side padding 20 px. Top row: language switcher,
-right-aligned (§6.6, D7). No back bar. The layout's footer.
+White page; one centred column, max 480 px, side padding 20 px. No language switcher: the page is
+in the payment's language, and its readers are the payer and Tatiana `[owner, 43, 68]`. No back
+bar. The layout's footer.
 
 ### 6.3 Composition, top to bottom
 
 1. h1 "Booking status" — 1 rem, `ink-muted`, semibold: it names the page; the band speaks.
 2. **Status band**, full column width, 12 px corners (as `.upcoming-tour-card`), padding
-   1 rem × 1.25 rem, content centred and stacked: glyph, word, date. [DD §9]
+   1 rem × 1.25 rem, content centred and stacked: glyph, word, then the line under it. [DD §9]
 
-   | state | band | glyph | word | under the word |
+   | view | band | glyph | word | under the word |
    |---|---|---|---|---|
    | valid | `green-700` fill, white text | ✓ | "Valid" / «Действительна» | the date, 1.125 rem |
    | not valid | `red-700` fill, white text | ✕ | "Not valid" / «Недействительна» | the date |
-   | not found | no fill, 2 px `ink-muted` border, `ink` text | ? | "Booking not found" / «Бронь не найдена» | nothing |
+   | not found | no fill, 2 px solid `ink-muted` border, `ink` text | ? | "Booking not found" / «Бронь не найдена» | nothing |
+   | error page (5xx) | no fill, 2 px **dashed** `ink-muted` border, `ink` text | ↻ | "Temporarily unavailable" / «Временно недоступно» | two lines, 1 rem, `ink` (§8): the problem is on the site's side and does not affect the payment; try again in a few minutes |
 
    Word 1.5 rem bold on mobile, 2 rem from 769 px. The glyph is decorative (`aria-hidden`); the
-   word carries the meaning, colour is a third carrier and never the only one. «Недействительна»
-   at 1.5 rem ≈ 215 px fits the 240 px inside the band on a 320 px phone.
+   word carries the meaning, colour and border are further carriers and never the only one.
+   «Недействительна» at 1.5 rem ≈ 215 px fits the 240 px inside the band on a 320 px phone;
+   «Временно недоступно» (≈ 270 px) wraps to two lines at the space on a 320 px phone and fits
+   one line from 360 px.
 3. **Fields**, valid and not valid only; label above value, labels 0.9 rem `ink-muted`:
    - Guests — 2 rem bold: the number heads are counted by;
    - Name — 1.25 rem bold, as typed;
@@ -264,23 +279,23 @@ right-aligned (§6.6, D7). No back bar. The layout's footer.
    The date is in the band and not repeated.
 
 Nothing else: no email, amount, start time (a reservation holds a date only [A §2.1]), no reason
-for "not valid".
+for "not valid", no reload button on the error page (reloading is the browser's, as in V3 state A).
 
 ### 6.4 States
 
 | state | view |
 |---|---|
 | valid | §6.3 |
+| valid, read from Stripe's data — paid, row not written yet `[owner, 70]` | the same view as from the sheet: same band, same fields, no mark of where the data came from. If the architect cannot build it [A §4.4], this case is the error page |
 | not valid | red band and all fields: Tatiana needs to know whose reservation it is |
-| not found | the neutral band only. Also the view when the sheet cannot be read [A §4.4] and when a paid row is not yet restored (PRD §7, R10 combination) — hence neutral, not red: for Tatiana "not found" ≠ "not paid" (D5) |
-| empty — no id, malformed id | not found [A §4.4] |
+| not found | the neutral solid band only; for an id that neither the sheet nor Stripe knows, and for a malformed id `[owner, 49, 70]`, AC 13 |
+| error page (5xx) | the dashed band only; when the status cannot be read — the sheet unreachable, or a paid id whose data cannot be shown `[owner, 66, 70]`, AC 24. It reads as a temporary fault of the site, not as a lost payment or a missing booking: no red, no "not found", and the line under the word says the payment is not affected [DD §9]. For Tatiana: check the payment in Stripe and admit the guest `[owner, 55, 58]` |
+| empty — no id | not found [A §4.4] |
 | one element | a page always shows one reservation |
 | limit — 15 guests | "15" |
 | long text | a 100-character name wraps under its label (§2.7); an 80-character RU title takes 2–3 lines on a phone; the band never widens |
-| reservation for another date | valid, with its date in the band; Tatiana compares (D8) |
+| reservation for another date | valid, with its own date in the band; Tatiana compares it `[owner, 69]` |
 | loading | none on the page: rendered on the server [A §4.4]; the browser's indicator |
-| failure | = not found |
-| language switched | the same reservation in the other language: the id is in the path [A §4.4]; the tour title changes with the locale; the stored payment language does not |
 
 ### 6.5 Mobile and desktop
 
@@ -288,19 +303,10 @@ One column on both. Desktop centres it and leaves the rest white: a band stretch
 would read as a banner detached from the fields. The only difference is the band's word, 1.5 rem →
 2 rem. [DD §13]
 
-### 6.6 Language switcher
+### 6.6 Accessibility
 
-The existing `LanguageSwitcher` is drawn white on the dark hero and would be invisible on white.
-On this page it takes a light form: the current language `brand-dark`, bold, underlined; the other
-`ink-muted`; 1 rem; each name a ≥ 44 × 44 px target and marked with its own `lang`. The home page's
-switcher is unchanged. It keeps the reservation because the id is in the path; the QR also carries
-the shareable-link query [A §4.5], which the switcher drops. The first visit leaves an access
-cookie on the host, so the switch stays admitted [A §1 V10] ⚙V10, checked in slice S3 (D7).
-[DD §10]
-
-### 6.7 Accessibility
-
-`<title>` "Booking status". Reading order: h1, band (word, then date), fields. No live regions.
+`<title>` "Booking status" in every view, the error page included. Reading order: h1, band (word,
+then the line under it), fields. No live regions.
 
 ---
 
@@ -346,7 +352,7 @@ sizes; nothing else differs.
 
 A value marked "draft" is the stage-1 text: the coder ships it as written, with no separate
 approval, and the maintainer replaces it before stage 2 `[owner, 63]`. A value with a named source
-stays. Rows tied to an open thread (D1, D2) change if the owner's answer does. Keys are the coder's.
+stays. Keys are the coder's.
 
 | slot | view | EN | RU | source |
 |---|---|---|---|---|
@@ -355,18 +361,19 @@ stays. Rows tied to an open thread (D1, D2) change if the owner's answer does. K
 | V5 placeholder | V5 | The policy text will be published here. | Здесь будет опубликован текст условий. | draft |
 | pending | V1 | Opening payment… | Переход к оплате… | draft |
 | start failed | V1 | The payment page didn't open. You weren't charged. Please try again. | Страница оплаты не открылась. Деньги не списаны. Попробуйте ещё раз. | draft |
-| name label | V2 | Name for the guest list | Имя для списка гостей | draft (D2) |
-| item description | V2 | Price per person | Цена за одного человека | draft (D1) |
+| name label | V2 | Name for the guest list | Имя для списка гостей | `[owner, 74]` |
+| item description | V2 | Price per person | Цена за одного человека | `[owner, 73]` |
 | state 0 | V3 | Confirming your payment… / Please don't close this page — your QR code will appear here. | Подтверждаем оплату… / Пожалуйста, не закрывайте страницу — здесь появится ваш QR-код. | draft |
 | state A | V3 | Payment not confirmed yet / If you have paid, reload this page in a minute: your QR code is shown here, only once. If this message stays, email tatiana.city.guide@gmail.com — Tatiana will find your payment. | Оплата пока не подтверждена / Если вы оплатили, обновите страницу через минуту: QR-код показывается здесь, только один раз. Если сообщение не исчезает, напишите на tatiana.city.guide@gmail.com — Татьяна найдёт ваш платёж. | draft |
 | state B heading | V3 | Payment received | Оплата прошла | draft |
-| state B warning | V3 | This QR code is shown only once. Share or save it now — a screenshot works too. | QR-код показывается только один раз. Поделитесь им или сохраните его сейчас — подойдёт и скриншот. | draft |
+| state B warning | V3 | This QR code is shown only once. Save or share it now — a screenshot works too. | QR-код показывается только один раз. Сохраните его или поделитесь им сейчас — подойдёт и скриншот. | draft |
 | state B hint | V3 | Show it to the guide at the start of the tour. | Покажите его гиду перед началом экскурсии. | draft |
-| Share / Save | V3 | Share QR code / Save QR code | Поделиться QR-кодом / Сохранить QR-код | draft |
+| Save / Share | V3 | Save QR code / Share QR code | Сохранить QR-код / Поделиться QR-кодом | draft |
 | QR alt | V3 | QR code for your booking: {tour}, {date} | QR-код вашей брони: {tour}, {date} | draft |
 | state C | V3 | QR code already shown / If you lost it, email tatiana.city.guide@gmail.com. | QR-код уже был показан / Если вы его потеряли, напишите на tatiana.city.guide@gmail.com. | EN `[owner, 46]`, PRD §5 V3; RU draft |
 | page title | V4 | Booking status | Статус брони | draft |
 | statuses | V4 | Valid / Not valid / Booking not found | Действительна / Недействительна / Бронь не найдена | "not found" EN `[owner, 49]`; rest draft |
+| error page | V4 | Temporarily unavailable / This is a temporary problem on our side; it does not affect your payment. Please try again in a few minutes. | Временно недоступно / Это временный сбой на нашей стороне, на вашу оплату он не влияет. Попробуйте через несколько минут. | draft `[owner, 63, 66]` |
 | field labels | V3, V4 | Guests / Name / Tour / Date | Гости / Имя / Экскурсия / Дата | draft |
 
 ---
@@ -378,10 +385,13 @@ None is required by the PRD, so none is added:
 - spinner, overlay, progress bar;
 - a banner after a cancelled payment;
 - a back link in states 0 and B of V3;
-- a "checked in" or "not today" state (PRD §3; D8);
-- the reason for "not valid"; email, amount or start time on V4;
+- a "checked in" or "different date" state `[owner, 69]`, PRD §3;
+- the reason for "not valid"; email, amount or start time on V4; a reload button on the V4 error
+  page;
+- a mark on V4 of whether the reservation came from the sheet or from Stripe;
 - a link from V4 to the date page or the meeting point;
-- a language switcher on V3 and V5;
+- a language switcher on V3, V4 `[owner, 68]` and V5;
+- "Free" or "0 USD" on an unpriced date `[owner, 67, 71]`;
 - a link or the policy link inside the notice on Stripe's page.
 
 ---
@@ -390,11 +400,11 @@ None is required by the PRD, so none is added:
 
 | | pending / loading | one | limit | long text | failure | not applicable |
 |---|---|---|---|---|---|---|
-| V1 card | §3.4 | §3.4 rest | five notices, §3.2 | §3.2 | §3.4 | price 0 / missing: no block |
-| V1 page | §3.4 | §3.4 rest | — | §3.3 | §3.4, stale page | price 0 / missing, next day: no block |
+| V1 card | §3.4 | §3.4 rest | five notices, §3.2 | §3.2 | §3.4 | price 0 / missing: no price line, no block |
+| V1 page | §3.4 | §3.4 rest | — | §3.3 | §3.4, stale page | price 0 / missing: no price line, no block; next day: no block |
 | V2 Stripe | Stripe's | §4 | 15 guests, Stripe's control | Stripe's | card declined: Stripe's | — |
-| V3 | state 0 | B | §5.3 | §5.3 | A; share → Save | cancel: §3.4 |
-| V4 | none: server-rendered | valid / not valid | §6.4 | §6.4 | not found | — |
+| V3 | state 0 | B | §5.3 | §5.3 | A; a failed share leaves Save | cancel: §3.4 |
+| V4 | none: server-rendered | valid / not valid, from the sheet or Stripe | §6.4 | §6.4 | error page (5xx) | not found: unknown id |
 | V5 | none: static | placeholder section | §7 | §7 | none | empty `policy`: h1 alone, does not happen |
 
 Empty: V1 has no list; V3 empty = A; V4 empty = not found; V5 empty = h1 alone, which does not happen (§7).
