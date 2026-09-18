@@ -1,6 +1,6 @@
 # Architecture: Stripe payments pilot
 
-version 1.1 | date 2026-09-18
+version 1.2 | date 2026-09-18
 inputs: `prd.md` v1.7; `decisions.md` (cited **[D]**, owner answers up to [65]);
 `projects/context.md` v1.2
 rationale and rejected options: `architecture-decisions.md` (cited **[AD §N]**)
@@ -54,6 +54,9 @@ the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
 | starting payment | `<form>` + Server Action + redirect | route handler `GET /pay/[eventId]`; client-side Stripe.js | [AD §13] |
 | status page, sheet unreachable | "booking not found" | a fourth, error state | [AD §14] |
 | status-page URL | path segment `/bookingstatus/{id}/` | query `?id=` | [AD §15] |
+| pay button restored by Back | remount the form on a back-forward restore | reload the page; leave it pending | [AD §16] |
+| "Confirming…" while V3 decides | route `loading.tsx`; one per-request state shared by page and metadata | no loading view; `<Suspense>` inside the page | [AD §17] |
+| policy text format | sections: optional heading + paragraphs | `string[]`; Markdown | [AD §18] |
 
 ---
 
@@ -61,7 +64,7 @@ the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
 
 | # | Claim | Serves | Status | Checked in | If false |
 |---|---|---|---|---|---|
-| V1 | Checkout accepts `locale: 'ru'` and renders its own UI in Russian; `custom_fields[].label.custom` is our string, ≤ 50 chars | [29], AC 23 | unverified | S1 | Stripe page in English, as R4 already accepts |
+| V1 | Checkout accepts `locale: 'ru'` and renders its own UI in Russian; `custom_fields[].label.custom` is our string, ≤ 50 chars | [29], AC 23 | unverified | S1 | Stripe page in English, as R4 already accepts; `checkoutLocale` becomes `'en'` for every payer, so our strings on Stripe's page are English too (§4.1) |
 | V2 | `custom_text.submit.message` shows up to 1200 chars of plain text next to the pay button | [17], AC 7 | unverified | S1 | AC 7 does not apply ("where the architect confirms") |
 | V3 | `line_items[].adjustable_quantity { enabled, minimum: 1, maximum: 15 }` with `quantity: 1` bounds the count 1–15, default 1, total = unit × quantity. A `numeric` custom field bounds digit count only, not value, and does not change the total | [41], [31], AC 6 | unverified | S1 | AC 6 not satisfiable on Stripe's page — back to product |
 | V4 | Card payments in Checkout ask "Name on card" regardless of our fields | [27], AC 12 | unverified | S1 | none; we never read it |
@@ -70,11 +73,12 @@ the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
 | V7 | Non-2xx deliveries are retried: live mode up to 3 days with exponential backoff; test mode about 3 times over a few hours; an event can be re-sent by hand (Dashboard, `stripe events resend`) | [34], [35], [54], AC 20 | unverified | S2 | AC 20 relies on manual resend |
 | V8 | Stripe does not follow redirects on webhook delivery; a 3xx counts as failure | webhook URL (§4.3) | unverified | S2 | none; URL has the trailing slash anyway |
 | V9 | Vercel Protection Bypass for Automation accepts the secret as query parameter `x-vercel-protection-bypass`, on the branch URL of a protected preview | R9, AC 18–21 | unverified | S0, S2 | R9 materialises: AC 18–21 fail together — back to owner (PRD §7 combination R9) |
-| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch | [11, 60], AC 11 | unverified | S0, S3 | QRs die on push or revoke, and AC 11 ("still after later pushes") fails — back to owner [AD §9] |
+| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch; the first visit leaves an access cookie on that host, so later navigation without the query (a language switch, design thread D7) stays admitted | [11, 60], AC 11 | unverified | S0, S3 | QRs die on push or revoke, and AC 11 ("still after later pushes") fails — back to owner [AD §9] |
 | V11 | Web Share with files (`navigator.canShare({ files })`) works in iOS Safari and Android Chrome, not in desktop Firefox; `<a download>` saves a data-URL PNG in both | [40], AC 9 | unverified | S1 | none; fallback covers it |
 | V12 | `redirect()` to an external URL from a Server Action works | §4.1 | unverified | S1 | Action returns the URL, client assigns `location` |
 | V13 | PaymentIntent `metadata` can be updated after the payment succeeded; updates merge by key | §2.2, §4.2, §4.3 | unverified | S1 | flags move to Checkout Session metadata, if updatable |
 | V14 | `checkout.sessions.list({ payment_intent })` returns the session of a PaymentIntent | §4.3 dispute | unverified | S4 | name copied into PI metadata at fulfilment |
+| V15 | In Next 16 a route's `loading.tsx` is sent before the page's awaited work finishes, and `generateMetadata` does not hold it back (streamed metadata) for ordinary browsers | §4.2 | unverified | S1 | state 0 is the browser's own loading indicator, which design.md §5.2 accepts |
 
 ---
 
@@ -177,14 +181,17 @@ session exists. No timestamp, no counter (AC 14). Accepted format on input:
 | `lib/fulfillment.ts` | new, server | per-event procedures (§4.3) | `fulfilCheckout(sessionId): Promise<'done' \| 'retry'>`; `handleDispute(dispute): Promise<'done' \| 'retry'>` |
 | `app/actions/startCheckout.ts` | new, `'use server'` | §4.1 | `startCheckout(prev, formData)` |
 | `app/api/stripe/webhook/route.ts` | new | §4.3; the one `app/api` endpoint [D §5] | `POST` |
-| `app/[locale]/payment/complete/page.tsx` | new | V3 (§4.2) | page, `generateMetadata` |
+| `lib/paymentCompletion.ts` | new, server | V3 decision table (§4.2), once per request | `getCompletionState = cache(async (sessionId: string \| undefined) => CompletionState)`; `CompletionState = { kind: 'A' } \| { kind: 'B'; reservation; qrDataUrl } \| { kind: 'C' }` |
+| `app/[locale]/payment/complete/page.tsx` | new | V3 (§4.2) | page, `generateMetadata` — both call `getCompletionState` |
+| `app/[locale]/payment/complete/loading.tsx` | new | state 0 of V3 (§4.2) | default |
 | `app/[locale]/bookingstatus/[reservationId]/page.tsx` | new | V4 (§4.4) | page, `generateMetadata` |
 | `app/[locale]/payment-policy/page.tsx` | new | V5 | page, `generateMetadata` |
-| `components/PayButton.tsx` | new, client | `<form action>` → `startCheckout`; hidden `eventId`, `locale`; error slot | default |
+| `components/PayButton.tsx` | new, client | `<form action>` → `startCheckout`; hidden `eventId`, `locale`; pending label; error slot; keyed by the restore count (§4.1.1) | default |
+| `lib/pageRestore.ts` | new, client | count of back-forward-cache restores of this document (§4.1.1) | `usePageRestoreCount(): number` |
 | `components/PaymentNotice.tsx` | new | notice + policy link (V1) | default |
 | `components/QrActions.tsx` | new, client | Share / Save, back-forward-cache guard (§4.5) | default |
 | `data/paymentPolicy.ts`, `data/paymentPolicy.en.ts` | new, pair | maintainer's RU / EN texts [19] | `paymentPolicy: PaymentPolicyText` |
-| `types/paymentPolicy.ts` | new | `interface PaymentPolicyText { notice: string; policy: string[] }` — both files must carry both | type |
+| `types/paymentPolicy.ts` | new | §7.2 — both files must carry both fields | `PaymentPolicyText`, `PolicySection` |
 | `components/UpcomingSection.tsx` | changed | passes `payable = effectivePrice(event, program) > 0` per card | — |
 | `components/UpcomingTourCard.tsx` | changed | `book-button` → `PayButton` + `PaymentNotice` when `payable`, nothing otherwise (AC 1, 2); `onReserveSpot` no longer used by the card | — |
 | `app/[locale]/tours/[tourEventId]/page.tsx` | changed | `isPayable(event, program, new Date())` → `PayButton` + `PaymentNotice`, else nothing; `TourDetailClient` no longer mounted: no contact form on a priced date view (AC 1, 2, 4; [62]) | — |
@@ -257,6 +264,25 @@ Checkout Session parameters:
 `origin` — the request's own origin (`x-forwarded-proto` + `host`), i.e. the host the payer
 is on and already has access to. Name and guests are asked only on Stripe's page [28]. [AD §2]
 
+`checkoutLocale` — the page's locale while V1 holds, otherwise `'en'`. `locale` above and every
+string the site sends to Stripe (item name and description, name label, notice) use
+`checkoutLocale`, so Stripe's page never mixes languages (design thread D2). The status-page
+language stays the page's locale (`metadata.locale`, [43]).
+
+#### 4.1.1 Pay button after the browser's Back
+
+Back from Stripe can restore the card or date page from the back-forward cache with the form
+still pending. Contract:
+
+| | |
+|---|---|
+| Signal | `pageshow` with `event.persisted === true` |
+| Store | `lib/pageRestore.ts`: a module-level counter, incremented by a `pageshow` listener; read with `useSyncExternalStore` (server snapshot `0`) |
+| Effect | `PayButton` renders its `<form>` with `key={restoreCount}`; a restore remounts it at rest, with its pending and error state reset |
+| Not used | `setState` in an effect; a reload of the page (the page itself is still valid; the server re-checks payability on the next tap, §4.1) |
+
+[AD §16]
+
 ### 4.2 Screen after payment — `/[locale]/payment/complete/?session_id=…` (V3)
 
 Dynamic, never cached. Decision table, evaluated top to bottom:
@@ -271,6 +297,12 @@ Dynamic, never cached. Decision table, evaluated top to bottom:
 
 The flag is written **before** the QR is rendered. This page never writes to the sheet and
 never sends Telegram: the webhook is the only writer. [AD §4], [AD §6]
+
+**State 0 and the per-request state.** The table is evaluated by `getCompletionState`
+(`lib/paymentCompletion.ts`), wrapped in React `cache`, so `generateMetadata` (the `<title>` is
+the state's h1, design.md §5.4) and the page share one evaluation — one pair of Stripe calls
+and at most one `qr_shown` write per request. While it runs, `loading.tsx` renders state 0
+(strings §7.1) [V15]. State 0 reads nothing and decides nothing. [AD §17]
 
 Residual, accepted: two requests arriving within the same instant can both see the flag
 absent and both render B.
@@ -366,6 +398,7 @@ QR carries from the payer's locale (§4.5).
 | `startCheckout` | Stripe API | no session; start-failed string | payer |
 | Stripe page | declined card | stays on Stripe | payer |
 | Stripe page | abandoned / back | `cancel_url` → date page; no QR (AC 8) | payer |
+| Browser's Back from Stripe | page restored with the form pending | form remounted at rest (§4.1.1) | payer |
 | Screen after payment | Stripe API, flag write | state A; reload retries | payer |
 | Webhook | bad or missing signature | 400, nothing written | — |
 | Webhook | sheet read / append | alert once; 500; Stripe redelivers [V7] | Tatiana: "New booking" + alert |
@@ -410,10 +443,11 @@ answers 400.
 | policy text | V5 | `data/paymentPolicy*.ts` `policy`; stage-1 placeholder; the maintainer's files [19] before stage 2 [63] |
 | policy link label | V1 | draft [63] |
 | start failed | V1 | draft [63] |
+| pending label | V1 | draft [63] |
 | Stripe name-field label (≤ 50 chars) | V2 | draft [63] |
 | Stripe item description: the price applies to each guest | V2 | [61], AC 6; wording draft [63], design thread D1 |
 | Stripe item name | V2 | existing data: program title + formatted date — form only |
-| state A, state B heading, Share, Save | V3 | draft [63] |
+| state 0 (`loading.tsx`), state A, state B heading, Share, Save | V3 | draft [63] |
 | state C | V3 | EN [46] and PRD §5 V3; RU draft [63] |
 | valid, not valid, booking not found, field labels | V4 | draft [63] |
 | `<title>` of V3, V4, V5 | V3–V5 | draft [63] |
@@ -421,12 +455,29 @@ answers 400.
 "Draft [63]": the coder writes EN and RU for stage 1 from the design.md §8 proposals; the
 maintainer replaces every draft before stage 2 (PRD AC 23).
 
-Stripe's own UI follows `locale` [V1]; our strings on it come from the same pair of files.
+Stripe's own UI and our strings on it follow `checkoutLocale` (§4.1) [V1].
 
-### 7.2 Constraint on the maintainer's texts
+### 7.2 Policy files and the constraint on the maintainer's texts
 
-`notice` is plain text of at most 1200 characters and names tatiana.city.guide@gmail.com
-(AC 5) [V2].
+```ts
+// types/paymentPolicy.ts
+export interface PolicySection {
+  heading?: string;       // rendered as h2; absent = paragraphs only
+  paragraphs: string[];   // plain text, one <p> each
+}
+export interface PaymentPolicyText {
+  notice: string;
+  policy: PolicySection[];
+}
+```
+
+- `notice` is plain text of at most 1200 characters and names tatiana.city.guide@gmail.com
+  (AC 5) [V2].
+- `policy` is plain text: headings and paragraphs, no lists, links or emphasis. The stage-1
+  placeholder is one section without a heading and one paragraph. The page title (h1) is a
+  §7.1 string, not part of `policy`.
+- The coder carries the maintainer's two files [19] into this shape, heading for heading and
+  paragraph for paragraph. [AD §18]
 
 ### 7.3 Telegram texts — English, not localized [9, 10]
 
@@ -479,9 +530,9 @@ Order S0 → S1 → S2 → S3 → S4. S1–S4 are the PRD §10 slices.
 | slice | content | AC | verifies |
 |---|---|---|---|
 | S0 | §9 steps 1–2 and 4; open `PILOT_SHARE_URL` with a deep path in a fresh private window; `curl` the branch URL with the bypass parameter | — | V9, V10 (deep path) |
-| S1 | `lib/payment.ts`, `startCheckout`, `PayButton`, `PaymentNotice`, `data/paymentPolicy*` (placeholder), V5 page, V3 page, `QrActions`, `lib/reservationUrl.ts`, messages | 1–10, 23 (V1, V3, V5) | V1–V4, V11–V13 |
+| S1 | `lib/payment.ts`, `startCheckout`, `PayButton` with `lib/pageRestore.ts`, `PaymentNotice`, `data/paymentPolicy*` (placeholder, §7.2 shape), V5 page, `lib/paymentCompletion.ts`, V3 page and `loading.tsx`, `QrActions`, `lib/reservationUrl.ts`, messages. Also checked: Back from Stripe leaves the pay button at rest (§4.1.1) | 1–10, 23 (V1, V3, V5) | V1–V4, V11–V13, V15 |
 | S2 | `lib/reservationSheet.ts` (append, find), `lib/reservationMessages.ts`, `lib/fulfillment.ts` (`fulfilCheckout`), webhook route; §9 steps 3, 5 | 16–20, 22 | V7, V8, V9 |
-| S3 | V4 page | 11–15, 23 (V4) | V10: a QR made before a later push still opens after it (AC 11) |
+| S3 | V4 page | 11–15, 23 (V4) | V10: a QR made before a later push still opens after it (AC 11); in a fresh private window, a second navigation without the share query stays admitted (D7) |
 | S4 | `setNotValid`, `handleDispute`, chargeback text | 21 | V5, V14 |
 
 Between S1 and S3 the QR points at a page that does not exist yet; AC 11 is checked in S3.

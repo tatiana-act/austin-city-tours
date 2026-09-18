@@ -1,7 +1,7 @@
 # Design decisions: Stripe payments pilot
 
-companion to: `design.md` v1.1 (cited there as **[DD §N]**). Options, criterion, choice.
-Requirements are in `prd.md` v1.4; contracts are in `architecture.md` v1.0.
+companion to: `design.md` v1.2 (cited there as **[DD §N]**). Options, criterion, choice.
+Requirements are in `prd.md` v1.4; contracts are in `architecture.md` v1.2.
 
 ---
 
@@ -181,3 +181,21 @@ Criterion: V3 and V4 are phone documents. On desktop a full-width band or QR row
 the action from its explanation. Existing standalone pages carry a back bar. On V3 it is an
 invitation to leave the one screen that shows the QR, and on V4 it pushes the status down for a
 reader who never needs the site. The footer's links remain on both.
+
+## §14. Section headings on the policy page
+
+| option | result |
+|---|---|
+| **h2 at 1.25 rem bold `ink`, 0.5 rem to its text, 2 rem between sections** | chosen |
+| h2 at 1.5 rem, like the entry names on `/places` | rejected |
+| Bold text at paragraph size | rejected |
+| Numbered headings, or a contents list | rejected |
+
+Criterion: the heading must rank clearly above a paragraph and clearly below the 2.5 rem h1, and
+it must belong to the text under it rather than to the text above. At 1.5 rem, a long RU heading
+takes a line more on a phone and competes with the h1. That size fits a catalogue entry on
+`/places`, not a subsection of prose. Bold text at paragraph size reads as emphasis, which the
+format does not carry [A §7.2], and it gives no outline to screen readers. The spacing is uneven
+on purpose: 2 rem before a section and 0.5 rem after its heading tie the heading to its own
+paragraphs. Numbering and a contents list would add structure the maintainer's text does not have
+and the PRD does not ask for.

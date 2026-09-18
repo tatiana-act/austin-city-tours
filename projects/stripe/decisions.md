@@ -58,7 +58,7 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
 | 29 | Stripe page not available in Russian? | No fallback to site fields: the fields are obvious. Confirmed as an exception to the localization rule, for the Stripe page in the pilot only. |
 | 30 | Who can open the QR page? | Anyone who scans it; the site has no auth. |
 | 31 | Price basis? | Per guest. |
-| 32 | Date without a price, or price 0? | No reservation. A price of 0 counts as no price. Only the pay button is hidden; nothing else changes. |
+| 32 | Date without a price, or price 0? | No reservation. A price of 0 counts as no price. Only the pay button is hidden; nothing else changes. → "nothing else changes" superseded for the price display by [67]. |
 | 33 | Which buttons start payment? | "Join this tour" (date card) and "Reserve a spot" (date page) start payment. "Reserve" (program card) and "Book a tour" keep their current behaviour; the contact form stays for customers who want to ask before booking. → on priced date views, settled by [62]. |
 | 34 | A step fails after payment? | Tatiana gets a Telegram alert when the reservation could not be written to the sheet, and adds it by hand. → "by hand" superseded by [54], §2. |
 | 35 | One incoming endpoint for Stripe notifications? | Yes. |
@@ -102,6 +102,8 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
 |---|---|---|
 | 64 | A-Q5 (thread A12): do Preview deployments use the production spreadsheet and Telegram chat? | "I checked the vercel settings, all vars propagated to all environments. Given we will work on separate sheet, I don't think we need different speadsheet doc" (relayed verbatim, 2026-09-18). The five existing variables have the same values in Production and Preview: the pilot writes to the production spreadsheet, in its own new tab, and messages the production chat. The new Stripe variables are not covered (architecture.md scopes them to the pilot branch, `payments-stripe-preview` per [65]). |
 | 65 | A-Q6: the pilot branch name, for env scoping (architect proposed `feat/stripe-pilot` from `dev`) | "A-06 Do we really need separate pilot banch? I would strongly prefer to have everything within current branch" and "having separate branch for docs and code looks odd to me. If I merge docs, and don't merge the code, this is inconsistency; also each update of the docs leads to code update, which means we shall always merge 2 these branch. A lot of efforts, but I see no benefits" (relayed verbatim, 2026-09-18). The pilot branch is `payments-stripe-preview`, holding docs and code; they merge to `dev` together or not at all; PR #69 (docs only) is not merged. |
+| 66 | D5 / A7: what the status page shows when the sheet cannot be read | "D5 no, I want honest 5XX error if we cannot get the status and detail, otherwise customers would think the payment itself was lost" (relayed verbatim, 2026-09-18). A 5xx response with an error page, never "booking not found"; "not found" only for an id that does not exist. |
+| 67 | D9: a date with price 0 or none still shows "Free" on its page | "D9 do not show "free", just omit the price and booking" (relayed verbatim, 2026-09-18). The date page shows no price line instead of "Free" / «Бесплатно», and no booking button. Whether it also covers the date card's "0 USD" (a date with an explicit price of 0): PRD OQ6. |
 
 ## 2. Superseded and rejected
 
@@ -119,6 +121,9 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
   handful of customers one abandoned attempt swings the share by tens of percent, and
   complaints miss customers who fail silently.
 - Collecting name and guests on the site when Stripe cannot show Russian → rejected [29].
+- An unreadable sheet shown as "booking not found" (design v1.0 §6.3) → a 5xx error page [66].
+- A date without a price keeps "Free" on its page ([32], "nothing else changes") → no price
+  line [67].
 
 ## 3. Provenance check
 
@@ -174,4 +179,5 @@ For the coordinator, who maintains it. The PRD follows the answers below.
 | "владелец" = the maintainer | [13] | the maintainer's "owner" is Tatiana |
 | CONSTRAINTS / `CLAUDE.md`: `main` is the release switch | [36] | `payments-stripe-preview` goes live on push; `CLAUDE.md` does not cover it |
 | `CLAUDE.md`: feature branches `type/short-description` from `dev`, PRs into `dev` | [65] | one branch, `payments-stripe-preview`, holds docs and code; the docs do not go to `dev` on their own (PR #69 is not merged) |
+| OPEN 27: fixing the "Free" shown for a date without a price — declined by the owner | [67] | on the pilot the date page omits the price instead of "Free" |
 | OPEN 4: return to the privacy policy when real payment appears | [15, 18, 19] | reopened for the pilot |

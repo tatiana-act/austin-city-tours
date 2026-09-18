@@ -1,6 +1,8 @@
 # PRD: Stripe payments pilot
 
-version 1.7 | date 2026-09-18 | status: buildable — no open questions
+version 1.8 | date 2026-09-18 | status: buildable; OQ5 and OQ6 (§8) each decide one display
+case — the status page for a paid reservation whose row is not yet written, and the date
+card of a date priced 0
 sources: `[owner, N]` — interview answer N, logged in `decisions.md` §1 (cited as **[D]**);
 `[owner, S1]`–`[owner, S6]` — the starting scenario, [D §1]; `[from code]` — read from the
 repository
@@ -64,7 +66,8 @@ pass condition `[owner, 1, 23]`. [D §4]
   their current behaviour `[owner, 33]`.
 - Any change to production (`main`) `[owner, 1]`.
 - Marking test-mode notifications `[owner, 8]`.
-- A "checked in" state: the status page has exactly three states (§5) `[owner, 47, 49, 51]`.
+- A "checked in" state: the status page has exactly three booking states, plus a server
+  error when the status cannot be read (§5) `[owner, 47, 49, 51, 66]`.
 
 ## 4. Entities
 
@@ -102,7 +105,8 @@ design.md §8); the maintainer replaces them before stage 2, together with those
 - **V1 Pay buttons.** "Join this tour" on a date card (`components/UpcomingTourCard.tsx:107`)
   and "Reserve a spot" on a date page (`components/TourDetailClient.tsx:21`) start payment
   instead of the contact form, and a priced date view offers no contact form
-  `[owner, 33, 62]`; hidden when the effective price is 0 or missing `[owner, 32]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
+  `[owner, 33, 62]`; hidden when the effective price is 0 or missing `[owner, 32]`, and the
+  date page then shows no price line instead of "Free" `[owner, 67]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
 - **V2 Stripe payment page** (external): name, guests, email, card `[owner, 28]`; the notice
   where Stripe allows it `[owner, 17]`; may be English only `[owner, 29]`.
 - **V3 Screen after payment**, three states: payment not yet confirmed — no QR; confirmed —
@@ -112,7 +116,10 @@ design.md §8); the maintainer replaces them before stage 2, together with those
 - **V4 Status page**, what the QR opens: valid / not valid / booking not found
   `[owner, 47, 49, 51]`; shows name, guests, tour, date, status, and no email
   `[owner, 47, 48]`; in the payment's language `[owner, 43]`; no login `[owner, 11, 30]`;
-  out of search [D §4].
+  out of search [D §4]. When the status and details cannot be read (e.g. the sheet is
+  unreachable): an honest server error — a 5xx response with an error page — never "booking
+  not found"; "not found" only for an id that does not exist `[owner, 66]`. Error-page text
+  drafted per `[owner, 63]`.
 - **V5 Policy page**: placeholder until the maintainer's files arrive `[owner, 19]`.
 
 ## 6. Acceptance criteria
@@ -124,8 +131,9 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
    spot" on its page each open Stripe's payment page for that date; neither opens the
    contact form `[owner, 33, 62]`.
 2. On a date whose effective price is 0 or missing — including a date without its own
-   price whose program has `price: 0` — neither button is shown, and the card and page are
-   otherwise identical to production `[owner, 32]`.
+   price whose program has `price: 0` — neither button is shown, and the date page shows no
+   price line: neither "Free" / «Бесплатно» nor a price `[owner, 32, 67]`. The date card:
+   see OQ6. Otherwise card and page are identical to production.
 3. "Reserve" on a program card and "Book a tour" (hero, About) open the same forms as on
    production and write to the same tabs `[owner, 33]`.
 4. A date can be paid for until the end of its own day in Central Time, including after
@@ -167,6 +175,9 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
     `[owner, 50]`.
 15. The status page is absent from `sitemap.xml` and marked not to be indexed; canonical,
     hreflang, sitemap and robots output of existing pages is unchanged [D §4].
+24. With the site denied access to the spreadsheet, opening a real reservation's QR returns
+    a 5xx response and an error page in the page's language — not "booking not found" and
+    no reservation data; with access back, the same QR shows the reservation `[owner, 66]`.
 
 **Records and notifications**
 16. Each successful payment produces exactly one row in the new tab, holding the id shown
@@ -193,7 +204,7 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 
 **Localization**
 23. Every string the site renders in this flow — notice, screen states, status-page states,
-    "booking not found", policy placeholder — exists in ru and en; where no text was given,
+    "booking not found", the status-page error page, policy placeholder — exists in ru and en; where no text was given,
     the stage-1 draft `[owner, 63]`. **Stage 2:** every drafted string is replaced by the
     maintainer's text `[owner, 63]`. Stripe's page may be English only `[owner, 29]`;
     context.md DEFINITION_OF_DONE.
@@ -205,19 +216,19 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 | R1 | Overbooking: no limit on guests per date `[owner, 4]` | accepted |
 | R2 | A QR is lost for good: shown once, no email, no re-issue `[owner, 37, 38, 45]`; the payer writes to Tatiana, who finds the row | accepted |
 | R3 | Anyone holding the link sees the name `[owner, 30]`; the QR also carries the pilot's access token, so it admits its holder to the whole pilot `[owner, 60]` | accepted; the id cannot be guessed (AC 13–14) |
-| R16 | Revoking or regenerating the shareable link during a stage breaks every QR issued so far `[owner, 60]` | not done during a stage (§10) |
 | R4 | Stripe's page may be English only `[owner, 29]` | accepted |
 | R5 | At stage 2 every push reaches paying customers at once `[owner, 36]` | accepted |
 | R6 | Two schedules: a date cancelled or re-priced on `main` stays on sale in the pilot until the maintainer edits the pilot's copy `[owner, 42]`. His local check (context.md OPEN 33) now has two places | accepted |
 | R7 | Stage 2 runs on an account setup stage 1 never exercised `[owner, 24, 25]` | mitigated by the $1 rehearsal (§10) `[owner, 26]` |
 | R8 | Activation of Tatiana's account: timing and outcome outside the project `[owner, 25]` | open |
 | R9 | Stripe's notifications may not get through the Vercel protection on the pilot `[owner, 11, 35]` | architect verifies (§11) |
-| R10 | A write to the tab fails (service outage, lost access). Meanwhile Tatiana checks the payment in the Stripe dashboard and admits the guest `[owner, 55, 58]`; Stripe's redelivery restores the row `[owner, 35, 57]`; once the window passes the row stays missing, since nobody repairs it by hand `[owner, 54, 55]` | alert (AC 20); a row missing at stage end is a mismatch |
+| R10 | The spreadsheet fails (service outage, lost access). A failed write: Tatiana checks the payment in the Stripe dashboard and admits the guest `[owner, 55, 58]`; Stripe's redelivery restores the row `[owner, 35, 57]`; once the window passes the row stays missing, since nobody repairs it by hand `[owner, 54, 55]`. A failed read: the status page shows a server error, not "not found" `[owner, 66]` | alert (AC 20), error page (AC 24); a row missing at stage end is a mismatch |
 | R11 | Sheet and Telegram fail together: only Stripe holds the payment | caught by reconciliation |
 | R12 | A stage has no deadline `[owner, 22]` | accepted |
 | R13 | Test messages look like real ones in Tatiana's chat, beside production inquiries `[owner, 8, 64]` | accepted |
 | R14 | The maintainer's texts arrive late `[owner, 19]` | stage 2 cannot open |
 | R15 | Rows nobody may delete: stage-1 test reservations and the $1 rehearsal stay in the tab of the production spreadsheet, "valid", beside real ones `[owner, 54, 56, 64]` | accepted |
+| R16 | Revoking or regenerating the shareable link during a stage breaks every QR issued so far `[owner, 60]` | not done during a stage (§10) |
 
 **Combinations**
 - **R2 + R11** — the payer closed the screen and both records failed: nobody knows of the
@@ -229,16 +240,27 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
   chargebacks reach Tatiana only through Stripe's own emails, and with no hand edits the row
   and the status page stay "valid". That is the path rejected in `[owner, 35]` and needs the
   maintainer's decision before building on it.
-- **R10 + a status page that reads the sheet** (if the architect chooses so) — a paid guest's
-  QR shows "booking not found" at check-in until redelivery restores the row. For Tatiana,
-  "not found" is not "not paid": she checks the payment in the Stripe dashboard and admits
-  the guest `[owner, 55, 58]`.
+- **R10 + a status page that reads the sheet** (if the architect chooses so) — while the
+  sheet is unreachable, a paid guest's QR shows the error page at check-in `[owner, 66]`;
+  after a failed write, while the sheet is readable but the row not yet restored, what it
+  shows is OQ5. Either way Tatiana checks the payment in the Stripe dashboard and admits the
+  guest `[owner, 55, 58]`.
 - **R8 + R14** — the start of stage 2 depends on two inputs outside the build.
 
 ## 8. Open questions
 
-No open questions.
-
+- **OQ5. A paid reservation whose row is not written yet.** After a failed write (AC 20) the
+  sheet may be readable again while the row waits for Stripe's redelivery. Looking only at
+  the sheet, the id is absent, so the page would say "booking not found" — which is what
+  `[owner, 66]` wants to avoid for a paid customer. Should this case also show the error
+  page (the architect finds how the site can tell it from a made-up id), or is "not found"
+  acceptable until the row is restored? Blocks only this case of V4 and AC 24.
+- **OQ6. The date card of a date priced 0.** The card prints the date's own price whenever
+  it is set (`components/UpcomingTourCard.tsx:85` `[from code]`): a date with `price: 0`
+  shows "💲 0 USD", not "Free"; a date without its own price shows nothing. `[owner, 67]`
+  names "Free", which only the date page prints (`page.tsx:80`). Does "omit the price" also
+  remove the card's "0 USD"? Blocks only the card clause of AC 2. No current date is priced
+  0 (`data/upcomingTours.ts`), so the case is theoretical during the pilot.
 - OQ4 (failed sheet write: automatic restore or not) — closed: automatic restore through
   redelivery, nobody repairs by hand, Tatiana checks the payment in the Stripe dashboard and
   admits the guest `[owner, 55, 57, 58]`, US8, R10.
@@ -261,7 +283,7 @@ Not acceptance criteria.
 
 **Build slices** — a tool for development while stage 1 is private; nothing a stage-2
 customer sees is cut: (1) pay buttons → Stripe page → screen after payment, AC 1–10;
-(2) endpoint, sheet row, Telegram, AC 16–20, 22; (3) status page, AC 11–15; (4) chargeback,
+(2) endpoint, sheet row, Telegram, AC 16–20, 22; (3) status page, AC 11–15, 24; (4) chargeback,
 AC 21.
 
 **Stage 1** `[owner, 12]`. Starts when the maintainer's test keys are set `[owner, 24]` and the

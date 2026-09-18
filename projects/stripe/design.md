@@ -1,9 +1,9 @@
 # Design: Stripe payments pilot
 
-version 1.1 | date 2026-09-18
+version 1.2 | date 2026-09-18
 inputs: `prd.md` v1.4 (cited by §, AC, `[owner, N]`), and `[owner, 63]` as carried into v1.5
 AC 23; `decisions.md` (**[D]**);
-`architecture.md` v1.0 (**[A]**); `projects/context.md` v1.2
+`architecture.md` v1.2 (**[A]**); `projects/context.md` v1.2
 rationale and rejected options: `design-decisions.md` (**[DD §N]**)
 objections: `answers.md`, items D1–D11
 
@@ -27,7 +27,8 @@ named here.
 **Architect [A]:** URLs; the state decision table of the screen after payment [A §4.2]; what the
 status page reads and when it answers "not found" [A §4.4]; Checkout Session parameters [A §4.1];
 QR payload and image [A §4.5]. Where this document needs a behaviour from there, it names it.
-Two behaviours it asks the architecture to add are in D10.
+The two behaviours asked for in D10 are in the architecture: the pay button after Back
+[A §4.1.1] and state 0 as `loading.tsx` [A §4.2].
 
 **Coder, for strings:** the EN and RU values of §8 are the stage-1 drafts the coder ships
 `[owner, 63]`.
@@ -120,7 +121,7 @@ The block is present only when the date is payable [A §3: card — effective pr
 | rest | §3.1 |
 | pending — from tap until Stripe opens | button disabled, label "Opening payment…"; notice and link unchanged; other buttons on the page unaffected. Ends with Stripe opening in the same tab [DD §4] or with a failure |
 | failure — Stripe did not open [A §4.1 `failed`] | button back to its label and enabled; error line under it (§8). Focus stays on the button; the line is announced. The next tap clears it |
-| returned from Stripe with the browser's Back | rest, never pending — D10 (a) |
+| returned from Stripe with the browser's Back | rest, never pending; the error line is cleared too [A §4.1.1] (D10 (a)) |
 | cancelled on Stripe (its "←" link) | the date page [A §4.1 `cancel_url`], block at rest, no banner — also when payment started from a card [DD §5] |
 | card declined | the payer stays on Stripe, which says so. No site view |
 | stale page: date stopped being payable (next day, or price set to 0) | tap → pending → the date page without the block [A §4.1]. No message (D11) |
@@ -140,8 +141,8 @@ Every line depends on [A §1] V1–V4, checked in slice S1.
 
 | item | what the payer sees | if the check fails |
 |---|---|---|
-| language | Stripe's own UI in the page's language ⚙V1 | English (PRD R4) |
-| our labels | in the language Stripe actually shows: if Stripe cannot show RU, our labels go EN too — no mixed page [DD §11] | — |
+| language | Stripe's own UI in the page's language ⚙V1 | English for every payer (PRD R4) |
+| our labels, item and notice | in the same single language as Stripe's UI (`checkoutLocale` [A §4.1]): if Stripe cannot show RU, all of them go EN too, so the page never mixes languages [DD §11]. The design reads `success_url` and `cancel_url` as keeping the page's locale, so the screens after Stripe stay in the payer's language; [A §4.1] leaves this open (D2) | — |
 | item | "<program title> · <date>" [A §4.1]; under it "Price per person" / «Цена за одного человека» — the count includes everyone who goes (D1) [DD §12] | — |
 | guest count | Stripe's quantity control, 1–15, default 1, Stripe's own label ⚙V3 | AC 6 cannot be met — product |
 | total | Stripe's, price × count | — |
@@ -170,7 +171,7 @@ State letters A, B, C are the architecture's [A §4.2].
 
 **State 0 — confirming.** Shown while the server decides between A, B and C (two Stripe calls
 [A §4.2]). h1 "Confirming your payment…"; one line "Please don't close this page — your QR code
-will appear here." Text only. Needs a loading view on the route (D10 (b)); if it is not built, the
+will appear here." Text only. It is the route's `loading.tsx` [A §4.2] (D10 (b)). If V15 fails ⚙V15, the
 browser's own loading indicator is this state.
 
 **State A — not confirmed, no QR.** h1 "Payment not confirmed yet"; body: reload in a minute,
@@ -293,8 +294,9 @@ The existing `LanguageSwitcher` is drawn white on the dark hero and would be inv
 On this page it takes a light form: the current language `brand-dark`, bold, underlined; the other
 `ink-muted`; 1 rem; each name a ≥ 44 × 44 px target and marked with its own `lang`. The home page's
 switcher is unchanged. It keeps the reservation because the id is in the path; the QR also carries
-the shareable-link query [A §4.5], which the switcher drops — safe only if Vercel keeps the access
-after the first visit ⚙V10 (D7). [DD §10]
+the shareable-link query [A §4.5], which the switcher drops. The first visit leaves an access
+cookie on the host, so the switch stays admitted [A §1 V10] ⚙V10, checked in slice S3 (D7).
+[DD §10]
 
 ### 6.7 Accessibility
 
@@ -305,20 +307,38 @@ after the first visit ⚙V10 (D7). [DD §10]
 ## 7. V5 — policy page
 
 Frame as `/places`: back bar "← Austin City Tours" to `/{locale}`; h1 `.section-title` with the
-policy title (§8); a centred text column `max-w-3xl`; paragraphs `ink`, 1 rem, line height 1.7,
-1 rem apart. One entry of `policy: string[]` [A §3] is one paragraph. No language switcher, as on
-`/places`.
+policy title (§8); a centred text column `max-w-3xl`. No language switcher, as on `/places`.
+
+**Content** is `policy`, a list of sections, each an optional heading and plain paragraphs
+[A §7.2]. Rendered in order, top to bottom:
+
+| element | form |
+|---|---|
+| section heading, when present | h2; 1.25 rem, bold, `ink`, line height 1.3; 0.5 rem to its first paragraph [DD §14] |
+| paragraph | `ink`, 1 rem, line height 1.7; 1 rem between paragraphs of one section |
+| gap between sections | 2 rem, whether or not the next section has a heading |
+
+- Heading levels are h1 → h2 only; no numbering is added. If the maintainer's heading text has
+  numbers, they are shown as written.
+- Lists, links and emphasis are not carried [A §7.2]. The one exception is the address
+  tatiana.city.guide@gmail.com in a paragraph. It is a `mailto:` link by the rule of §2.8, the
+  same as in the notice. Any other URL in the text stays plain text.
+- No contents list, no anchors on headings, no collapsing.
 
 | state | view |
 |---|---|
-| stage 1 placeholder | h1 and one paragraph (§8) |
-| the maintainer's text | its paragraphs in order |
-| empty array | the placeholder paragraph |
-| long text | the column grows; no contents, no collapse. Section headings are not possible with `string[]`; the data format is the architect's (D4 (b)) |
-| long title | the RU draft (35 characters) at the `.section-title` 2.5 rem takes 3 lines on a 320 px phone — the same as the existing `/places` title; accepted |
+| stage 1 placeholder | h1 and one section with no heading and one paragraph (§8) |
+| the maintainer's text | its sections in order, each heading above its paragraphs |
+| text starts with a section without a heading | the paragraphs come straight under the h1, as an introduction; the first heading follows after the 2 rem gap |
+| a heading with no paragraphs | the heading, then the 2 rem gap and the next section. The coder carries the maintainer's files heading for heading [A §7.2], so this appears only if the file has it |
+| empty `policy` | h1 alone. It does not happen at either stage: stage 1 has the placeholder section, stage 2 the maintainer's files |
+| long text | the column grows; nothing is collapsed |
+| long heading | wraps by words. A 60-character RU heading takes ≈ 3 lines on a 320 px phone and 1–2 on desktop; never truncated |
+| long title | the RU draft (35 characters) at the `.section-title` 2.5 rem takes 3 lines on a 320 px phone. This is the same as the existing `/places` title; accepted |
 | failure | static page; none |
 
-Mobile: the column is full width inside the 20 px padding; nothing else differs.
+Mobile: the column is full width inside the 20 px padding. Headings and paragraphs keep their
+sizes; nothing else differs.
 
 ---
 
@@ -375,6 +395,6 @@ None is required by the PRD, so none is added:
 | V2 Stripe | Stripe's | §4 | 15 guests, Stripe's control | Stripe's | card declined: Stripe's | — |
 | V3 | state 0 | B | §5.3 | §5.3 | A; share → Save | cancel: §3.4 |
 | V4 | none: server-rendered | valid / not valid | §6.4 | §6.4 | not found | — |
-| V5 | none: static | placeholder | §7 | §7 | none | empty array → placeholder |
+| V5 | none: static | placeholder section | §7 | §7 | none | empty `policy`: h1 alone, does not happen |
 
-Empty: V1 has no list; V3 empty = A; V4 empty = not found; V5 empty = placeholder.
+Empty: V1 has no list; V3 empty = A; V4 empty = not found; V5 empty = h1 alone, which does not happen (§7).

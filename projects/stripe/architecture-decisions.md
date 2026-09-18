@@ -1,8 +1,8 @@
 # Architecture decisions: Stripe payments pilot
 
-companion to: `architecture.md` v1.1 (cited there as **[AD §N]**)
+companion to: `architecture.md` v1.2 (cited there as **[AD §N]**)
 holds: options, criterion and reasoning for each choice in `architecture.md` §0.1.
-Stripe and Vercel claims carry the §1 register ids (V1–V14); all are unverified.
+Stripe and Vercel claims carry the §1 register ids (V1–V15); all are unverified.
 
 ---
 
@@ -181,3 +181,47 @@ and strings the PRD does not have. For Tatiana, "not found" already means "check
 Criterion: the maintainer's proposal [49] (page `bookingstatus`, id as a parameter); both
 satisfy it. (a) keeps the query string for the share token alone (§9), so that nothing else
 competes for it, and needs no `searchParams` handling on the page.
+
+## 16. Pay button restored by the browser's Back
+
+- (a) Count back-forward restores (`pageshow`, `persisted`) in a small external store and key the form by the count — **chosen**.
+- (b) Reload the page on a restore, as V3 does.
+- (c) Nothing: the button stays pending.
+
+Criterion: design.md §3.4 — Back from Stripe shows the button at rest (thread D10 (a)),
+within `.claude/skills/*` (no `setState` in an effect).
+(c) leaves a disabled "Opening payment…" button that no tap can clear. (b) works, but it
+throws away a page that is still correct. V3 reloads because its answer lives on the server
+(state C). Here nothing on the page is stale: payability is re-checked by `startCheckout` on
+the next tap. (a) resets exactly the state that is wrong, the form's pending status, by
+remounting that one form. `useSyncExternalStore` follows the project's precedent
+(`ToursSection`, context.md OPEN 20).
+
+## 17. "Confirming…" while the screen after payment decides
+
+- (a) Route `loading.tsx` for state 0; the decision in one `cache`-wrapped function shared by `generateMetadata` and the page — **chosen** (V15).
+- (b) No loading view: the browser's indicator is state 0.
+- (c) A `<Suspense>` boundary inside the page around the decision.
+
+Criterion: design.md §5.2 state 0 (thread D10 (b)), and §5.4: `<title>` is the state's h1. The
+title makes `generateMetadata` depend on the decision. Without a shared per-request function,
+the decision would run twice: four Stripe calls, and two `qr_shown` writes racing inside one
+request. (b) is what design accepts as a fallback, and it is also what (a) degrades to if V15
+fails. (c) is equivalent in effect, but it splits the page into a shell and a body that the
+route convention already separates.
+State 0 decides nothing and reads nothing. It is a view of the time before one of the three V3
+states is known, not a fourth state.
+
+## 18. Policy text format
+
+- (a) `policy: { heading?: string; paragraphs: string[] }[]` — **chosen**.
+- (b) `policy: string[]`, one paragraph per entry.
+- (c) One Markdown string per language, rendered by a library.
+
+Criterion: carry the maintainer's two files [19], a "standard policy" [15], without losing
+their structure (thread D4 (b)). Standard policies are sectioned; (b) cannot say which line is
+a heading. (c) adds a dependency and a rendering path for arbitrary markup on a page that
+needs headings and paragraphs only. (a) covers the stage-1 placeholder (one untitled section)
+and a sectioned text alike, and it keeps the pair typed, so a missing field fails the build.
+Residual: lists, links and emphasis in the maintainer's text are not carried. If his files
+have them, the shape is revisited then, not now (architecture §7.2).

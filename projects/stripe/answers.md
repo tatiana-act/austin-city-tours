@@ -110,6 +110,13 @@ D4. [меняет решение] prd.md v1.4 AC 23, [19]; architecture.md v1.0 
       advice to the maintainer — neither is a PRD matter    · 09-18
     → внесено: prd.md v1.5 §4, AC 23                        · 09-18
     → внесено: design.md v1.1 §1, §3.4, §7, §8              · 09-18
+    → architect, (b): `policy` becomes sections, each an optional heading plus plain
+      paragraphs; the placeholder is one untitled section; lists, links and emphasis are
+      not carried. design.md §7 ("one entry of `policy: string[]`", "headings are not
+      possible") is the designer's to revise                 · 09-18
+    → внесено: architecture.md v1.2 §0.1, §3, §7.2, §10 S1;
+      architecture-decisions.md §18                         · 09-18
+    → внесено: design.md v1.2 §7, §10; design-decisions.md §14   · 09-18
 
 ## Сбой записи в таблицу и повторная доставка · открыт
 
@@ -125,20 +132,24 @@ A6. [к сведению] prd.md v1.4 AC 20 and R10: Stripe's redelivery window 
                                                    · архитектор · 09-18
     → ждёт владельца
 
-## Страница статуса при недоступной таблице · открыт
+## Страница статуса при недоступной таблице · внесён → prd.md v1.8
 
 A7. [к сведению] prd.md v1.4 §5 V4 has three states and none for "the sheet cannot be
     read"; the design shows "booking not found", which the R10 combination already tells
     Tatiana to treat as "check Stripe"
                                                    · архитектор · 09-18
-    → ждёт владельца
+    → no: an unreadable status is an honest 5xx error page, never "booking not found";
+      "not found" only for an id that does not exist [owner, 66]  · 09-18
+    → внесено: prd.md v1.8 §3, §5 V4, AC 23, AC 24, §7 R10 and its combination · 09-18
 
 D5. [к сведению] architecture.md v1.0 §4.4, §5; prd.md v1.4 §7 (R10 combination): an unreadable
     sheet shows "booking not found"; design.md v1.0 §6.3 draws "not found" neutral (outline, no
     red, no ✕) so that it does not read as "not paid"; a separate "cannot check now" view would be
     clearer, but Tatiana's action is the same (check Stripe), so it is not asked for
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "D5 no, I want honest 5XX error if we cannot get the status and detail, otherwise
+      customers would think the payment itself was lost" [owner, 66]  · 09-18
+    → внесено: prd.md v1.8 §5 V4, AC 24                      · 09-18
 
 ## Страница оплаты Stripe · открыт
 
@@ -160,6 +171,18 @@ D2. [меняет решение] prd.md v1.4 [27], [28], [29]; architecture.md 
     Stripe page gets English labels, not Russian ones inside it
                                                    · дизайнер · 09-18
     → ждёт владельца
+    → architect, technical half: `checkoutLocale` (the page's locale while V1 holds,
+      otherwise `'en'`) sets Stripe's locale and every string the site sends to Stripe; the
+      label wording stays with the owner. Pointers checked: §1 V1, V4 and §4.1 are still
+      the right sections                                    · 09-18
+    → внесено: architecture.md v1.2 §1 V1, §4.1, §7.1       · 09-18
+    → внесено: design.md v1.2 §4 (checked against `checkoutLocale`)  · 09-18
+    → designer, к сведению: architecture.md v1.2 §4.1 says "`locale` above … use
+      `checkoutLocale`" but does not say whether `success_url` and `cancel_url` keep the
+      page's locale; design.md v1.2 §4, §5.1 assume they do, so a Russian payer who falls
+      back to an English Stripe page still sees the screen after payment and the date page in
+      Russian                                                · 09-18
+    → ждёт архитектора
 
 ## Смысл чарджбэка · открыт
 
@@ -222,6 +245,12 @@ D7. [меняет решение] prd.md v1.4 §5 V4, [43]; context.md v1.2 USER
     first visit (architecture.md v1.0 §1 V10)
                                                    · дизайнер · 09-18
     → ждёт владельца
+    → architect: the pointer is still right (§1 V10; the query is built in §4.5). V10 now
+      also claims the first visit leaves an access cookie, and S3 checks a second
+      navigation without the query in a fresh private window. Whether to show the switcher
+      stays with the owner                                  · 09-18
+    → внесено: architecture.md v1.2 §1 V10, §10 S3          · 09-18
+    → внесено: design.md v1.2 §6.6 (access cookie, checked in S3)  · 09-18
 
 ## Действующая бронь на другую дату · открыт
 
@@ -232,14 +261,16 @@ D8. [к сведению] prd.md v1.4 §3 (exactly three states), §5 V4: a vali
                                                    · дизайнер · 09-18
     → ждёт владельца
 
-## Дата без цены · открыт
+## Дата без цены · внесён → prd.md v1.8
 
 D9. [к сведению] prd.md v1.4 AC 2, [32]; context.md v1.2 GLOSSARY (price): on a date with price 0
     or none the date page still prints "Free" / «Бесплатно» and now has no button at all, where
     production opens the contact form; all five current dates are priced, so the state is
     theoretical during the pilot
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "D9 do not show "free", just omit the price and booking" [owner, 67]: the date page
+      shows no price line and no button; the card's "0 USD" is PRD OQ6  · 09-18
+    → внесено: prd.md v1.8 §5 V1, AC 2; decisions.md §2, §5  · 09-18
 
 ## Состояния, которых нет в архитектуре · открыт
 
@@ -251,6 +282,13 @@ D10. [меняет решение] architecture.md v1.0 §4.1, §4.2, §4.5: (a)
      don't close this page", as the route's loading view
                                                    · дизайнер · 09-18
      → ждёт архитектора
+     → architect: (a) the pay form is remounted at rest on a back-forward restore,
+       counted from `pageshow` `persisted` through `useSyncExternalStore`; (b) route
+       `loading.tsx` renders state 0; the V3 decision runs once per request, shared by
+       the page and `generateMetadata`; if Next holds the loading view back (V15), the
+       browser's indicator is state 0, as design.md §5.2 allows      · 09-18
+     → внесено: architecture.md v1.2 §0.1, §1 V15, §3, §4.1.1, §4.2, §5, §7.1, §10 S1;
+       architecture-decisions.md §16, §17                  · 09-18
 
 ## Устаревшая страница · открыт
 
