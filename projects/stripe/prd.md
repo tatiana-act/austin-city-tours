@@ -1,8 +1,6 @@
 # PRD: Stripe payments pilot
 
-version 1.8 | date 2026-09-18 | status: buildable; OQ5 and OQ6 (§8) each decide one display
-case — the status page for a paid reservation whose row is not yet written, and the date
-card of a date priced 0
+version 1.11 | date 2026-09-18 | status: buildable — no open questions
 sources: `[owner, N]` — interview answer N, logged in `decisions.md` §1 (cited as **[D]**);
 `[owner, S1]`–`[owner, S6]` — the starting scenario, [D §1]; `[from code]` — read from the
 repository
@@ -36,8 +34,8 @@ pass condition `[owner, 1, 23]`. [D §4]
 1. As a visitor — a tourist, or a local paying for guests — I pay for a scheduled date from
    its card or its page and enter the name and guest count on the payment page
    `[owner, S1, S3, 28, 33]`.
-2. As a payer, right after paying I see the QR once and can share or save it, so that I or
-   my guests can show it at the tour `[owner, 40, 44, 45]`.
+2. As a payer, right after paying I see the QR once and can save it, and share it where my
+   browser allows, so that I or my guests can show it at the tour `[owner, 44, 45, 75]`.
 3. Before paying I see that there are no refunds or cancellations through the site and
    whom to write to, and I can read the policy `[owner, 15–18]`.
 4. As a visitor not ready to pay, I can still ask the guide questions: on a priced date
@@ -66,8 +64,9 @@ pass condition `[owner, 1, 23]`. [D §4]
   their current behaviour `[owner, 33]`.
 - Any change to production (`main`) `[owner, 1]`.
 - Marking test-mode notifications `[owner, 8]`.
-- A "checked in" state: the status page has exactly three booking states, plus a server
-  error when the status cannot be read (§5) `[owner, 47, 49, 51, 66]`.
+- A "checked in" or "different date" state: the status page has exactly three booking
+  states, plus a server error when the status cannot be read (§5)
+  `[owner, 47, 49, 51, 66, 69]`.
 
 ## 4. Entities
 
@@ -105,21 +104,29 @@ design.md §8); the maintainer replaces them before stage 2, together with those
 - **V1 Pay buttons.** "Join this tour" on a date card (`components/UpcomingTourCard.tsx:107`)
   and "Reserve a spot" on a date page (`components/TourDetailClient.tsx:21`) start payment
   instead of the contact form, and a priced date view offers no contact form
-  `[owner, 33, 62]`; hidden when the effective price is 0 or missing `[owner, 32]`, and the
-  date page then shows no price line instead of "Free" `[owner, 67]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
-- **V2 Stripe payment page** (external): name, guests, email, card `[owner, 28]`; the notice
-  where Stripe allows it `[owner, 17]`; may be English only `[owner, 29]`.
+  `[owner, 33, 62]`; hidden when the effective price is 0 or missing `[owner, 32]`, and then
+  neither the date page nor the date card shows a price — no "Free", no "0 USD"
+  `[owner, 67, 71]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
+- **V2 Stripe payment page** (external): name ("Name for the guest list" / «Имя для списка
+  гостей» `[owner, 74]`), guests as the quantity, with "Price per person" / «Цена за одного
+  человека» in the item `[owner, 61, 73]`, email, card `[owner, 28]`; the notice where Stripe
+  allows it `[owner, 17]`; may be English only `[owner, 29]`.
 - **V3 Screen after payment**, three states: payment not yet confirmed — no QR; confirmed —
-  the QR, once, with Share where the browser supports it, otherwise Save `[owner, 40, 44, 45]`;
+  the QR, once, with Save always and Share as well where the browser supports it
+  `[owner, 44, 45, 75]`;
   reopened — "QR already shown; if lost, email tatiana.city.guide@gmail.com", no QR
   `[owner, 7, 46]`.
 - **V4 Status page**, what the QR opens: valid / not valid / booking not found
   `[owner, 47, 49, 51]`; shows name, guests, tour, date, status, and no email
-  `[owner, 47, 48]`; in the payment's language `[owner, 43]`; no login `[owner, 11, 30]`;
+  `[owner, 47, 48]`; a valid reservation for another date shows "valid" with its own date,
+  and Tatiana compares the date herself `[owner, 69]`; in the payment's language, with no language switcher — its readers
+  are the payer and Tatiana `[owner, 43, 68]`; no login `[owner, 11, 30]`;
   out of search [D §4]. When the status and details cannot be read (e.g. the sheet is
   unreachable): an honest server error — a 5xx response with an error page — never "booking
-  not found"; "not found" only for an id that does not exist `[owner, 66]`. Error-page text
-  drafted per `[owner, 63]`.
+  not found" `[owner, 66]`. An id absent from the sheet is checked with Stripe: if Stripe
+  holds a payment for it, the page shows the reservation from Stripe's data where feasible,
+  otherwise the error page; "booking not found" only for an id Stripe does not know either
+  `[owner, 70]`. Error-page text drafted per `[owner, 63]`.
 - **V5 Policy page**: placeholder until the maintainer's files arrive `[owner, 19]`.
 
 ## 6. Acceptance criteria
@@ -131,33 +138,37 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
    spot" on its page each open Stripe's payment page for that date; neither opens the
    contact form `[owner, 33, 62]`.
 2. On a date whose effective price is 0 or missing — including a date without its own
-   price whose program has `price: 0` — neither button is shown, and the date page shows no
-   price line: neither "Free" / «Бесплатно» nor a price `[owner, 32, 67]`. The date card:
-   see OQ6. Otherwise card and page are identical to production.
+   price whose program has `price: 0` — neither button is shown; the date page shows no
+   price line, neither "Free" / «Бесплатно» nor a price, and the date card shows no price,
+   including no "0 USD" for a date priced 0 `[owner, 32, 67, 71]`. Otherwise card and page
+   are identical to production.
 3. "Reserve" on a program card and "Book a tour" (hero, About) open the same forms as on
    production and write to the same tabs `[owner, 33]`.
 4. A date can be paid for until the end of its own day in Central Time, including after
    its start time — then only from its page, since the upcoming list already hides it at
    the start (`lib/tourSchedule.ts` `[from code]`). From the next day neither button is
-   shown and no payment for that date can be started `[owner, 53]`.
+   shown and no payment for that date can be started `[owner, 53]`. A card or page left
+   open from the day before, when tapped, leads to the date page without the button and
+   without a message `[owner, 76]`.
 5. Next to each pay button, in ru and en: the notice naming tatiana.city.guide@gmail.com and
    a working link to the policy page `[owner, 7, 16–18]`. **Stage 2:** the policy page and the
    notice show the maintainer's texts, not the placeholder `[owner, 19, 63]`.
 
 **Payment page**
-6. Stripe's page asks for the name, and its own quantity selector is the guest count: it
-   starts at 1 and cannot be set below 1 or above 15; the item's description says the price
-   applies to each guest; the total equals effective price × quantity, in USD
-   `[owner, 5, 28, 31, 41, 61]`.
+6. Stripe's page asks for the name under the label "Name for the guest list" / «Имя для
+   списка гостей» `[owner, 74]`, and its own quantity selector is the guest count: it starts
+   at 1 and cannot be set below 1 or above 15; the item's description reads "Price per
+   person" / «Цена за одного человека» `[owner, 73]`; the total equals effective price ×
+   quantity, in USD `[owner, 5, 28, 31, 41, 61]`.
 7. Where the architect confirms Stripe can show custom text, the notice appears on Stripe's
    page `[owner, 17]`.
 
 **Screen after payment**
 8. A successful payment shows the QR; a declined or abandoned payment never shows one
    `[owner, 45]`.
-9. In a browser that supports sharing the screen offers Share, which hands the QR to another
-   app; in one that does not, it offers Save, which stores the QR image on the device. One
-   browser of each kind is checked `[owner, 40]`.
+9. The screen always offers Save, which stores the QR image on the device; in a browser that
+   supports sharing it also offers Share, which hands the QR to another app, and Save stays.
+   One browser of each kind is checked `[owner, 75]`.
 10. Reloading the screen, returning to it, or opening its address again shows the
     "already shown" message with tatiana.city.guide@gmail.com in the page's language, and
     no QR `[owner, 45, 46]`.
@@ -170,7 +181,7 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
     title in the page's language, the date and "valid"; it shows no email, and the
     cardholder's name appears nowhere in this flow `[owner, 27, 47, 48]`.
 13. A made-up id, or a real id with one character changed, shows "booking not found" and no
-    data of any reservation `[owner, 49, 50]`.
+    data of any reservation `[owner, 49, 50, 70]`.
 14. Two reservations made one after the other have ids with no shared counter or timestamp
     `[owner, 50]`.
 15. The status page is absent from `sitemap.xml` and marked not to be indexed; canonical,
@@ -178,6 +189,8 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 24. With the site denied access to the spreadsheet, opening a real reservation's QR returns
     a 5xx response and an error page in the page's language — not "booking not found" and
     no reservation data; with access back, the same QR shows the reservation `[owner, 66]`.
+    A paid reservation whose row is not written yet (AC 20, access back, redelivery not yet
+    done) shows the reservation or the error page, never "booking not found" `[owner, 70]`.
 
 **Records and notifications**
 16. Each successful payment produces exactly one row in the new tab, holding the id shown
@@ -242,25 +255,19 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
   maintainer's decision before building on it.
 - **R10 + a status page that reads the sheet** (if the architect chooses so) — while the
   sheet is unreachable, a paid guest's QR shows the error page at check-in `[owner, 66]`;
-  after a failed write, while the sheet is readable but the row not yet restored, what it
-  shows is OQ5. Either way Tatiana checks the payment in the Stripe dashboard and admits the
-  guest `[owner, 55, 58]`.
+  after a failed write, while the sheet is readable but the row not yet restored, it shows
+  the reservation from Stripe's data or the error page, never "not found" `[owner, 70]`.
+  Either way Tatiana checks the payment in the Stripe dashboard and admits the guest
+  `[owner, 55, 58]`.
 - **R8 + R14** — the start of stage 2 depends on two inputs outside the build.
 
 ## 8. Open questions
 
-- **OQ5. A paid reservation whose row is not written yet.** After a failed write (AC 20) the
-  sheet may be readable again while the row waits for Stripe's redelivery. Looking only at
-  the sheet, the id is absent, so the page would say "booking not found" — which is what
-  `[owner, 66]` wants to avoid for a paid customer. Should this case also show the error
-  page (the architect finds how the site can tell it from a made-up id), or is "not found"
-  acceptable until the row is restored? Blocks only this case of V4 and AC 24.
-- **OQ6. The date card of a date priced 0.** The card prints the date's own price whenever
-  it is set (`components/UpcomingTourCard.tsx:85` `[from code]`): a date with `price: 0`
-  shows "💲 0 USD", not "Free"; a date without its own price shows nothing. `[owner, 67]`
-  names "Free", which only the date page prints (`page.tsx:80`). Does "omit the price" also
-  remove the card's "0 USD"? Blocks only the card clause of AC 2. No current date is priced
-  0 (`data/upcomingTours.ts`), so the case is theoretical during the pilot.
+No open questions.
+
+- OQ6 (the card's "0 USD") — closed: hidden too `[owner, 71]`, AC 2.
+- OQ5 (paid reservation without a row yet) — closed: checked with Stripe, never "not found"
+  `[owner, 70]`, V4, AC 24.
 - OQ4 (failed sheet write: automatic restore or not) — closed: automatic restore through
   redelivery, nobody repairs by hand, Tatiana checks the payment in the Stripe dashboard and
   admits the guest `[owner, 55, 57, 58]`, US8, R10.
@@ -272,7 +279,9 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 
 ## 9. Deferred
 
-- Payments on production — a separate decision after stage 2 `[owner, 1]`.
+- Payments on production — a separate decision after stage 2 `[owner, 1]`. Until it is taken,
+  `payments-stripe-preview` is not merged into `dev`, and no production switch is built
+  `[owner, 72]`.
 - Logins `[owner, 3]`; email from the site, "for now" `[owner, 37]`.
 - Paying for a program without a date `[owner, 33]`.
 - Measuring convenience `[owner, 23]`.
@@ -305,7 +314,7 @@ passes on §1.
 Throughout: nothing from this pilot reaches `main` `[owner, 1]`; the shareable link is never
 revoked or regenerated during a stage `[owner, 60]`. The pilot code and this documentation
 live together on `payments-stripe-preview`; they reach `dev` together or not at all
-`[owner, 65]`.
+`[owner, 65]`, and not before the production decision (§9) `[owner, 72]`.
 
 ## 11. Boundary with the architect
 
@@ -315,7 +324,9 @@ proposes a page `bookingstatus` taking the id as a parameter, and a random UUID 
 timestamp `[owner, 49, 50]`; how the date page's button learns its date (`TourDetailClient`
 receives only the program `[from code]`); the endpoint's signature check and de-duplication;
 that a failed sheet write leaves Stripe's notification unaccepted, so Stripe sends it again
-`[owner, 34, 35, 54]`;
+`[owner, 34, 35, 54]`; how the status page asks Stripe about an id missing from the sheet,
+and whether it can show that reservation from Stripe's data or shows the error page
+`[owner, 70]`;
 how Stripe reaches the protected pilot; environment variables per stage; the tab's name
 and column order; the QR image format. This document fixes behaviour, not data structures.
 

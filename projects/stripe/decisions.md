@@ -66,7 +66,7 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
 | 37 | Emails from the site? | None, for now. The customer uses their own email. |
 | 38 | Lost QR? | The customer notifies Tatiana. The QR is not generated again: without auth the site cannot know who may have it. |
 | 39 | Sheet row content? | The proposed set plus the booking id embedded in the QR. |
-| 40 | Passing the QR on? | "Share" where the browser supports it, otherwise "save". |
+| 40 | Passing the QR on? | "Share" where the browser supports it, otherwise "save". → superseded by [75]. |
 | 41 | Guests per reservation? | 1 to 15, default 1. |
 | 42 | Pilot schedule? | The schedule is in code, so the pilot has its own. |
 | 43 | Language of the QR page? | The language of the customer who paid. |
@@ -94,7 +94,7 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
 | N | Question | Accepted recommendation |
 |---|---|---|
 | 60 | A-Q1: the QR must open without a Vercel login at stage 1 too | Every QR carries the shareable-link token; the link is issued before stage 1 and never revoked during a stage. |
-| 61 | A-Q2: how Stripe's page takes the guest count | Stripe's own quantity selector ("Qty", 1–15, default 1) is the guest count, with "per guest" / "Price per person" in the item description (exact wording: design thread D1, open). |
+| 61 | A-Q2: how Stripe's page takes the guest count | Stripe's own quantity selector ("Qty", 1–15, default 1) is the guest count, with "per guest" / "Price per person" in the item description (exact wording: [73]). |
 | 62 | A-Q3: contact form on date views | AC 1 as written: priced date views have no contact form; questions go through the footer contacts and the email in the notice. |
 | 63 | A-Q4: who writes strings without a source | The coder drafts EN and RU for stage 1 (design.md §8 proposals); the maintainer replaces them before stage 2, together with the policy files [19]. |
 
@@ -104,12 +104,27 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
 | 65 | A-Q6: the pilot branch name, for env scoping (architect proposed `feat/stripe-pilot` from `dev`) | "A-06 Do we really need separate pilot banch? I would strongly prefer to have everything within current branch" and "having separate branch for docs and code looks odd to me. If I merge docs, and don't merge the code, this is inconsistency; also each update of the docs leads to code update, which means we shall always merge 2 these branch. A lot of efforts, but I see no benefits" (relayed verbatim, 2026-09-18). The pilot branch is `payments-stripe-preview`, holding docs and code; they merge to `dev` together or not at all; PR #69 (docs only) is not merged. |
 | 66 | D5 / A7: what the status page shows when the sheet cannot be read | "D5 no, I want honest 5XX error if we cannot get the status and detail, otherwise customers would think the payment itself was lost" (relayed verbatim, 2026-09-18). A 5xx response with an error page, never "booking not found"; "not found" only for an id that does not exist. |
 | 67 | D9: a date with price 0 or none still shows "Free" on its page | "D9 do not show "free", just omit the price and booking" (relayed verbatim, 2026-09-18). The date page shows no price line instead of "Free" / «Бесплатно», and no booking button. Whether it also covers the date card's "0 USD" (a date with an explicit price of 0): PRD OQ6. |
+| 68 | D7: a language switcher on the status page? | "D7 no. 2 persons scan QR code: the one who created it, and Tatiana. It is safe to assume user already used their language, and Tatiana is ok with any language we support. No separate lang switch is required" (relayed verbatim, 2026-09-18). No switcher; the page stays in the payer's language [43]. A guest who receives a shared QR also reads it in the payer's language — accepted by the owner's assumption. |
+| 69 | D8: a valid QR for another date shows "valid" | "D8 it is enough if we just display the date" (relayed verbatim, 2026-09-18). No fourth "different date" state; the page shows the reservation's date and Tatiana checks it. |
+
+Answers 70–76 are one reply, relayed verbatim by the coordinator, 2026-09-18: "accept the
+rest". Each row gives the coordinator's recommendation it accepts, as put to the owner.
+
+| N | Question | Accepted recommendation |
+|---|---|---|
+| 70 | PRD OQ5: a paid reservation whose row is not written yet | When the id is not in the sheet, the site asks Stripe whether a payment exists for it. If Stripe confirms one, the page never shows "not found": it shows the reservation from Stripe's data where feasible, otherwise the error page; the architect decides how. Only an id Stripe does not know either shows "booking not found". |
+| 71 | PRD OQ6: the date card's "0 USD" for a date priced 0 | Hidden too, to match [67]. |
+| 72 | Architect's Q7 (thread A13): [65] lets the branch reach `dev`, and `dev` is released to `main` | `payments-stripe-preview` is not merged into `dev` before the production decision (PRD §9); no production switch is built. |
+| 73 | D1: item description on Stripe's page | "Price per person" / «Цена за одного человека». |
+| 74 | D2: name field label on Stripe's page | "Name for the guest list" / «Имя для списка гостей». |
+| 75 | D6: Share replaces Save on the screen after payment | Save always; Share in addition where the browser supports it. Supersedes [40]. |
+| 76 | D11: a date page left open overnight, tapped the next day | Goes to the date page, with no button and no message. |
 
 ## 2. Superseded and rejected
 
 - S2, name and guests on the site → Stripe page [28].
 - S4, confirmation email with QR → removed [37]; the QR is delivered only by the screen after payment [44, 45].
-- Site-sent "email the QR to any address", limited to one send per reservation → replaced by share/save [37, 40].
+- Site-sent "email the QR to any address", limited to one send per reservation → replaced by share/save [37, 40, 75].
 - Marking test notifications → rejected [8].
 - Tatiana adds a missing row by hand after the alert [34] → nobody edits the spreadsheet
   [54, 55]. She checks the payment in the Stripe dashboard and admits the guest [55, 58]; the
@@ -123,7 +138,10 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
 - Collecting name and guests on the site when Stripe cannot show Russian → rejected [29].
 - An unreadable sheet shown as "booking not found" (design v1.0 §6.3) → a 5xx error page [66].
 - A date without a price keeps "Free" on its page ([32], "nothing else changes") → no price
-  line [67].
+  line [67], and no "0 USD" on its card [71].
+- Share instead of Save where the browser can share [40] → Save always, Share in addition [75].
+- A paid reservation missing from the sheet shown as "booking not found" → checked with
+  Stripe; the reservation or the error page [70].
 
 ## 3. Provenance check
 
@@ -178,6 +196,6 @@ For the coordinator, who maintains it. The PRD follows the answers below.
 | OPEN 29: shareable links not needed | [11, 60] | reversed for `payments-stripe-preview`; the link exists from stage 1 and rides in every QR |
 | "владелец" = the maintainer | [13] | the maintainer's "owner" is Tatiana |
 | CONSTRAINTS / `CLAUDE.md`: `main` is the release switch | [36] | `payments-stripe-preview` goes live on push; `CLAUDE.md` does not cover it |
-| `CLAUDE.md`: feature branches `type/short-description` from `dev`, PRs into `dev` | [65] | one branch, `payments-stripe-preview`, holds docs and code; the docs do not go to `dev` on their own (PR #69 is not merged) |
+| `CLAUDE.md`: feature branches `type/short-description` from `dev`, PRs into `dev` | [65, 72] | one branch, `payments-stripe-preview`, holds docs and code; the docs do not go to `dev` on their own (PR #69 is not merged), and the branch is not merged into `dev` before the production decision |
 | OPEN 27: fixing the "Free" shown for a date without a price — declined by the owner | [67] | on the pilot the date page omits the price instead of "Free" |
 | OPEN 4: return to the privacy policy when real payment appears | [15, 18, 19] | reopened for the pilot |

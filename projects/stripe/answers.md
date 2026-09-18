@@ -45,7 +45,7 @@ A1. [меняет решение] prd.md v1.4 AC 11 requires the QR to open with
     → внесено: architecture.md v1.1 §1 V10, §6, §9, §10 S3, §11;
       architecture-decisions.md §9                          · 09-18
 
-## Число гостей на странице Stripe · открыт
+## Число гостей на странице Stripe · внесён → prd.md v1.11
 
 A2. [меняет решение] prd.md v1.4 AC 6 / [28, 41]: Stripe can bound to 1–15 and multiply
     into the total only the line-item quantity, which Stripe labels itself ("Qty"), not
@@ -62,7 +62,8 @@ D1. [меняет решение] prd.md v1.4 AC 6, [41]; architecture.md v1.0 �
     count includes everyone who goes; design.md v1.0 §4, §8 proposes "Price per person" /
     «Цена за одного человека» in the item; the status page and Telegram keep "guests"
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "accept the rest": "Price per person" / «Цена за одного человека» [owner, 73] · 09-18
+    → внесено: prd.md v1.11 §5 V2, AC 6                     · 09-18
 
 ## Контактная форма на видах даты · внесён → prd.md v1.5
 
@@ -150,6 +151,9 @@ D5. [к сведению] architecture.md v1.0 §4.4, §5; prd.md v1.4 §7 (R10 
     → "D5 no, I want honest 5XX error if we cannot get the status and detail, otherwise
       customers would think the payment itself was lost" [owner, 66]  · 09-18
     → внесено: prd.md v1.8 §5 V4, AC 24                      · 09-18
+    → PRD OQ5, "accept the rest": an id absent from the sheet is checked with Stripe; a
+      paid one shows the reservation or the error page, never "not found" [owner, 70] · 09-18
+    → внесено: prd.md v1.11 §5 V4, AC 13, AC 24, §7, §11     · 09-18
 
 ## Страница оплаты Stripe · открыт
 
@@ -170,7 +174,8 @@ D2. [меняет решение] prd.md v1.4 [27], [28], [29]; architecture.md 
     (≤ 50 characters), and our labels follow the language Stripe actually shows, so an English-only
     Stripe page gets English labels, not Russian ones inside it
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "accept the rest": "Name for the guest list" / «Имя для списка гостей» [owner, 74] · 09-18
+    → внесено: prd.md v1.11 §5 V2, AC 6                     · 09-18
     → architect, technical half: `checkoutLocale` (the page's locale while V1 holds,
       otherwise `'en'`) sets Stripe's locale and every string the site sends to Stripe; the
       label wording stays with the owner. Pointers checked: §1 V1, V4 and §4.1 are still
@@ -200,7 +205,7 @@ A11. [к сведению] prd.md v1.4 AC 4: a session started before midnight C
                                                    · архитектор · 09-18
      → ждёт владельца
 
-## Окружение пилота · внесён → prd.md v1.7
+## Окружение пилота · внесён → prd.md v1.11
 
 A12. [к сведению] prd.md v1.4 [S6], [8]: the pilot writes to the production spreadsheet and
      Telegram chat only if the Preview environment carries the production values, which is
@@ -223,9 +228,11 @@ A13. [меняет решение] prd.md v1.7 §10 [65] lets `payments-stripe-p
      start-failed message), and priced date views lose the contact form — so the two
      answers hold together only as "not at all" until the production decision (PRD §9)
                                                    · архитектор · 09-18
-     → ждёт владельца
+     → "accept the rest" (Q7): not merged into `dev` before the production decision;
+       no production switch is built [owner, 72]              · 09-18
+     → внесено: prd.md v1.11 §9, §10; decisions.md §5       · 09-18
 
-## Share и Save на экране после оплаты · открыт
+## Share и Save на экране после оплаты · внесён → prd.md v1.11
 
 D6. [меняет решение] prd.md v1.4 §5 V3, AC 9, [40]; architecture.md v1.0 §4.5: on a phone Share
     replaces Save, so a share sheet closed by mistake, a failing target app, or a browser tab
@@ -233,9 +240,11 @@ D6. [меняет решение] prd.md v1.4 §5 V3, AC 9, [40]; architecture.m
     is never shown again (R2); recommended: Save always, Share in addition where supported;
     design.md v1.0 §5.2 builds the PRD's rule, and a share error turns the button into Save
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "accept the rest": Save always, Share in addition where supported; supersedes
+      [40] [owner, 75]                                      · 09-18
+    → внесено: prd.md v1.11 US2, §5 V3, AC 9; decisions.md §1 [40], §2 · 09-18
 
-## Переключатель языка на странице статуса · открыт
+## Переключатель языка на странице статуса · внесён → prd.md v1.9
 
 D7. [меняет решение] prd.md v1.4 §5 V4, [43]; context.md v1.2 USERS; poi answers D5: the brief
     asks for the existing switcher on the status page, the PRD does not, and the owner kept one off
@@ -244,7 +253,10 @@ D7. [меняет решение] prd.md v1.4 §5 V4, [43]; context.md v1.2 USER
     it drops the QR's shareable-link query, which is safe only if Vercel keeps access after the
     first visit (architecture.md v1.0 §1 V10)
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "D7 no. 2 persons scan QR code: the one who created it, and Tatiana. It is safe to
+      assume user already used their language, and Tatiana is ok with any language we
+      support. No separate lang switch is required" [owner, 68]  · 09-18
+    → внесено: prd.md v1.9 §5 V4                             · 09-18
     → architect: the pointer is still right (§1 V10; the query is built in §4.5). V10 now
       also claims the first visit leaves an access cookie, and S3 checks a second
       navigation without the query in a fresh private window. Whether to show the switcher
@@ -252,14 +264,15 @@ D7. [меняет решение] prd.md v1.4 §5 V4, [43]; context.md v1.2 USER
     → внесено: architecture.md v1.2 §1 V10, §10 S3          · 09-18
     → внесено: design.md v1.2 §6.6 (access cookie, checked in S3)  · 09-18
 
-## Действующая бронь на другую дату · открыт
+## Действующая бронь на другую дату · внесён → prd.md v1.10
 
 D8. [к сведению] prd.md v1.4 §3 (exactly three states), §5 V4: a valid QR for yesterday's or next
     week's date shows "valid", and only the date tells Tatiana it is not for this tour; design.md
     v1.0 §6.3 puts the date inside the status band so that both are read together; no fourth state
     is added
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → "D8 it is enough if we just display the date" [owner, 69]  · 09-18
+    → внесено: prd.md v1.10 §3, §5 V4                       · 09-18
 
 ## Дата без цены · внесён → prd.md v1.8
 
@@ -271,6 +284,8 @@ D9. [к сведению] prd.md v1.4 AC 2, [32]; context.md v1.2 GLOSSARY (pric
     → "D9 do not show "free", just omit the price and booking" [owner, 67]: the date page
       shows no price line and no button; the card's "0 USD" is PRD OQ6  · 09-18
     → внесено: prd.md v1.8 §5 V1, AC 2; decisions.md §2, §5  · 09-18
+    → PRD OQ6, "accept the rest": the card's "0 USD" is hidden too [owner, 71] · 09-18
+    → внесено: prd.md v1.11 §5 V1, AC 2                     · 09-18
 
 ## Состояния, которых нет в архитектуре · открыт
 
@@ -290,10 +305,11 @@ D10. [меняет решение] architecture.md v1.0 §4.1, §4.2, §4.5: (a)
      → внесено: architecture.md v1.2 §0.1, §1 V15, §3, §4.1.1, §4.2, §5, §7.1, §10 S1;
        architecture-decisions.md §16, §17                  · 09-18
 
-## Устаревшая страница · открыт
+## Устаревшая страница · внесён → prd.md v1.11
 
 D11. [к сведению] architecture.md v1.0 §4.1; prd.md v1.4 AC 4: a page left open overnight and
      tapped the next day goes to the date page without the button and without any message; the
      date on that page is the explanation; accepted in design.md v1.0 §3.4
                                                    · дизайнер · 09-18
-     → ждёт владельца
+     → "accept the rest": to the date page, no button, no message [owner, 76] · 09-18
+     → внесено: prd.md v1.11 AC 4                           · 09-18
