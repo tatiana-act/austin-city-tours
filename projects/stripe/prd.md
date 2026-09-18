@@ -1,6 +1,6 @@
 # PRD: Stripe payments pilot
 
-version 1.4 | date 2026-09-18 | status: buildable — no open questions
+version 1.6 | date 2026-09-18 | status: buildable — no open questions
 sources: `[owner, N]` — interview answer N, logged in `decisions.md` §1 (cited as **[D]**);
 `[owner, S1]`–`[owner, S6]` — the starting scenario, [D §1]; `[from code]` — read from the
 repository
@@ -37,8 +37,9 @@ pass condition `[owner, 1, 23]`. [D §4]
    my guests can show it at the tour `[owner, 40, 44, 45]`.
 3. Before paying I see that there are no refunds or cancellations through the site and
    whom to write to, and I can read the policy `[owner, 15–18]`.
-4. As a visitor not ready to pay, I can still ask the guide questions through the existing
-   forms `[owner, 33]`.
+4. As a visitor not ready to pay, I can still ask the guide questions: on a priced date
+   through the footer contacts or the email in the notice, elsewhere through the existing
+   forms `[owner, 33, 62]`.
 5. As Tatiana, I scan a QR and see name, guests, tour, date and whether the reservation is
    valid `[owner, 30, 48]`.
 6. As Tatiana, I get a Telegram message and a sheet row for every paid reservation
@@ -78,25 +79,29 @@ the name as typed `[owner, 27]`; the tour date; guests 1–15 `[owner, 41]`; amo
 price × guests, USD `[owner, 5, 31]`; the payer's email as Stripe collects it `[owner, 39]`;
 the language the payment started in `[owner, 43]`; status valid / not valid `[owner, 47, 51]`.
 
-**Sheet row**, in a new tab of the existing spreadsheet `[owner, S6]`: booking id, name, tour,
+**Sheet row**, in a new tab of the existing production spreadsheet — the pilot uses the same
+spreadsheet, no separate document `[owner, S6, 64]`: booking id, name, tour,
 date, guests, amount, email, link to the status page, status `[owner, 39, 52]`. Written and
 changed only by the site `[owner, 54]`; Tatiana reads it to find a customer `[owner, 38]`.
 Stage-1 test reservations and the $1 rehearsal are written the same way, to the same tab,
 unmarked `[owner, 56]`.
 
 **Telegram messages**, to the chat the site already uses (`TELEGRAM_BOT_CHATID`,
-`app/tgmessage.ts` `[from code]`), in English: reservation `[owner, 9]`; chargeback
-`[owner, 10]`; failed-to-save alert `[owner, 34]` — no text given; one per reservation, it
-names the reservation.
+`app/tgmessage.ts` `[from code]`; same value on the pilot `[owner, 64]`), in English: reservation `[owner, 9]`; chargeback
+`[owner, 10]`; failed-to-save alert `[owner, 34]` — no text given, drafted per `[owner, 63]`;
+one per reservation, it names the reservation.
 
 **Texts from the maintainer**: policy and notice, one EN file and one RU file `[owner, 19]`.
+Every other string without a source is drafted in EN and RU for stage 1 (the proposals in
+design.md §8); the maintainer replaces them before stage 2, together with those files
+`[owner, 63]`.
 
 ## 5. Views
 
 - **V1 Pay buttons.** "Join this tour" on a date card (`components/UpcomingTourCard.tsx:107`)
   and "Reserve a spot" on a date page (`components/TourDetailClient.tsx:21`) start payment
-  instead of the contact form `[owner, 33]`; hidden when the effective price is 0 or
-  missing `[owner, 32]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
+  instead of the contact form, and a priced date view offers no contact form
+  `[owner, 33, 62]`; hidden when the effective price is 0 or missing `[owner, 32]`. Beside them: the notice `[owner, 16, 17]` and a policy link `[owner, 18]`.
 - **V2 Stripe payment page** (external): name, guests, email, card `[owner, 28]`; the notice
   where Stripe allows it `[owner, 17]`; may be English only `[owner, 29]`.
 - **V3 Screen after payment**, three states: payment not yet confirmed — no QR; confirmed —
@@ -116,7 +121,7 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 **Entry**
 1. On a date whose effective price is > 0, "Join this tour" on its card and "Reserve a
    spot" on its page each open Stripe's payment page for that date; neither opens the
-   contact form `[owner, 33]`.
+   contact form `[owner, 33, 62]`.
 2. On a date whose effective price is 0 or missing — including a date without its own
    price whose program has `price: 0` — neither button is shown, and the card and page are
    otherwise identical to production `[owner, 32]`.
@@ -128,12 +133,13 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
    shown and no payment for that date can be started `[owner, 53]`.
 5. Next to each pay button, in ru and en: the notice naming tatiana.city.guide@gmail.com and
    a working link to the policy page `[owner, 7, 16–18]`. **Stage 2:** the policy page and the
-   notice show the maintainer's texts, not the placeholder `[owner, 19]`.
+   notice show the maintainer's texts, not the placeholder `[owner, 19, 63]`.
 
 **Payment page**
-6. Stripe's page asks for name and guest count; the count starts at 1 and cannot be set
-   below 1 or above 15; the total equals effective price × guests, in USD
-   `[owner, 5, 28, 31, 41]`.
+6. Stripe's page asks for the name, and its own quantity selector is the guest count: it
+   starts at 1 and cannot be set below 1 or above 15; the item's description says the price
+   applies to each guest; the total equals effective price × quantity, in USD
+   `[owner, 5, 28, 31, 41, 61]`.
 7. Where the architect confirms Stripe can show custom text, the notice appears on Stripe's
    page `[owner, 17]`.
 
@@ -149,7 +155,8 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 
 **Status page**
 11. The QR opens the status page on a device that has never opened the pilot, without a
-    Vercel login, in the language of the page where payment started `[owner, 11, 30, 43]`.
+    Vercel login, in the language of the page where payment started — at stage 1 as at
+    stage 2, and still after later pushes to the pilot `[owner, 11, 30, 43, 60]`.
 12. For a paid reservation it shows the name as typed on Stripe's page, the guests, the tour
     title in the page's language, the date and "valid"; it shows no email, and the
     cardholder's name appears nowhere in this flow `[owner, 27, 47, 48]`.
@@ -185,8 +192,10 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 
 **Localization**
 23. Every string the site renders in this flow — notice, screen states, status-page states,
-    "booking not found", policy placeholder — exists in ru and en. Stripe's page may be
-    English only `[owner, 29]`; context.md DEFINITION_OF_DONE.
+    "booking not found", policy placeholder — exists in ru and en; where no text was given,
+    the stage-1 draft `[owner, 63]`. **Stage 2:** every drafted string is replaced by the
+    maintainer's text `[owner, 63]`. Stripe's page may be English only `[owner, 29]`;
+    context.md DEFINITION_OF_DONE.
 
 ## 7. Risks and combinations
 
@@ -194,7 +203,8 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 |---|---|---|
 | R1 | Overbooking: no limit on guests per date `[owner, 4]` | accepted |
 | R2 | A QR is lost for good: shown once, no email, no re-issue `[owner, 37, 38, 45]`; the payer writes to Tatiana, who finds the row | accepted |
-| R3 | Anyone holding the link sees the name `[owner, 30]` | accepted; the id cannot be guessed (AC 13–14) |
+| R3 | Anyone holding the link sees the name `[owner, 30]`; the QR also carries the pilot's access token, so it admits its holder to the whole pilot `[owner, 60]` | accepted; the id cannot be guessed (AC 13–14) |
+| R16 | Revoking or regenerating the shareable link during a stage breaks every QR issued so far `[owner, 60]` | not done during a stage (§10) |
 | R4 | Stripe's page may be English only `[owner, 29]` | accepted |
 | R5 | At stage 2 every push reaches paying customers at once `[owner, 36]` | accepted |
 | R6 | Two schedules: a date cancelled or re-priced on `main` stays on sale in the pilot until the maintainer edits the pilot's copy `[owner, 42]`. His local check (context.md OPEN 33) now has two places | accepted |
@@ -204,9 +214,9 @@ Checked on the pilot deployment in test mode unless marked **stage 2**.
 | R10 | A write to the tab fails (service outage, lost access). Meanwhile Tatiana checks the payment in the Stripe dashboard and admits the guest `[owner, 55, 58]`; Stripe's redelivery restores the row `[owner, 35, 57]`; once the window passes the row stays missing, since nobody repairs it by hand `[owner, 54, 55]` | alert (AC 20); a row missing at stage end is a mismatch |
 | R11 | Sheet and Telegram fail together: only Stripe holds the payment | caught by reconciliation |
 | R12 | A stage has no deadline `[owner, 22]` | accepted |
-| R13 | Test messages look like real ones in Tatiana's chat, beside production inquiries `[owner, 8]` | accepted |
+| R13 | Test messages look like real ones in Tatiana's chat, beside production inquiries `[owner, 8, 64]` | accepted |
 | R14 | The maintainer's texts arrive late `[owner, 19]` | stage 2 cannot open |
-| R15 | Rows nobody may delete: stage-1 test reservations and the $1 rehearsal stay in the tab, "valid", beside real ones `[owner, 54, 56]` | accepted |
+| R15 | Rows nobody may delete: stage-1 test reservations and the $1 rehearsal stay in the tab of the production spreadsheet, "valid", beside real ones `[owner, 54, 56, 64]` | accepted |
 
 **Combinations**
 - **R2 + R11** — the payer closed the screen and both records failed: nobody knows of the
@@ -253,21 +263,24 @@ customer sees is cut: (1) pay buttons → Stripe page → screen after payment, 
 (2) endpoint, sheet row, Telegram, AC 16–20, 22; (3) status page, AC 11–15; (4) chargeback,
 AC 21.
 
-**Stage 1** `[owner, 12]`. Starts when the maintainer's test keys are set `[owner, 24]`; policy
-placeholder allowed `[owner, 19]`. Testers: the maintainer and Tatiana. Ends when Tatiana
+**Stage 1** `[owner, 12]`. Starts when the maintainer's test keys are set `[owner, 24]` and the
+shareable link exists `[owner, 11, 60]`; policy placeholder and drafted strings allowed
+`[owner, 19, 63]`. Testers: the maintainer and Tatiana. Ends when Tatiana
 says so `[owner, 22]`; passes on §1.
 
 **Between stages**, in order: Tatiana's account active `[owner, 25]`; live keys set; the
-maintainer's EN and RU texts in place `[owner, 19]`; he adds a $1 date to the pilot schedule,
+maintainer's EN and RU texts in place — policy, notice and every drafted string
+`[owner, 19, 63]`; he adds a $1 date to the pilot schedule,
 a real payment goes through AC 12, 16, 17 and a QR scan, and is refunded in Stripe outside
 the site `[owner, 2, 26]` — its row stays (R15); he removes the date `[owner, 26]`; a Stripe test card is declined on
-the pilot; the shareable link is issued `[owner, 11]`.
+the pilot.
 
 **Stage 2** `[owner, 14]`. Real customers through the link. The maintainer keeps the pilot
 schedule `[owner, 42]`; changes go live on push `[owner, 36]`. Ends when Tatiana says so;
 passes on §1.
 
-Throughout: nothing from this pilot reaches `main` `[owner, 1]`.
+Throughout: nothing from this pilot reaches `main` `[owner, 1]`; the shareable link is never
+revoked or regenerated during a stage `[owner, 60]`.
 
 ## 11. Boundary with the architect
 

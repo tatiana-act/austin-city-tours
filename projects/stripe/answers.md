@@ -31,7 +31,7 @@ D — дизайнер, T — тестировщик, C — кодер.
 
 ---
 
-## QR без входа в Vercel · открыт
+## QR без входа в Vercel · внесён → prd.md v1.5
 
 A1. [меняет решение] prd.md v1.4 AC 11 requires the QR to open without a Vercel login
     already at stage 1, but §10 issues the shareable link only between stages; the token
@@ -39,7 +39,9 @@ A1. [меняет решение] prd.md v1.4 AC 11 requires the QR to open with
     or regenerating it breaks every QR, every QR admits its holder to the whole pilot
     (extends R3), and whether the token survives new deployments is unverified (V10)
                                                    · архитектор · 09-18
-    → ждёт владельца
+    → accepted (A-Q1): the token rides in every QR; the link is issued before stage 1
+      and never revoked during a stage [owner, 60]           · 09-18
+    → внесено: prd.md v1.5 AC 11, §7 R3, R16, §10          · 09-18
 
 ## Число гостей на странице Stripe · открыт
 
@@ -48,7 +50,9 @@ A2. [меняет решение] prd.md v1.4 AC 6 / [28, 41]: Stripe can bound 
     "guests"; a numeric custom field bounds digit count, not value, and does not change
     the total — the design takes the quantity, with "per guest" in the item description
                                                    · архитектор · 09-18
-    → ждёт владельца
+    → accepted (A-Q2): Stripe's quantity selector is the guest count, 1–15, default 1;
+      the item wording stays with D1 [owner, 61]              · 09-18
+    → внесено: prd.md v1.5 AC 6                             · 09-18
 
 D1. [меняет решение] prd.md v1.4 AC 6, [41]; architecture.md v1.0 §4.1, §7.1: "per guest" leaves
     a payer who also goes unsure whether to count themselves, while the default of 1 means the
@@ -57,22 +61,25 @@ D1. [меняет решение] prd.md v1.4 AC 6, [41]; architecture.md v1.0 �
                                                    · дизайнер · 09-18
     → ждёт владельца
 
-## Контактная форма на видах даты · открыт
+## Контактная форма на видах даты · внесён → prd.md v1.5
 
 A3. [меняет решение] prd.md v1.4 AC 1 and [33] take the contact form off both date views,
     leaving the date page with no route to it, while decisions.md §2 says "Removing the
     contact form from date views → rejected [33]"; the design follows AC 1
                                                    · архитектор · 09-18
-    → ждёт владельца
+    → accepted (A-Q3): AC 1 as written; priced date views have no contact form;
+      questions go through the footer contacts and the notice's email [owner, 62] · 09-18
+    → внесено: prd.md v1.5 US4, §5 V1, AC 1; decisions.md §1 [33], §2 · 09-18
 
 D3. [к сведению] prd.md v1.4 US4, AC 1: on a priced date page the ways left to ask a question are
     the footer contacts and the back link to the home page's program card; design.md v1.0 adds
     no element for it and renders the address in the notice as a `mailto:` link, which also
     serves US4
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → answered by A-Q3 [owner, 62]                          · 09-18
+    → внесено: prd.md v1.5 US4                              · 09-18
 
-## Строки без источника · открыт
+## Строки без источника · внесён → prd.md v1.5
 
 A4. [меняет решение] prd.md v1.4 AC 23 requires ru and en for every string of the flow,
     but only the EN notice [16], the EN "already shown" message [46] and the two Telegram
@@ -81,7 +88,9 @@ A4. [меняет решение] prd.md v1.4 AC 23 requires ru and en for every
     status-page states and labels, the start-failed message, page titles and the
     failed-to-save alert line ([34], "no text given") have none
                                                    · архитектор · 09-18
-    → ждёт владельца
+    → accepted (A-Q4): the coder drafts EN and RU for stage 1; the maintainer replaces
+      them before stage 2, with the policy files [owner, 63]   · 09-18
+    → внесено: prd.md v1.5 §4, AC 5, AC 23, §10             · 09-18
 
 D4. [меняет решение] prd.md v1.4 AC 23, [19]; architecture.md v1.0 §3, §7: design.md v1.0 §8
     gives an EN/RU value for every string without a source, each marked "proposal", for the
@@ -91,7 +100,10 @@ D4. [меняет решение] prd.md v1.4 AC 23, [19]; architecture.md v1.0 
     cannot carry section headings if the maintainer's text has them; (c) the notice repeats on
     every payable card, so the maintainer's stage-2 notice should stay at one or two sentences
                                                    · дизайнер · 09-18
-    → ждёт владельца
+    → answered by A-Q4: the §8 proposals, (a) included, are the stage-1 drafts and the
+      maintainer replaces them before stage 2 [owner, 63]; (b) is the architect's, (c) is
+      advice to the maintainer — neither is a PRD matter    · 09-18
+    → внесено: prd.md v1.5 §4, AC 23                        · 09-18
 
 ## Сбой записи в таблицу и повторная доставка · открыт
 
@@ -159,14 +171,18 @@ A11. [к сведению] prd.md v1.4 AC 4: a session started before midnight C
                                                    · архитектор · 09-18
      → ждёт владельца
 
-## Окружение пилота · открыт
+## Окружение пилота · внесён → prd.md v1.6
 
 A12. [к сведению] prd.md v1.4 [S6], [8]: the pilot writes to the production spreadsheet and
      Telegram chat only if the Preview environment carries the production values, which is
      not visible from the repository; the pilot branch name is needed to scope the new
      variables
                                                    · архитектор · 09-18
-     → ждёт владельца
+     → A-Q5: the five existing variables have the same values in Production and
+       Preview; the pilot uses the production spreadsheet (its own tab) and chat;
+       no separate spreadsheet [owner, 64]. The branch name is A-Q6, an architecture
+       matter, not carried into the PRD                       · 09-18
+     → внесено: prd.md v1.6 §4, §7 R13, R15                 · 09-18
 
 ## Share и Save на экране после оплаты · открыт
 

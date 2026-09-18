@@ -59,7 +59,7 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
 | 30 | Who can open the QR page? | Anyone who scans it; the site has no auth. |
 | 31 | Price basis? | Per guest. |
 | 32 | Date without a price, or price 0? | No reservation. A price of 0 counts as no price. Only the pay button is hidden; nothing else changes. |
-| 33 | Which buttons start payment? | "Join this tour" (date card) and "Reserve a spot" (date page) start payment. "Reserve" (program card) and "Book a tour" keep their current behaviour; the contact form stays for customers who want to ask before booking. |
+| 33 | Which buttons start payment? | "Join this tour" (date card) and "Reserve a spot" (date page) start payment. "Reserve" (program card) and "Book a tour" keep their current behaviour; the contact form stays for customers who want to ask before booking. → on priced date views, settled by [62]. |
 | 34 | A step fails after payment? | Tatiana gets a Telegram alert when the reservation could not be written to the sheet, and adds it by hand. → "by hand" superseded by [54], §2. |
 | 35 | One incoming endpoint for Stripe notifications? | Yes. |
 | 36 | At stage 2, how do changes reach the pilot? | Immediately, on push. |
@@ -87,6 +87,21 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
 | 58 | Does "excuse" mean Tatiana lets the customer join the tour, and does she check the payment in the Stripe dashboard? | "2 yes" (relayed verbatim, 2026-09-18). Both confirmed. |
 | 59 | Does [54] cover the `Reviews` column E moderation? | "4 yes, I mean we will not edit reservations sheet" (relayed verbatim, 2026-09-18). [54] covers the reservations tab only. |
 
+Answers 60–63 are one reply to the architect's questions A-Q1–A-Q4 (`answers.md` threads
+A1–A4), relayed verbatim by the coordinator, 2026-09-18: "I accept first 4 from a-q1 to
+a-q4". Each row gives the recommendation it accepts, as put to the owner.
+
+| N | Question | Accepted recommendation |
+|---|---|---|
+| 60 | A-Q1: the QR must open without a Vercel login at stage 1 too | Every QR carries the shareable-link token; the link is issued before stage 1 and never revoked during a stage. |
+| 61 | A-Q2: how Stripe's page takes the guest count | Stripe's own quantity selector ("Qty", 1–15, default 1) is the guest count, with "per guest" / "Price per person" in the item description (exact wording: design thread D1, open). |
+| 62 | A-Q3: contact form on date views | AC 1 as written: priced date views have no contact form; questions go through the footer contacts and the email in the notice. |
+| 63 | A-Q4: who writes strings without a source | The coder drafts EN and RU for stage 1 (design.md §8 proposals); the maintainer replaces them before stage 2, together with the policy files [19]. |
+
+| N | Question | Answer |
+|---|---|---|
+| 64 | A-Q5 (thread A12): do Preview deployments use the production spreadsheet and Telegram chat? | "I checked the vercel settings, all vars propagated to all environments. Given we will work on separate sheet, I don't think we need different speadsheet doc" (relayed verbatim, 2026-09-18). The five existing variables have the same values in Production and Preview: the pilot writes to the production spreadsheet, in its own new tab, and messages the production chat. The new Stripe variables are not covered (architecture.md scopes them to the pilot branch). |
+
 ## 2. Superseded and rejected
 
 - S2, name and guests on the site → Stripe page [28].
@@ -97,7 +112,8 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
   [54, 55]. She checks the payment in the Stripe dashboard and admits the guest [55, 58]; the
   row is restored by Stripe's redelivery through the endpoint [35, 57], or stays missing and
   counts as a mismatch.
-- Removing the contact form from date views → rejected [33].
+- Keeping the contact form on date views for questions (my reading of [33]) → removed from
+  priced date views; questions go through the footer contacts and the notice's email [62].
 - Measures "payment attempts vs completed" and "complaints only" → dropped [20]: at a
   handful of customers one abandoned attempt swings the share by tens of percent, and
   complaints miss customers who fail silently.
@@ -108,7 +124,8 @@ scenario came through the coordinator's brief and is cited as `[owner, S1]`–`[
 Eight messages in the interview channel were marked as not coming from the maintainer; one
 was a request ("6 explain"), seven were answers. Six were put back to him: [24] confirmed,
 [52] confirmed, [30] confirmed, [21] confirmed, [8] reversed ("not needed"), and the
-removal of the contact form reversed in [33]. The seventh — "OQ2 no, we will not edit this
+removal of the contact form reversed in [33] (later removed from priced date views on the
+architect's question, [62]). The seventh — "OQ2 no, we will not edit this
 file manually" — was recorded as [54] in PRD v1.2 without that check. That was an error.
 [54] now rests on the owner's own words, relayed by the coordinator.
 
@@ -152,7 +169,7 @@ For the coordinator, who maintains it. The PRD follows the answers below.
 |---|---|---|
 | DoD: correct localization always, both languages | [29] | exception for the Stripe page in the pilot |
 | CONSTRAINTS: data only through Server Actions, no `app/api/*` (tagged `[из кода]`) | [35] | exception: one endpoint for Stripe |
-| OPEN 29: shareable links not needed | [11] | reversed for the pilot branch |
+| OPEN 29: shareable links not needed | [11, 60] | reversed for the pilot branch; the link exists from stage 1 and rides in every QR |
 | "владелец" = the maintainer | [13] | the maintainer's "owner" is Tatiana |
 | CONSTRAINTS / `CLAUDE.md`: `main` is the release switch | [36] | pilot branch goes live on push; `CLAUDE.md` does not cover it |
 | OPEN 4: return to the privacy policy when real payment appears | [15, 18, 19] | reopened for the pilot |
