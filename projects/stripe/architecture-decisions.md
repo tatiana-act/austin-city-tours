@@ -1,6 +1,6 @@
 # Architecture decisions: Stripe payments pilot
 
-companion to: `architecture.md` v1.0 (cited there as **[AD §N]**)
+companion to: `architecture.md` v1.1 (cited there as **[AD §N]**)
 holds: options, criterion and reasoning for each choice in `architecture.md` §0.1.
 Stripe and Vercel claims carry the §1 register ids (V1–V14); all are unverified.
 
@@ -30,7 +30,8 @@ Cost of (a), already accepted by the PRD: while a row is missing the page says "
 Criterion: AC 6 — bounded 1–15, default 1, and the total equals price × guests on Stripe's
 page. Only (a) changes the amount; (b) bounds digit count, not value, and (b) and (c) leave the
 total at one unit. Cost: the control is Stripe's quantity selector, labelled by Stripe, not
-"guests" — mitigated by "per guest" in the item description; thread A2.
+"guests" — mitigated by the item description saying the price is per guest; accepted
+[61], wording in design thread D1.
 Name: a `text` custom field is the only way to ask a name that is not the cardholder's [27];
 Stripe still asks the name on card (V4), which the site never reads.
 
@@ -115,15 +116,14 @@ visible to members of the Stripe account holding the endpoint (Tatiana's, at sta
 - (c) Deployment Protection Exceptions for a pilot domain (a paid Vercel add-on, unverified).
 - (d) Automation bypass secret in the QR — rejected outright: it opens every deployment.
 
-Criterion: AC 11 — a device that has never opened the pilot, no Vercel login, under [11]
-("shareable link") and OPEN 29. A device with no cookie can only be admitted by something it
-carries, so the credential has to be in the QR. (a) adds no new credential: at stage 2 every
-customer already holds the same link.
-Consequences, returned to product (thread A1): the link must exist before stage 1's AC 11
-check (PRD §10 issues it between stages); revoking or regenerating it breaks every QR; every
-QR admits its holder to the whole pilot. If V10 shows the token does not survive new
-deployments, [11] itself fails at stage 2 (pushes go live [36]) and the choice returns to the
-owner between (b) and (c).
+Criterion: AC 11 — a device that has never opened the pilot, no Vercel login, at stage 1 as at
+stage 2 and after later pushes, under [11] ("shareable link") and OPEN 29. A device with no
+cookie can only be admitted by something it carries, so the credential has to be in the QR.
+(a) adds no new credential: at stage 2 every customer already holds the same link.
+Consequences, accepted [60] (PRD R3, R16, §10): the link exists before stage 1; it is not
+revoked or regenerated during a stage, since that breaks every QR; every QR admits its holder
+to the whole pilot. If V10 shows the token does not survive new deployments, AC 11 fails on
+the first push after a QR is issued, and the choice returns to the owner between (b) and (c).
 
 ## 10. QR image
 

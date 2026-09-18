@@ -42,6 +42,8 @@ A1. [меняет решение] prd.md v1.4 AC 11 requires the QR to open with
     → accepted (A-Q1): the token rides in every QR; the link is issued before stage 1
       and never revoked during a stage [owner, 60]           · 09-18
     → внесено: prd.md v1.5 AC 11, §7 R3, R16, §10          · 09-18
+    → внесено: architecture.md v1.1 §1 V10, §6, §9, §10 S3, §11;
+      architecture-decisions.md §9                          · 09-18
 
 ## Число гостей на странице Stripe · открыт
 
@@ -53,6 +55,7 @@ A2. [меняет решение] prd.md v1.4 AC 6 / [28, 41]: Stripe can bound 
     → accepted (A-Q2): Stripe's quantity selector is the guest count, 1–15, default 1;
       the item wording stays with D1 [owner, 61]              · 09-18
     → внесено: prd.md v1.5 AC 6                             · 09-18
+    → внесено: architecture.md v1.1 §7.1, §11; architecture-decisions.md §2 · 09-18
 
 D1. [меняет решение] prd.md v1.4 AC 6, [41]; architecture.md v1.0 §4.1, §7.1: "per guest" leaves
     a payer who also goes unsure whether to count themselves, while the default of 1 means the
@@ -70,6 +73,7 @@ A3. [меняет решение] prd.md v1.4 AC 1 and [33] take the contact for
     → accepted (A-Q3): AC 1 as written; priced date views have no contact form;
       questions go through the footer contacts and the notice's email [owner, 62] · 09-18
     → внесено: prd.md v1.5 US4, §5 V1, AC 1; decisions.md §1 [33], §2 · 09-18
+    → внесено: architecture.md v1.1 §3 (date page row), §11 · 09-18
 
 D3. [к сведению] prd.md v1.4 US4, AC 1: on a priced date page the ways left to ask a question are
     the footer contacts and the back link to the home page's program card; design.md v1.0 adds
@@ -91,6 +95,7 @@ A4. [меняет решение] prd.md v1.4 AC 23 requires ru and en for every
     → accepted (A-Q4): the coder drafts EN and RU for stage 1; the maintainer replaces
       them before stage 2, with the policy files [owner, 63]   · 09-18
     → внесено: prd.md v1.5 §4, AC 5, AC 23, §10             · 09-18
+    → внесено: architecture.md v1.1 §0, §7.1, §7.3, §11      · 09-18
 
 D4. [меняет решение] prd.md v1.4 AC 23, [19]; architecture.md v1.0 §3, §7: design.md v1.0 §8
     gives an EN/RU value for every string without a source, each marked "proposal", for the
@@ -104,6 +109,7 @@ D4. [меняет решение] prd.md v1.4 AC 23, [19]; architecture.md v1.0 
       maintainer replaces them before stage 2 [owner, 63]; (b) is the architect's, (c) is
       advice to the maintainer — neither is a PRD matter    · 09-18
     → внесено: prd.md v1.5 §4, AC 23                        · 09-18
+    → внесено: design.md v1.1 §1, §3.4, §7, §8              · 09-18
 
 ## Сбой записи в таблицу и повторная доставка · открыт
 
@@ -171,7 +177,7 @@ A11. [к сведению] prd.md v1.4 AC 4: a session started before midnight C
                                                    · архитектор · 09-18
      → ждёт владельца
 
-## Окружение пилота · внесён → prd.md v1.6
+## Окружение пилота · внесён → prd.md v1.7
 
 A12. [к сведению] prd.md v1.4 [S6], [8]: the pilot writes to the production spreadsheet and
      Telegram chat only if the Preview environment carries the production values, which is
@@ -183,6 +189,18 @@ A12. [к сведению] prd.md v1.4 [S6], [8]: the pilot writes to the produc
        no separate spreadsheet [owner, 64]. The branch name is A-Q6, an architecture
        matter, not carried into the PRD                       · 09-18
      → внесено: prd.md v1.6 §4, §7 R13, R15                 · 09-18
+     → A-Q6: no separate pilot branch; `payments-stripe-preview` holds docs and code,
+       which reach `dev` together or not at all [owner, 65]    · 09-18
+     → внесено: prd.md v1.7 §1, §10; decisions.md §5        · 09-18
+     → внесено: architecture.md v1.1 header, §2.3, §4.3, §6, §9, §11 · 09-18
+A13. [меняет решение] prd.md v1.7 §10 [65] lets `payments-stripe-preview` reach `dev`
+     "together or not at all", while `dev` is released to `main` in batches and nothing
+     from the pilot may reach `main` [1]: once in `dev`, the next release shows pay buttons
+     on production, where there are no Stripe variables (every button ends in the
+     start-failed message), and priced date views lose the contact form — so the two
+     answers hold together only as "not at all" until the production decision (PRD §9)
+                                                   · архитектор · 09-18
+     → ждёт владельца
 
 ## Share и Save на экране после оплаты · открыт
 

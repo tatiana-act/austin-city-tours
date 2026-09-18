@@ -1,9 +1,11 @@
 # Architecture: Stripe payments pilot
 
-version 1.0 | date 2026-09-18
-inputs: `prd.md` v1.4; `decisions.md` (cited **[D]**); `projects/context.md` v1.2
+version 1.1 | date 2026-09-18
+inputs: `prd.md` v1.7; `decisions.md` (cited **[D]**, owner answers up to [65]);
+`projects/context.md` v1.2
 rationale and rejected options: `architecture-decisions.md` (cited **[AD §N]**)
-objections to the PRD: `answers.md`, threads A1–A12
+objections to the PRD: `answers.md`, threads A1–A13
+pilot branch: `payments-stripe-preview` — holds this documentation and the pilot code [65]
 
 **[unverified]** marks a claim about Stripe or Vercel taken from their documentation as
 the architect knows it (through 2026-05). It was not checked against current documentation:
@@ -24,11 +26,12 @@ Stripe SDK version and its pinned API version, QR pixel size and error-correctio
 share-support detection technique (subject to `.claude/skills/*`, in particular no
 `setState` in effects), logging, the saved file's name.
 
-**Visual form** of V1 notice, V3, V4, V5 — a design document if one is commissioned;
-otherwise the coder reuses existing classes. Not decided here.
+**Visual form** of V1 notice, V3, V4, V5 — `design.md`. Not decided here.
 
-**Owner / maintainer:** env values (§6); Stripe and Vercel setup (§9); texts without a source
-(§7.2); answers in §11.
+**Owner / maintainer:** env values (§6); Stripe and Vercel setup (§9); the texts that replace
+the stage-1 drafts (§7.1, §7.2) [63]; the answer to §11 Q7.
+
+**Coder, additionally:** the stage-1 EN and RU drafts of §7.1 [63].
 
 **PRD, not here:** everything behavioural. Where this document and the PRD disagree, the PRD wins.
 
@@ -67,7 +70,7 @@ otherwise the coder reuses existing classes. Not decided here.
 | V7 | Non-2xx deliveries are retried: live mode up to 3 days with exponential backoff; test mode about 3 times over a few hours; an event can be re-sent by hand (Dashboard, `stripe events resend`) | [34], [35], [54], AC 20 | unverified | S2 | AC 20 relies on manual resend |
 | V8 | Stripe does not follow redirects on webhook delivery; a 3xx counts as failure | webhook URL (§4.3) | unverified | S2 | none; URL has the trailing slash anyway |
 | V9 | Vercel Protection Bypass for Automation accepts the secret as query parameter `x-vercel-protection-bypass`, on the branch URL of a protected preview | R9, AC 18–21 | unverified | S0, S2 | R9 materialises: AC 18–21 fail together — back to owner (PRD §7 combination R9) |
-| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch | [11], AC 11 | unverified | S0, S3 | QRs die on push or revoke — back to product (thread A1) |
+| V10 | A Vercel shareable link is a URL with a query token (`_vercel_share`); the token works on any path of that host, does not expire until revoked, and survives new deployments of the branch | [11, 60], AC 11 | unverified | S0, S3 | QRs die on push or revoke, and AC 11 ("still after later pushes") fails — back to owner [AD §9] |
 | V11 | Web Share with files (`navigator.canShare({ files })`) works in iOS Safari and Android Chrome, not in desktop Firefox; `<a download>` saves a data-URL PNG in both | [40], AC 9 | unverified | S1 | none; fallback covers it |
 | V12 | `redirect()` to an external URL from a Server Action works | §4.1 | unverified | S1 | Action returns the URL, client assigns `location` |
 | V13 | PaymentIntent `metadata` can be updated after the payment succeeded; updates merge by key | §2.2, §4.2, §4.3 | unverified | S1 | flags move to Checkout Session metadata, if updatable |
@@ -127,7 +130,7 @@ The status page must not depend on the schedule: the $1 date is removed after th
 Stripe holds these flags because it is the one store that is available when the sheet is
 not. [AD §5]
 
-### 2.3 Sheet tab `Reservations` — new, existing spreadsheet [S6]
+### 2.3 Sheet tab `Reservations` — new, in the production spreadsheet [S6, 64]
 
 Header in row 1; one row per reservation from row 2. Written with `valueInputOption: 'RAW'`
 (a name beginning with `=` stays text).
@@ -184,7 +187,7 @@ session exists. No timestamp, no counter (AC 14). Accepted format on input:
 | `types/paymentPolicy.ts` | new | `interface PaymentPolicyText { notice: string; policy: string[] }` — both files must carry both | type |
 | `components/UpcomingSection.tsx` | changed | passes `payable = effectivePrice(event, program) > 0` per card | — |
 | `components/UpcomingTourCard.tsx` | changed | `book-button` → `PayButton` + `PaymentNotice` when `payable`, nothing otherwise (AC 1, 2); `onReserveSpot` no longer used by the card | — |
-| `app/[locale]/tours/[tourEventId]/page.tsx` | changed | `isPayable(event, program, new Date())` → `PayButton` + `PaymentNotice`, else nothing; `TourDetailClient` no longer mounted (AC 1, 2, 4) | — |
+| `app/[locale]/tours/[tourEventId]/page.tsx` | changed | `isPayable(event, program, new Date())` → `PayButton` + `PaymentNotice`, else nothing; `TourDetailClient` no longer mounted: no contact form on a priced date view (AC 1, 2, 4; [62]) | — |
 | `messages/en.json`, `messages/ru.json` | changed, pair | strings of §7.1 | — |
 | `package.json` | changed | `stripe`, `qrcode`, `@types/qrcode` | — |
 
@@ -277,7 +280,7 @@ absent and both render B.
 | | |
 |---|---|
 | Path | `/api/stripe/webhook/` — **with** the trailing slash: `trailingSlash: true` answers 308 without it [V8] |
-| Stripe endpoint URL | `https://<pilot branch host>/api/stripe/webhook/?x-vercel-protection-bypass=<secret>` [V9] |
+| Stripe endpoint URL | `https://<branch URL of payments-stripe-preview>/api/stripe/webhook/?x-vercel-protection-bypass=<secret>` [V9]. The host is copied from Vercel, not composed: `austin-city-tours-git-payments-stripe-preview-tatiana-orlovas-projects` is 70 characters, over the 63-character DNS label limit, so Vercel shortens it [unverified] |
 | Events enabled | `checkout.session.completed`, `charge.dispute.created` — nothing else |
 | Endpoint API version | the API version pinned by the installed `stripe` SDK |
 | Runtime | Node.js; body read once with `request.text()` |
@@ -376,16 +379,16 @@ QR carries from the payer's locale (§4.5).
 
 ## 6. Environment variables
 
-Set by the maintainer or owner in Vercel, never committed. Scope: **Preview, Git branch = the
-pilot branch only** (§11 Q6). A change takes effect on the next deployment.
+Set by the maintainer or owner in Vercel, never committed. New variables: scope **Preview,
+Git branch `payments-stripe-preview` only** [65]. A change takes effect on the next deployment.
 
 | name | used by | stage 1 value | stage 2 value | new |
 |---|---|---|---|---|
 | `STRIPE_SECRET_KEY` | `lib/stripe.ts` | maintainer's test key `sk_test_…` [24] | Tatiana's live key `sk_live_…` [25] | yes |
 | `STRIPE_WEBHOOK_SECRET` | webhook | `whsec_…` of the test-mode endpoint | `whsec_…` of the live endpoint in Tatiana's account | yes |
-| `PILOT_SHARE_URL` | `lib/reservationUrl.ts` | the Vercel shareable link of the pilot branch URL | same link, unless revoked | yes |
-| `GOOGLE_SHEETS_CLIENT_EMAIL`, `GOOGLE_SHEETS_PRIVATE_KEY`, `GOOGLE_SHEETS_SPREADSHEET_ID` | `lib/reservationSheet.ts` | production spreadsheet [S6] | same | no — must be present for Preview (§11 Q5) |
-| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_CHATID` | `app/tgmessage.ts` | production chat [owner, 8] | same | no — same |
+| `PILOT_SHARE_URL` | `lib/reservationUrl.ts` | the Vercel shareable link of the `payments-stripe-preview` branch URL, created before stage 1 [60] | same link: never revoked or regenerated during a stage [60] | yes |
+| `GOOGLE_SHEETS_CLIENT_EMAIL`, `GOOGLE_SHEETS_PRIVATE_KEY`, `GOOGLE_SHEETS_SPREADSHEET_ID` | `lib/reservationSheet.ts` | production spreadsheet, own tab [S6, 64] | same | no — same value in Production and Preview; nothing to set [64] |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_CHATID` | `app/tgmessage.ts` | production chat [8, 64] | same | no — same [64] |
 
 The Vercel automation-bypass secret is **not** a code variable: it goes only into the
 Stripe endpoint URL (§4.3). No Stripe publishable key is needed (redirect to `session.url`).
@@ -403,17 +406,20 @@ answers 400.
 
 | slot | view | source |
 |---|---|---|
-| notice | V1, Stripe `custom_text` | `data/paymentPolicy*.ts` `notice` [19]; EN wording [16] with the address [7]; RU — none at stage 1 (thread A4) |
-| policy text | V5 | `data/paymentPolicy*.ts` `policy` [19]; placeholder at stage 1 |
-| policy link label | V1 | none (A4) |
-| start failed | V1 | none (A4) |
-| Stripe name-field label (≤ 50 chars) | V2 | none (A4) |
-| Stripe item description, "per guest" | V2 | none (A4) |
+| notice | V1, Stripe `custom_text` | `data/paymentPolicy*.ts` `notice`; EN wording [16] with the address [7]; RU — stage-1 draft; the maintainer's files [19] before stage 2 [63] |
+| policy text | V5 | `data/paymentPolicy*.ts` `policy`; stage-1 placeholder; the maintainer's files [19] before stage 2 [63] |
+| policy link label | V1 | draft [63] |
+| start failed | V1 | draft [63] |
+| Stripe name-field label (≤ 50 chars) | V2 | draft [63] |
+| Stripe item description: the price applies to each guest | V2 | [61], AC 6; wording draft [63], design thread D1 |
 | Stripe item name | V2 | existing data: program title + formatted date — form only |
-| state A, state B heading, Share, Save | V3 | none (A4) |
-| state C | V3 | EN [46] and PRD §5 V3; RU none (A4) |
-| valid, not valid, booking not found, field labels | V4 | none (A4) |
-| `<title>` of V3, V4, V5 | V3–V5 | none (A4) |
+| state A, state B heading, Share, Save | V3 | draft [63] |
+| state C | V3 | EN [46] and PRD §5 V3; RU draft [63] |
+| valid, not valid, booking not found, field labels | V4 | draft [63] |
+| `<title>` of V3, V4, V5 | V3–V5 | draft [63] |
+
+"Draft [63]": the coder writes EN and RU for stage 1 from the design.md §8 proposals; the
+maintainer replaces every draft before stage 2 (PRD AC 23).
 
 Stripe's own UI follows `locale` [V1]; our strings on it come from the same pair of files.
 
@@ -428,7 +434,7 @@ Stripe's own UI follows `locale` [V1]; our strings on it come from the same pair
 |---|---|
 | `newBookingText` | `New booking from ${name}: ${tourEn}, date: ${date}, guests: ${guests}` [9] |
 | `chargebackText` | `Chargeback for reservation made by ${name} for tour ${tourEn} date: ${date}` [10] |
-| `notSavedText` | owner's line (none yet, A4) + name, tour, date, guests; says the reservation is not saved [34] |
+| `notSavedText` | one line, draft [63], + name, tour, date, guests; says the reservation is not saved [34] |
 
 `tourEn` = EN `TourProgram.title`; `date` = `YYYY-MM-DD` from the data.
 
@@ -447,18 +453,22 @@ Stripe's own UI follows `locale` [V1]; our strings on it come from the same pair
 
 ## 9. Setup per stage (owner and maintainer, no code)
 
-**Before S2 (stage 1):**
+**Before stage 1** (steps 1, 2, 4 in S0; 3, 5 in S2):
 
 1. Vercel project: enable Protection Bypass for Automation; keep the secret [V9].
-2. Vercel: create the shareable link for the pilot **branch** URL → `PILOT_SHARE_URL` [V10].
+2. Vercel: create the shareable link for the **branch** URL of `payments-stripe-preview` →
+   `PILOT_SHARE_URL` [V10]. It must exist before stage 1 and is not revoked or regenerated
+   during a stage [60].
 3. Stripe test account: add the endpoint (§4.3) with the two events → `STRIPE_WEBHOOK_SECRET`.
-4. Spreadsheet: add the tab `Reservations` with the header row of §2.3. Setup, not an edit of reservations [54].
-5. Set §6 variables for the pilot branch; redeploy.
+4. Production spreadsheet: add the tab `Reservations` with the header row of §2.3 [64]. Setup,
+   not an edit of reservations [54]. The other tabs are not touched.
+5. Set the three new §6 variables, scoped to Preview + `payments-stripe-preview`; the five
+   existing ones need nothing [64]. Redeploy.
 
 **Between stages** (after Tatiana's account is active [25]): in her live account, repeat 3
-with the same URL; replace `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`; redeploy. Then the
-PRD §10 sequence. Stripe account settings — email receipts, statement descriptor — are
-Stripe's, not the site's [37].
+with the same URL; replace `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`; redeploy.
+`PILOT_SHARE_URL` stays as it is. Then the PRD §10 sequence. Stripe account settings — email
+receipts, statement descriptor — are Stripe's, not the site's [37].
 
 ---
 
@@ -471,7 +481,7 @@ Order S0 → S1 → S2 → S3 → S4. S1–S4 are the PRD §10 slices.
 | S0 | §9 steps 1–2 and 4; open `PILOT_SHARE_URL` with a deep path in a fresh private window; `curl` the branch URL with the bypass parameter | — | V9, V10 (deep path) |
 | S1 | `lib/payment.ts`, `startCheckout`, `PayButton`, `PaymentNotice`, `data/paymentPolicy*` (placeholder), V5 page, V3 page, `QrActions`, `lib/reservationUrl.ts`, messages | 1–10, 23 (V1, V3, V5) | V1–V4, V11–V13 |
 | S2 | `lib/reservationSheet.ts` (append, find), `lib/reservationMessages.ts`, `lib/fulfillment.ts` (`fulfilCheckout`), webhook route; §9 steps 3, 5 | 16–20, 22 | V7, V8, V9 |
-| S3 | V4 page | 11–15, 23 (V4) | V10 (on a push after the link was made) |
+| S3 | V4 page | 11–15, 23 (V4) | V10: a QR made before a later push still opens after it (AC 11) |
 | S4 | `setNotValid`, `handleDispute`, chargeback text | 21 | V5, V14 |
 
 Between S1 and S3 the QR points at a page that does not exist yet; AC 11 is checked in S3.
@@ -480,11 +490,12 @@ Between S1 and S3 the QR points at a page that does not exist yet; AC 11 is chec
 
 ## 11. Questions for the owner
 
-| # | question | blocks | recommended |
+| # | question | answer | carried into |
 |---|---|---|---|
-| Q1 | Every QR carries the shareable-link token, so the link must exist before stage 1 and must not be revoked or regenerated while any QR is in use (A1) | AC 11 at stage 1; PRD §10 order | accept; move "shareable link issued" before stage 1 |
-| Q2 | Guests are Stripe's quantity selector, labelled by Stripe, with "per guest" in the item (A2) | S1 acceptance of AC 6 | accept |
-| Q3 | Date views lose their contact-form entry (AC 1) while [D §2] says removing it was rejected (A3) | nothing in code; product wording | AC 1 as written |
-| Q4 | Who writes the strings marked "none" in §7.1 and the alert line (A4) | AC 23, stage 2 | coder drafts both locales for stage 1; the maintainer replaces them with his [19] files before stage 2 |
-| Q5 | Do Preview deployments already use the production spreadsheet and Telegram chat? (A12) | S2 | confirm, or set them for the pilot branch |
-| Q6 | Exact pilot branch name, for env scoping | §6 | `feat/stripe-pilot`, from `dev`, never merged |
+| Q1 | QR without a Vercel login at stage 1 (A1) | answered [60]: every QR carries the shareable-link token; the link exists before stage 1 and is not revoked during a stage | §1 V10, §4.5, §6, §9, §10 S3 |
+| Q2 | Guest count on Stripe's page (A2) | answered [61]: Stripe's quantity selector, 1–15, default 1; item wording in design thread D1 | §4.1, §7.1 |
+| Q3 | Contact form on date views (A3) | answered [62]: AC 1 as written | §3 (`UpcomingTourCard`, date page) |
+| Q4 | Strings without a source (A4) | answered [63]: coder's EN/RU drafts for stage 1, the maintainer's texts before stage 2 | §7.1, §7.3 |
+| Q5 | Preview uses the production spreadsheet and chat? (A12) | answered [64]: yes, same values in Production and Preview | §2.3, §6, §9 |
+| Q6 | Pilot branch name (A12) | answered [65]: `payments-stripe-preview`, docs and code together | header, §4.3, §6, §9 |
+| Q7 | [65] lets the branch reach `dev` "together or not at all"; `dev` is released to `main` in batches, and nothing from the pilot may reach `main` [1]. Merged into `dev`, the next release would show pay buttons on production, with no Stripe variables there, so every button would end in the start-failed message, and priced date views would lose the contact form (A13) | **open**; blocks no slice, only a merge into `dev` | recommended: not merged into `dev` before the production decision (PRD §9); no production gate is built |

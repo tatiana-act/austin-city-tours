@@ -1,6 +1,6 @@
 # Design decisions: Stripe payments pilot
 
-companion to: `design.md` v1.0 (cited there as **[DD §N]**). Options, criterion, choice.
+companion to: `design.md` v1.1 (cited there as **[DD §N]**). Options, criterion, choice.
 Requirements are in `prd.md` v1.4; contracts are in `architecture.md` v1.0.
 
 ---
@@ -33,7 +33,7 @@ Cost: five cards repeat the notice five times. Accepted; the text is small and m
 Criterion: what the reader can do with it in one tap. On a phone, the main traffic, plain text
 means a long-press and a copy. The footer already renders the same address as `mailto:`, so this
 is not a new pattern. On a priced date page the contact form is gone (AC 1), and this link is the
-nearest way left to ask the guide a question (US4, D3). The risk of tapping it instead of the
+nearest way left to ask the guide a question (US4, `[owner, 62]`). The risk of tapping it instead of the
 button is limited by the 0.5 rem gap and the link's text size. A copy button would be a new
 control that the PRD does not ask for.
 

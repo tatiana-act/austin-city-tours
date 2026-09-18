@@ -1,7 +1,8 @@
 # Design: Stripe payments pilot
 
-version 1.0 | date 2026-09-18
-inputs: `prd.md` v1.4 (cited by §, AC, `[owner, N]`); `decisions.md` (**[D]**);
+version 1.1 | date 2026-09-18
+inputs: `prd.md` v1.4 (cited by §, AC, `[owner, N]`), and `[owner, 63]` as carried into v1.5
+AC 23; `decisions.md` (**[D]**);
 `architecture.md` v1.0 (**[A]**); `projects/context.md` v1.2
 rationale and rejected options: `design-decisions.md` (**[DD §N]**)
 objections: `answers.md`, items D1–D11
@@ -14,13 +15,13 @@ is named, and the fallback stands beside it.
 ## 1. Boundaries
 
 **Design decides:** what each view shows, in what order and with what emphasis; the states of
-every view and the look of each; copy intent of every new string, with a proposed EN/RU value
+every view and the look of each; copy intent of every new string, with its stage-1 EN/RU draft
 (§8); where the notice and the policy link sit; where mobile and desktop differ; accessibility
 requirements — focus, accessible names, contrast, target size.
 
 **Coder:** classes and tokens that satisfy the rules below; message key names; how share support
 is detected, how focus and announcements are done, how the back-forward cache is handled; final
-punctuation of proposed strings; any spacing not named here, taken from the nearest existing class
+punctuation of the §8 drafts; any spacing not named here, taken from the nearest existing class
 named here.
 
 **Architect [A]:** URLs; the state decision table of the screen after payment [A §4.2]; what the
@@ -28,7 +29,11 @@ status page reads and when it answers "not found" [A §4.4]; Checkout Session pa
 QR payload and image [A §4.5]. Where this document needs a behaviour from there, it names it.
 Two behaviours it asks the architecture to add are in D10.
 
-**Owner:** string values (§8 holds proposals until approved, D4); answers in `answers.md`.
+**Coder, for strings:** the EN and RU values of §8 are the stage-1 drafts the coder ships
+`[owner, 63]`.
+
+**Maintainer:** replaces the §8 values before stage 2, together with the policy files
+`[owner, 19, 63]`. **Owner:** answers in `answers.md`.
 
 ---
 
@@ -125,7 +130,7 @@ The block is present only when the date is payable [A §3: card — effective pr
 | from the next day | page: no block (AC 4) |
 | empty | the block holds no list |
 | long text | §3.2, §3.3; the program title above the block wraps, as today |
-| stage 2 notice | the maintainer's text, up to 1200 characters [A §7.2]: the block grows, no "read more". Repeated on five cards, a long text dominates the list (D4) |
+| stage 2 notice | the maintainer's text, up to 1200 characters [A §7.2]: the block grows, no "read more". Repeated on five cards, a long text dominates the list; one or two sentences is the advice to the maintainer (D4 (c)) |
 
 ---
 
@@ -309,8 +314,8 @@ policy title (§8); a centred text column `max-w-3xl`; paragraphs `ink`, 1 rem, 
 | stage 1 placeholder | h1 and one paragraph (§8) |
 | the maintainer's text | its paragraphs in order |
 | empty array | the placeholder paragraph |
-| long text | the column grows; no contents, no collapse. Section headings are not possible with `string[]` (D4) |
-| long title | the RU proposal (35 characters) at the `.section-title` 2.5 rem takes 3 lines on a 320 px phone — the same as the existing `/places` title; accepted |
+| long text | the column grows; no contents, no collapse. Section headings are not possible with `string[]`; the data format is the architect's (D4 (b)) |
+| long title | the RU draft (35 characters) at the `.section-title` 2.5 rem takes 3 lines on a 320 px phone — the same as the existing `/places` title; accepted |
 | failure | static page; none |
 
 Mobile: the column is full width inside the 20 px padding; nothing else differs.
@@ -319,29 +324,30 @@ Mobile: the column is full width inside the 20 px padding; nothing else differs.
 
 ## 8. Strings
 
-Values are proposals unless a source is named; D4 asks the owner to approve or replace them. Keys
-are the coder's.
+A value marked "draft" is the stage-1 text: the coder ships it as written, with no separate
+approval, and the maintainer replaces it before stage 2 `[owner, 63]`. A value with a named source
+stays. Rows tied to an open thread (D1, D2) change if the owner's answer does. Keys are the coder's.
 
 | slot | view | EN | RU | source |
 |---|---|---|---|---|
-| notice, stage 1 | V1, V2 | No refunds or cancellations through the site. For any issue, email tatiana.city.guide@gmail.com. | Возврат и отмена через сайт невозможны. По любому вопросу пишите на tatiana.city.guide@gmail.com. | EN `[owner, 16, 7]`; RU proposal |
-| policy link = V5 h1 = V5 `<title>` | V1, V5 | Payment and privacy policy | Условия оплаты и конфиденциальность | proposal (D4) |
-| V5 placeholder | V5 | The policy text will be published here. | Здесь будет опубликован текст условий. | proposal |
-| pending | V1 | Opening payment… | Переход к оплате… | proposal |
-| start failed | V1 | The payment page didn't open. You weren't charged. Please try again. | Страница оплаты не открылась. Деньги не списаны. Попробуйте ещё раз. | proposal |
-| name label | V2 | Name for the guest list | Имя для списка гостей | proposal (D2) |
-| item description | V2 | Price per person | Цена за одного человека | proposal (D1) |
-| state 0 | V3 | Confirming your payment… / Please don't close this page — your QR code will appear here. | Подтверждаем оплату… / Пожалуйста, не закрывайте страницу — здесь появится ваш QR-код. | proposal |
-| state A | V3 | Payment not confirmed yet / If you have paid, reload this page in a minute: your QR code is shown here, only once. If this message stays, email tatiana.city.guide@gmail.com — Tatiana will find your payment. | Оплата пока не подтверждена / Если вы оплатили, обновите страницу через минуту: QR-код показывается здесь, только один раз. Если сообщение не исчезает, напишите на tatiana.city.guide@gmail.com — Татьяна найдёт ваш платёж. | proposal |
-| state B heading | V3 | Payment received | Оплата прошла | proposal |
-| state B warning | V3 | This QR code is shown only once. Share or save it now — a screenshot works too. | QR-код показывается только один раз. Поделитесь им или сохраните его сейчас — подойдёт и скриншот. | proposal |
-| state B hint | V3 | Show it to the guide at the start of the tour. | Покажите его гиду перед началом экскурсии. | proposal |
-| Share / Save | V3 | Share QR code / Save QR code | Поделиться QR-кодом / Сохранить QR-код | proposal |
-| QR alt | V3 | QR code for your booking: {tour}, {date} | QR-код вашей брони: {tour}, {date} | proposal |
-| state C | V3 | QR code already shown / If you lost it, email tatiana.city.guide@gmail.com. | QR-код уже был показан / Если вы его потеряли, напишите на tatiana.city.guide@gmail.com. | EN `[owner, 46]`, PRD §5 V3; RU proposal |
-| page title | V4 | Booking status | Статус брони | proposal |
-| statuses | V4 | Valid / Not valid / Booking not found | Действительна / Недействительна / Бронь не найдена | "not found" EN `[owner, 49]`; rest proposal |
-| field labels | V3, V4 | Guests / Name / Tour / Date | Гости / Имя / Экскурсия / Дата | proposal |
+| notice, stage 1 | V1, V2 | No refunds or cancellations through the site. For any issue, email tatiana.city.guide@gmail.com. | Возврат и отмена через сайт невозможны. По любому вопросу пишите на tatiana.city.guide@gmail.com. | EN `[owner, 16, 7]`; RU draft |
+| policy link = V5 h1 = V5 `<title>` | V1, V5 | Payment and privacy policy | Условия оплаты и конфиденциальность | draft |
+| V5 placeholder | V5 | The policy text will be published here. | Здесь будет опубликован текст условий. | draft |
+| pending | V1 | Opening payment… | Переход к оплате… | draft |
+| start failed | V1 | The payment page didn't open. You weren't charged. Please try again. | Страница оплаты не открылась. Деньги не списаны. Попробуйте ещё раз. | draft |
+| name label | V2 | Name for the guest list | Имя для списка гостей | draft (D2) |
+| item description | V2 | Price per person | Цена за одного человека | draft (D1) |
+| state 0 | V3 | Confirming your payment… / Please don't close this page — your QR code will appear here. | Подтверждаем оплату… / Пожалуйста, не закрывайте страницу — здесь появится ваш QR-код. | draft |
+| state A | V3 | Payment not confirmed yet / If you have paid, reload this page in a minute: your QR code is shown here, only once. If this message stays, email tatiana.city.guide@gmail.com — Tatiana will find your payment. | Оплата пока не подтверждена / Если вы оплатили, обновите страницу через минуту: QR-код показывается здесь, только один раз. Если сообщение не исчезает, напишите на tatiana.city.guide@gmail.com — Татьяна найдёт ваш платёж. | draft |
+| state B heading | V3 | Payment received | Оплата прошла | draft |
+| state B warning | V3 | This QR code is shown only once. Share or save it now — a screenshot works too. | QR-код показывается только один раз. Поделитесь им или сохраните его сейчас — подойдёт и скриншот. | draft |
+| state B hint | V3 | Show it to the guide at the start of the tour. | Покажите его гиду перед началом экскурсии. | draft |
+| Share / Save | V3 | Share QR code / Save QR code | Поделиться QR-кодом / Сохранить QR-код | draft |
+| QR alt | V3 | QR code for your booking: {tour}, {date} | QR-код вашей брони: {tour}, {date} | draft |
+| state C | V3 | QR code already shown / If you lost it, email tatiana.city.guide@gmail.com. | QR-код уже был показан / Если вы его потеряли, напишите на tatiana.city.guide@gmail.com. | EN `[owner, 46]`, PRD §5 V3; RU draft |
+| page title | V4 | Booking status | Статус брони | draft |
+| statuses | V4 | Valid / Not valid / Booking not found | Действительна / Недействительна / Бронь не найдена | "not found" EN `[owner, 49]`; rest draft |
+| field labels | V3, V4 | Guests / Name / Tour / Date | Гости / Имя / Экскурсия / Дата | draft |
 
 ---
 

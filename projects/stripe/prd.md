@@ -1,6 +1,6 @@
 # PRD: Stripe payments pilot
 
-version 1.6 | date 2026-09-18 | status: buildable — no open questions
+version 1.7 | date 2026-09-18 | status: buildable — no open questions
 sources: `[owner, N]` — interview answer N, logged in `decisions.md` §1 (cited as **[D]**);
 `[owner, S1]`–`[owner, S6]` — the starting scenario, [D §1]; `[from code]` — read from the
 repository
@@ -14,8 +14,9 @@ maintainer calls her "owner" [owner, 13].
 
 ## 1. Goal and metric
 
-**Goal.** Find out whether the site can take payment for scheduled tours reliably, on a
-branch deployment, with production unchanged `[owner, 1]`.
+**Goal.** Find out whether the site can take payment for scheduled tours reliably, on the
+deployment of the branch `payments-stripe-preview`, with production unchanged
+`[owner, 1, 65]`.
 
 | | |
 |---|---|
@@ -280,7 +281,9 @@ schedule `[owner, 42]`; changes go live on push `[owner, 36]`. Ends when Tatiana
 passes on §1.
 
 Throughout: nothing from this pilot reaches `main` `[owner, 1]`; the shareable link is never
-revoked or regenerated during a stage `[owner, 60]`.
+revoked or regenerated during a stage `[owner, 60]`. The pilot code and this documentation
+live together on `payments-stripe-preview`; they reach `dev` together or not at all
+`[owner, 65]`.
 
 ## 11. Boundary with the architect
 

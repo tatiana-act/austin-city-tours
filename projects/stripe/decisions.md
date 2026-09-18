@@ -100,7 +100,8 @@ a-q4". Each row gives the recommendation it accepts, as put to the owner.
 
 | N | Question | Answer |
 |---|---|---|
-| 64 | A-Q5 (thread A12): do Preview deployments use the production spreadsheet and Telegram chat? | "I checked the vercel settings, all vars propagated to all environments. Given we will work on separate sheet, I don't think we need different speadsheet doc" (relayed verbatim, 2026-09-18). The five existing variables have the same values in Production and Preview: the pilot writes to the production spreadsheet, in its own new tab, and messages the production chat. The new Stripe variables are not covered (architecture.md scopes them to the pilot branch). |
+| 64 | A-Q5 (thread A12): do Preview deployments use the production spreadsheet and Telegram chat? | "I checked the vercel settings, all vars propagated to all environments. Given we will work on separate sheet, I don't think we need different speadsheet doc" (relayed verbatim, 2026-09-18). The five existing variables have the same values in Production and Preview: the pilot writes to the production spreadsheet, in its own new tab, and messages the production chat. The new Stripe variables are not covered (architecture.md scopes them to the pilot branch, `payments-stripe-preview` per [65]). |
+| 65 | A-Q6: the pilot branch name, for env scoping (architect proposed `feat/stripe-pilot` from `dev`) | "A-06 Do we really need separate pilot banch? I would strongly prefer to have everything within current branch" and "having separate branch for docs and code looks odd to me. If I merge docs, and don't merge the code, this is inconsistency; also each update of the docs leads to code update, which means we shall always merge 2 these branch. A lot of efforts, but I see no benefits" (relayed verbatim, 2026-09-18). The pilot branch is `payments-stripe-preview`, holding docs and code; they merge to `dev` together or not at all; PR #69 (docs only) is not merged. |
 
 ## 2. Superseded and rejected
 
@@ -169,7 +170,8 @@ For the coordinator, who maintains it. The PRD follows the answers below.
 |---|---|---|
 | DoD: correct localization always, both languages | [29] | exception for the Stripe page in the pilot |
 | CONSTRAINTS: data only through Server Actions, no `app/api/*` (tagged `[из кода]`) | [35] | exception: one endpoint for Stripe |
-| OPEN 29: shareable links not needed | [11, 60] | reversed for the pilot branch; the link exists from stage 1 and rides in every QR |
+| OPEN 29: shareable links not needed | [11, 60] | reversed for `payments-stripe-preview`; the link exists from stage 1 and rides in every QR |
 | "владелец" = the maintainer | [13] | the maintainer's "owner" is Tatiana |
-| CONSTRAINTS / `CLAUDE.md`: `main` is the release switch | [36] | pilot branch goes live on push; `CLAUDE.md` does not cover it |
+| CONSTRAINTS / `CLAUDE.md`: `main` is the release switch | [36] | `payments-stripe-preview` goes live on push; `CLAUDE.md` does not cover it |
+| `CLAUDE.md`: feature branches `type/short-description` from `dev`, PRs into `dev` | [65] | one branch, `payments-stripe-preview`, holds docs and code; the docs do not go to `dev` on their own (PR #69 is not merged) |
 | OPEN 4: return to the privacy policy when real payment appears | [15, 18, 19] | reopened for the pilot |
