@@ -26,8 +26,12 @@ export type StartCheckoutState = { failed: boolean };
  */
 const STRIPE_CHECKOUT_SUPPORTS_RU = true;
 
-/** Stripe's minimum session lifetime (architecture §4.1, thread A11). */
-const SESSION_LIFETIME_SECONDS = 30 * 60;
+/**
+ * Stripe's minimum session lifetime is 30 minutes (architecture §4.1, thread A11).
+ * One extra minute covers the delay before Stripe receives the request, so the
+ * value never falls below that minimum.
+ */
+const SESSION_LIFETIME_SECONDS = 31 * 60;
 
 const MAX_GUESTS = 15;
 

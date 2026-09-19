@@ -185,9 +185,9 @@ describe('startCheckout — Checkout Session parameters', () => {
     expect(params.line_items[0].price_data.product_data.description).toBe('Цена за одного человека');
   });
 
-  it('expires the session after 30 minutes', async () => {
+  it('expires the session after 31 minutes, above the 30-minute Stripe minimum', async () => {
     const params = await createdParams('en');
-    expect(params.expires_at).toBe(Math.floor(Date.now() / 1000) + 30 * 60);
+    expect(params.expires_at).toBe(Math.floor(Date.now() / 1000) + 31 * 60);
   });
 
   it('gives two reservations ids with no shared counter or timestamp (AC 14)', async () => {
