@@ -144,5 +144,40 @@
         "book": "Reserve a spot",
         "noReviews": "No reviews for this tour yet",
         "notFound": "Tour not found"
+    },
+    "Payment": {
+        "policyLink": "Payment and privacy policy",
+        "pending": "Opening payment…",
+        "startFailed": "The payment page didn't open. You weren't charged. Please try again.",
+        "nameLabel": "Name for the guest list",
+        "pricePerPerson": "Price per person",
+        "back": "← Austin City Tours"
+    },
+    "PaymentComplete": {
+        "confirmingTitle": "Confirming your payment…",
+        "confirmingText": "Please don't close this page — your QR code will appear here.",
+        "notConfirmedTitle": "Payment not confirmed yet",
+        "notConfirmedText": "If you have paid, reload this page in a minute: your QR code is shown here, only once. If this message stays, email <mail>tatiana.city.guide@gmail.com</mail> — Tatiana will find your payment.",
+        "receivedTitle": "Payment received",
+        "receivedWarning": "This QR code is shown only once. Save or share it now — a screenshot works too.",
+        "receivedHint": "Show it to the guide at the start of the tour.",
+        "save": "Save QR code",
+        "share": "Share QR code",
+        "qrAlt": "QR code for your booking: {tour}, {date}",
+        "shownTitle": "QR code already shown",
+        "shownText": "If you lost it, email <mail>tatiana.city.guide@gmail.com</mail>."
+    },
+    "BookingStatus": {
+        "title": "Booking status",
+        "valid": "Valid",
+        "notValid": "Not valid",
+        "notFound": "Booking not found",
+        "errorTitle": "Temporarily unavailable",
+        "errorLine1": "This is a temporary problem on our side; it does not affect your payment.",
+        "errorLine2": "Please try again in a few minutes.",
+        "guests": "Guests",
+        "name": "Name",
+        "tour": "Tour",
+        "date": "Date"
     }
 }

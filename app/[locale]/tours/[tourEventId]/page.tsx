@@ -9,9 +9,11 @@ import { tours as toursEn } from '@/data/tours.en';
 import { getAllReviews } from '@/app/actions/readAllFeedbacks';
 import { formatDateToUserLocale } from '@/lib/utils';
 import ReviewCard from '@/components/ReviewCard';
-import TourDetailClient from '@/components/TourDetailClient';
+import PayButton from '@/components/PayButton';
+import PaymentNotice from '@/components/PaymentNotice';
 import PoiList from '@/components/PoiList';
 import { getProgramPoi } from '@/lib/poi';
+import { effectivePrice, isPayable } from '@/lib/payment';
 
 export default async function TourDetailPage({
   params,
@@ -35,7 +37,11 @@ export default async function TourDetailPage({
   const tTours = await getTranslations({ locale, namespace: 'ToursSection' });
   const tReviews = await getTranslations({ locale, namespace: 'Reviews' });
 
-  const price = event.price ?? program.price;
+  const price = effectivePrice(event, program);
+  // Until the end of the date's own day in Central Time (PRD AC 4). Holds only
+  // because this page renders per request (`ƒ` in the build output).
+  const payable = isPayable(event, program, new Date());
+  const noticeId = `pay-notice-${event.id}`;
   const bonus = event.bonus ? tUpcoming(event.bonus) : null;
 
   // The program's list, not the date's — a date has no places of its own, and a
@@ -75,10 +81,13 @@ export default async function TourDetailPage({
               <span>⏱️</span>
               <span>{program.duration}</span>
             </div>
-            <div className="tour-detail-attr">
-              <span>💲</span>
-              <span>{price > 0 ? `${price}${tUpcoming('currency')}` : t('free')}</span>
-            </div>
+            {/* An unpriced date shows no price line at all — no "Free" [67]. */}
+            {price > 0 && (
+              <div className="tour-detail-attr">
+                <span>💲</span>
+                <span>{`${price}${tUpcoming('currency')}`}</span>
+              </div>
+            )}
             {bonus && (
               <div className="tour-detail-attr tour-detail-bonus">
                 <span>🎁</span>
@@ -86,7 +95,15 @@ export default async function TourDetailPage({
               </div>
             )}
           </div>
-          <TourDetailClient tourProgram={program} />
+          {/* Pay block instead of the contact form: a priced date view offers no
+              contact form [62]. Button width on desktop, full width on mobile
+              (design §3.3). */}
+          {payable && (
+            <div className="mt-auto flex w-full max-w-70 flex-col gap-2 max-md:max-w-none">
+              <PayButton eventId={event.id} locale={locale} label={t('book')} noticeId={noticeId} />
+              <PaymentNotice id={noticeId} locale={locale} />
+            </div>
+          )}
         </div>
       </div>
 
