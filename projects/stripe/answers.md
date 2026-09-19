@@ -217,6 +217,12 @@ A11. [к сведению] prd.md v1.4 AC 4: a session started before midnight C
      a date can complete up to 30 minutes into the next day; "started" in AC 4 still holds
                                                    · архитектор · 09-18
      → ждёт владельца
+C2. [к сведению] architecture.md v1.3 §4.1 sets `expires_at: nowSeconds + 30 * 60`,
+    exactly Stripe's minimum as measured when Stripe receives the request, so it may be
+    rejected as below 30 minutes (unverified); the code follows the document, with the
+    value in one constant (`SESSION_LIFETIME_SECONDS`, `app/actions/startCheckout.ts`),
+    and S1 shows at once whether every payment start fails
+                                                   · кодер · 09-18
 
 ## Окружение пилота · внесён → prd.md v1.11
 
@@ -333,3 +339,51 @@ D11. [к сведению] architecture.md v1.0 §4.1; prd.md v1.4 AC 4: a page 
      → "accept the rest": to the date page, no button, no message [owner, 76] · 09-18
      → внесено: prd.md v1.11 AC 4                           · 09-18
      → внесено: design.md v1.3 §3.4 (cites [76])            · 09-18
+
+## Stripe-клиент без ключа · открыт
+
+C1. [к сведению] architecture.md v1.3 §3 has `lib/stripe.ts` export `stripe`, but
+    `stripe` 22.6.2 throws on construction without a key ("Neither apiKey nor
+    config.authenticator provided"), so a module-level client would crash every
+    importer when `STRIPE_SECRET_KEY` is unset instead of failing closed as §6
+    requires; the code exports `getStripe()`, which throws `StripeNotConfiguredError`
+    at the point of use
+                                                   · кодер · 09-18
+
+## Адрес страницы статуса при записи строки · открыт
+
+C3. [к сведению] architecture.md v1.3 §3 gives `appendReservation(r)` and
+    `fulfilCheckout(sessionId)`, but column H is `statusPageUrl(locale, id, requestOrigin)`
+    (§2.3, §4.5), which needs the webhook request's origin when `PILOT_SHARE_URL` is
+    absent; the code passes it as a second parameter: `appendReservation(r, statusUrl)`,
+    `fulfilCheckout(sessionId, origin)`; `handleDispute` takes only the two dispute
+    fields it reads
+                                                   · кодер · 09-18
+
+## Страница ошибки статуса без JavaScript · открыт
+
+C4. [к сведению] architecture.md v1.3 §1 V17, §4.4: checked locally on `next start`
+    (Next 16.3.3) with the sheet unconfigured — the response is HTTP 500 with the page's
+    noindex and `<title>`, but the HTML body is an empty shell and `error.tsx` renders
+    only on the client after hydration (confirmed in headless Edge); a scanner with
+    JavaScript sees the error page, one without sees a blank page
+                                                   · кодер · 09-18
+
+## Реализация вне таблицы файлов · открыт
+
+C5. [к сведению] architecture.md v1.3 §3; design.md v1.3 §2, §3.1, §6.3: helpers not in
+    the file table — `lib/programTitle.ts` (program title by locale for sheet, Telegram,
+    V3, V4), `components/MailtoText.tsx` (address as `mailto:`, §2.8),
+    `components/StatusBand.tsx` (shared by V4 and its `error.tsx`),
+    `test-utils/stripeFakes.ts`; the sizes 0.9 rem and 2 rem are off Tailwind's scale and
+    `.claude/skills/tailwind-design.md` forbids arbitrary values, so `@theme` in
+    `app/globals.css` gains `--text-note` and `--text-figure`; line heights 1.6 / 1.7 / 1.3
+    use the nearest scale values (`leading-relaxed`, `leading-snug`); Share rebuilds the
+    `.details-link` look with utilities, since a `text-brand-dark` utility cannot override
+    the unlayered `.details-link` colour
+                                                   · кодер · 09-18
+C6. [к сведению] architecture.md v1.3 §3 changes `UpcomingSection` and
+    `UpcomingTourCard` but not `HomeClient`, which still passes `onReserveSpot`; the prop
+    stays in `UpcomingSection`'s type, unused; `components/TourDetailClient.tsx` is no
+    longer mounted and `TourDetail.free` is no longer rendered, both left in place
+                                                   · кодер · 09-18

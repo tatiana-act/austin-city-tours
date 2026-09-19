@@ -8,6 +8,11 @@
     --color-ink: #333333;
     --color-ink-muted: #666666;
 
+    /* Stripe pilot (projects/stripe/design.md): the notice and small print at the
+       size of `.meeting-point`, and the figures of the booking status page. */
+    --text-note: 0.9rem;
+    --text-figure: 2rem;
+
     --animate-float: float 20s ease-in-out infinite;
     --animate-slide-up: slideInUp 1s ease-out forwards;
 

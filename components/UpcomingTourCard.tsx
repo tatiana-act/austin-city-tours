@@ -7,11 +7,14 @@ import { UpcomingTourEvent } from '@/types/tour';
 import { formatDateToUserLocale } from '@/lib/utils';
 import { useTranslations } from "next-intl";
 import { FaFacebook, FaTelegram, FaShare } from 'react-icons/fa';
+import PayButton from './PayButton';
+import PaymentNotice from './PaymentNotice';
 
 interface UpcomingTourCardProps {
   upcomingTour: UpcomingTourEvent;
   tourName: string;
-  onReserveSpot: (tourId: string) => void;
+  /** `event.price ?? program.price`; 0 = unpriced: no price line, no pay block. */
+  effectivePrice: number;
   isMobileDevice: boolean;
   locale: string;
 }
@@ -19,7 +22,7 @@ interface UpcomingTourCardProps {
 const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
   upcomingTour,
   tourName,
-  onReserveSpot,
+  effectivePrice,
   isMobileDevice,
   locale
 }) => {
@@ -34,10 +37,6 @@ const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
       });
       window.dispatchEvent(event);
     }
-  };
-  const handleReserveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onReserveSpot(upcomingTour.tourProgramId);
   };
 
   const handleShare = async (e: React.MouseEvent<HTMLButtonElement>, platform: string, text: string, title: string) => {
@@ -70,6 +69,8 @@ const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
   const t = useTranslations('Upcoming');
   const shareText = t('shareText', { tourName: tourName, date: upcomingTour.date, time: upcomingTour.time })
   const shareTitle = t('shareTitle')
+  const isPriced = effectivePrice > 0;
+  const noticeId = `pay-notice-${upcomingTour.id}`;
   return (
     <div className="upcoming-tour-card" onClick={handleClick} id={'tour-card-' + upcomingTour.id.valueOf()}>
       <div className="upcoming-tour-content">
@@ -82,7 +83,7 @@ const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
             <span className="time">🕐 {upcomingTour.time}</span>
           </div>
           {upcomingTour.bonus && <div className="tour-highlights">{t(upcomingTour.bonus)}</div>}
-          {upcomingTour.price !== undefined && (<div className="tour-price">💲 {upcomingTour.price}{t('currency')}</div>)}
+          {isPriced && (<div className="tour-price">💲 {effectivePrice}{t('currency')}</div>)}
         </div>
         <div className="share-buttons">
           {isMobileDevice && (<button className="share-button share" onClick={async (e) => handleShare(e, 'share', shareText, shareTitle)} title={t('share')}>
@@ -103,9 +104,14 @@ const UpcomingTourCard: React.FC<UpcomingTourCardProps> = ({
           >
             {t('details')}
           </Link>
-          <button className="book-button" onClick={handleReserveClick}>
-            {t('join')}
-          </button>
+          {/* The list hides a date at its start time, so on the card price
+              alone decides (architecture §3). */}
+          {isPriced && (
+            <>
+              <PayButton eventId={upcomingTour.id} locale={locale} label={t('join')} noticeId={noticeId} />
+              <PaymentNotice id={noticeId} locale={locale} isolateClicks />
+            </>
+          )}
         </div>
       </div>
     </div>
