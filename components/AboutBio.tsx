@@ -14,13 +14,12 @@ interface AboutBioProps {
 
 const AboutBio: React.FC<AboutBioProps> = ({ locale, allTours }) => {
   const t = useTranslations('About');
-  const tHero = useTranslations('Hero');
   const tBooking = useTranslations('BookingForm');
   const [isBookingOpen, setBookingOpen] = useState(false);
 
   // Cross-page section links need a full navigation with an explicit trailing
   // slash (trailingSlash: true) so the browser scrolls to the target section.
-  const calendarHref = `/${locale}/#${MyConstants.idCalendar}`;
+  const upcomingHref = `/${locale}/#${MyConstants.idEvents}`;
 
   return (
     <>
@@ -29,8 +28,8 @@ const AboutBio: React.FC<AboutBioProps> = ({ locale, allTours }) => {
       <p>{t('bio3')}</p>
       <p>
         {t.rich('bio4', {
-          calendar: (chunks) => (
-            <a href={calendarHref} className="about-inline-link">
+          upcoming: (chunks) => (
+            <a href={upcomingHref} className="about-inline-link">
               {chunks}
             </a>
           ),
@@ -50,9 +49,6 @@ const AboutBio: React.FC<AboutBioProps> = ({ locale, allTours }) => {
         <button type="button" className="cta-button" onClick={() => setBookingOpen(true)}>
           {t('cta')}
         </button>
-        <a href={calendarHref} className="cta-button">
-          {tHero('calendar')}
-        </a>
       </div>
 
       {isBookingOpen && (
