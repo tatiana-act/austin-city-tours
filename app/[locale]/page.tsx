@@ -7,11 +7,8 @@ import { faqs as faqsRu } from '@/data/faq';
 import { faqs as faqsEn } from '@/data/faq.en';
 import { TourProgram } from '@/types/tour';
 import HomeClient from '@/components/HomeClient';
-import { getAllReviews } from "@/app/actions/readAllFeedbacks";
-import ReviewSection from "@/components/ReviewsSection";
 import { headers } from 'next/headers';
 import { getTourSchedule } from '@/lib/tourSchedule';
-import RecentEventsSection from '@/components/RecentEventsSection';
 import HashScrollHandler from '@/components/HashScrollHandler';
 import { getProgramPoi, type ProgramPoi } from '@/lib/poi';
 
@@ -21,7 +18,6 @@ export default async function Home({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const allReviews = await getAllReviews();
   const userAgent = (await headers()).get('user-agent') || '';
   const isMobileDevice = /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
   const tours = locale === 'en' ? toursEn : toursRu;
@@ -37,15 +33,15 @@ export default async function Home({
     tours.map(tour => [tour.id, getProgramPoi(tour.id, locale)] as const),
   );
 
-  const { futureUpcomingTours, mergedPastTours } = getTourSchedule();
+  const { futureUpcomingTours } = getTourSchedule();
 
+  // Compact layout: the calendar, recent tours and the reviews section are
+  // hidden. Their components are kept so any of them can be mounted again.
   return (
     <main>
       <HashScrollHandler />
       <Hero allTours={allTours} />
       <HomeClient allTours={allTours} tours={tours} poiByProgram={poiByProgram} upcomingTours={futureUpcomingTours} isMobileDevice={isMobileDevice} locale={locale} />
-      <RecentEventsSection pastTours={mergedPastTours} tours={tours} locale={locale} />
-      <ReviewSection reviews={allReviews} allTours={allTours} />
       <FAQSection faqs={faqs} />
     </main>
   );

@@ -20,7 +20,7 @@ interface ToursSectionProps {
 }
 
 // Mobile shows one column, so keep the initial list short — otherwise the
-// calendar and the sections below it are a very long scroll away.
+// the sections below it are a very long scroll away.
 const MOBILE_INITIAL_COUNT = 3;
 
 // Three 350px cards, two 32px gaps and 40px of page padding.

@@ -2,12 +2,10 @@
 
 import React from 'react';
 import ToursSection from '@/components/ToursSection';
-import CalendarSection from "@/components/CalendarSection";
 import UpcomingToursSection from '@/components/UpcomingSection';
 import BookingManager from '@/components/BookingManager';
 import { TourProgram, UpcomingTourEvent } from '@/types/tour';
 import type { ProgramPoi } from '@/lib/poi';
-import pastTours from '@/data/RecentTours';
 
 
 interface HomeClientProps {
@@ -26,7 +24,6 @@ const HomeClient: React.FC<HomeClientProps> = ({ allTours, tours, poiByProgram, 
             {(handleBookTour) => (
                 <>
                     <ToursSection tours={tours} poiByProgram={poiByProgram} onBookTour={handleBookTour} isMobileDevice={isMobileDevice} />
-                    <CalendarSection allTours={allTours} upcomingTours={upcomingTours} recentTours={pastTours} locale={locale} />
                     <UpcomingToursSection allTours={allTours} upcomingTours={upcomingTours} onReserveSpot={handleBookTour} isMobileDevice={isMobileDevice} locale={locale} />
                 </>
             )}

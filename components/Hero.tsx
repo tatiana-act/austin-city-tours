@@ -38,9 +38,6 @@ const Hero: React.FC<HeroProps> = ({ allTours }) => {
         <button className="cta-button" onClick={() => setBookingOpened(true)}>
           {t('makeOrder')}
         </button>
-        <button className="cta-button" onClick={() => scrollToSection(MyConstants.idCalendar)}>
-          {t('calendar')}
-        </button>
         <button className="cta-button" onClick={() => scrollToSection(MyConstants.idContactInfo)}>
           {t('contacts')}
         </button>
